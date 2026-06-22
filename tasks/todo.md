@@ -1,0 +1,447 @@
+# Tenant Graph Plan
+
+- [x] Inspect repo and conventions
+- [x] Scaffold React + TypeScript + Vite app
+- [x] Add MSAL auth using env vars
+- [x] Build authenticated shell with toolbar/sidebar
+- [x] Render typed mocked graph in Three.js
+- [x] Add Microsoft Graph adapters behind a small client
+- [x] Add progressive node expansion, search, and filters
+- [x] Add loading, empty, and permission states
+- [x] Run lint, typecheck, tests, and browser smoke test
+- [x] Fix live sign-in Graph endpoint warnings and canvas framing
+- [x] Showcase UI pass
+  - [x] Add visual depth to Three.js graph without changing data flow
+  - [x] Improve dark shell contrast and readability
+  - [x] Verify with lint, tests, build, and Playwright screenshot
+- [x] Icon node pass
+  - [x] Replace generic node circles with typed icons
+  - [x] Distinguish device operating systems where Graph data exposes them
+  - [x] Verify with lint, tests, build, and Playwright screenshot
+- [x] Advanced UX feature pass
+  - [x] Add graph view modes
+  - [x] Add icon legend and mini map
+  - [x] Add relationship inspector
+  - [x] Add focus mode controls
+  - [x] Add selected-node impact preview
+  - [x] Run strict review and React Doctor workflow
+- [x] Cutting-edge color refresh
+  - [x] Apply `ui-ux-pro-max` dark cybersecurity/HUD palette to global tokens
+  - [x] Refresh graph node and edge colors for sharper type distinction
+  - [x] Update Three.js lighting, atmosphere, and icon highlights to match the palette
+  - [x] Verify contrast, responsive screenshots, lint, tests, and build
+- [x] Fix dead Expand action
+  - [x] Trace selected-object expansion flow and root cause
+  - [x] Fix Expand so unavailable/no-new-depth states are visible instead of silent
+  - [x] Scan and fix similar clickable no-op controls
+  - [x] Add focused tests and run verification
+- [ ] Non-admin intuitiveness roadmap
+  - [x] Readable Mode: translate selected objects and relationships into plain English
+  - [x] Move raw Graph fields behind technical-details disclosure
+  - [x] Add glossary hints for Intune and Entra terms
+  - [x] Add relationship sentence copy for edge hover/click and inspector rows
+  - [x] Add cluster summaries for dense groups of devices, users, policies, and apps
+    - [x] Summarize visible graph by people, devices, groups, apps, policies, assignments, and guardrails
+    - [x] Show the summaries only in Readable Mode before search/filter controls
+    - [x] Keep summaries compact, accessible, and responsive
+  - [x] Add impact badges for required apps, broad assignments, filters, recent changes, and missing permissions
+    - [x] Add selected-object badges for app assignment intent, assigned apps, broad targets, filters, scope tags, and recent updates
+    - [x] Add readable data-confidence badges for missing permissions and partial Graph data
+    - [x] Keep badges text+color so meaning is not color-only
+  - [x] Add "Why does this apply?" path finder between a user/device and a policy/app
+    - [x] Compute shortest readable paths through already-loaded graph relationships
+    - [x] Offer target candidates based on the selected object
+    - [x] Render a compact step-by-step explanation in Readable Mode
+    - [x] Keep no-path and partial-data states explicit
+  - [x] Add guided story mode for user -> group -> assignment -> policy/app -> device impact
+    - [x] Generate readable story steps from already-loaded graph relationships
+    - [x] Render the story in Readable Mode without overwhelming the sidebar
+    - [x] Show partial-data guidance when a full impact chain is not loaded
+    - [x] Add focused story-generation tests and run verification
+  - [x] Add evidence drawer with raw Graph fields for admin verification
+    - [x] Extract normalized, metadata, raw Graph, and relationship evidence into typed records
+    - [x] Render a collapsed-by-default evidence drawer for selected objects
+    - [x] Keep Readable Mode clean while allowing admin verification on demand
+    - [x] Add focused tests and run verification
+  - [x] Add comparison mode for two users/devices/policies
+  - [ ] Verify accessibility, contrast, keyboard flow, reduced motion, and responsive layout
+- [x] Fix broad-target expansion warnings
+  - [x] Mark All users / All devices assignment targets as virtual nodes
+  - [x] Prevent virtual broad targets from being queued for Microsoft Graph expansion
+  - [x] Add tests for non-expandable broad targets
+  - [x] Run lint, tests, build, and audit
+- [x] Fix directory role names
+  - [x] Model directory roles as first-class nodes
+  - [x] Use directory role display names instead of role IDs
+  - [x] Hydrate missing role names from Graph directory role enumeration
+  - [x] Add focused tests and run verification
+- [x] Remove AI-slop visual tells
+  - [x] Flatten decorative body and graph-stage gradients
+  - [x] Replace generic neon-green chrome with cyan action accent
+  - [x] Remove repeated glassmorphism, glow, all-caps, left-border, and numbered-label patterns
+  - [x] Add reduced-motion fallback
+  - [x] Run lint, tests, build, audit, and targeted style scan
+- [x] Fix directory roles unsupported query warning
+  - [x] Remove unsupported `$top` from `/directoryRoles` enumeration
+  - [x] Add regression coverage for directory role search and hydration paths
+  - [x] Run lint, tests, build, audit, and targeted Graph path scan
+- [x] Render Intune app icons
+  - [x] Normalize Microsoft Graph `largeIcon` mimeContent into app node icon data
+  - [x] Render app image sprites in Three.js when icon content is available
+  - [x] Keep current app glyph as fallback when icon content is missing or invalid
+  - [x] Add regression tests and run lint, tests, build, audit, and smoke checks
+- [x] Fix mobile app BadRequest warning
+  - [x] Remove `largeIcon` from mobile app collection list queries
+  - [x] Hydrate app icons through guarded per-app detail calls
+  - [x] Add regression coverage for safe mobile app search and icon fallback
+  - [x] Run lint, tests, build, audit, and targeted Graph path scan
+- [x] Address ponytail audit
+  - [x] Remove Comparison Mode and Guided Story overlap
+  - [x] Remove graph view preset layer and unused model surface
+  - [x] Collapse duplicate search controls
+  - [x] Delete dead exports and use native canvas APIs
+  - [x] Prune tests/CSS and run verification
+- [x] Fix mobile app selected-field BadRequest warning
+  - [x] Remove unsupported non-base fields from mobile app collection `$select`
+  - [x] Add no-select fallback for mobile app overview and search
+  - [x] Add regression coverage for fallback behavior
+  - [x] Run lint, tests, build, audit, and smoke
+- [x] Render user profile photos
+  - [x] Add binary Microsoft Graph photo fetch helper
+  - [x] Hydrate capped loaded user nodes with 48x48 photos
+  - [x] Render user portraits in Three.js node sprites with glyph fallback
+  - [x] Add regression coverage and run verification
+- [x] Add default object display limits
+  - [x] Cap rendered graph objects by default while preserving selected context
+  - [x] Add a Show more control for hidden graph objects
+  - [x] Add visible paging for sidebar results instead of silently slicing
+  - [x] Add regression coverage and run verification
+- [x] Address thermo-nuclear code quality findings
+  - [x] Split Graph service into source registries, expansion, call execution, and media enrichment
+  - [x] Move AppShell state transitions into a reducer-backed workspace hook
+  - [x] Centralize readable node-type behavior into one config
+  - [x] Extract Three.js canvas image cache, layout, and object helpers
+  - [x] Decompose monolithic stylesheet by ownership
+  - [x] Run lint, tests, build, audit, smoke, and final strict review
+- [x] Implement ponytail audit cuts
+  - [x] Remove unused Playwright dependency
+  - [x] Replace bounded Graph call collector with `Promise.allSettled`
+  - [x] Delete thin tenant graph service wrapper
+  - [x] Replace manual Blob-to-data-URL loop with native FileReader
+  - [x] Deduplicate Graph metadata text helpers
+  - [x] Inline tiny one-use details components
+  - [x] Run lint, tests, build, and audit
+- [x] Graph visual value pass
+  - [x] Add semantic cluster zones for people, devices, apps, policies, access, and guardrails
+  - [x] Strengthen relationship-specific edge styling and labels
+  - [x] Add selected-object constellation dimming
+  - [x] Add richer layered node materials and badges
+  - [x] Replace hover metadata with readable relationship/object copy
+  - [x] Run lint, tests, build, and browser/canvas smoke
+- [x] Write README
+  - [x] Add visual hook, install, usage, Azure app registration, env vars, and verification commands
+  - [x] Fix app-registration helper scope mismatch
+  - [x] Run documentation and verification checks
+- [x] Tenant Graph UI Refinement Sprint
+  - [x] Task 1.1 Strengthen selected node state: 25-40% scale increase, animated halo, secondary pulse ring, larger label, render above other nodes
+  - [x] Task 1.2 Relationship focus dimming: direct 100%, one-hop 85%, two-hop 60%, unrelated 15-25%
+  - [x] Task 1.3 Focus mode toggle: Off, Direct, Two-Hop
+  - [x] Task 2.1 Progressive label rendering for selected, hovered, direct, and zoomed-in nodes only
+  - [x] Task 2.2 Label collision detection with priority and low-priority fading
+  - [x] Task 2.3 Smart zoom thresholds: far icons, medium primary labels, close visible labels
+  - [x] Task 3.1 Relationship type styling: assignment solid, membership dashed, ownership double-line, filter dotted, scope tag thin, dependency animated
+  - [x] Task 3.2 Relationship direction indicators
+  - [x] Task 3.3 Relationship hover preview with source, relationship type, target
+  - [x] Task 4.1 Cluster labels with type counts inside clusters
+  - [x] Task 4.2 Dynamic cluster boundaries using object distribution
+  - [x] Task 4.3 Cluster click zoom, isolate, and summary panel behavior
+  - [x] Task 5.1 Reduce starfield count, opacity, and color noise
+  - [x] Task 5.2 Separate render layers for stars, clusters, nodes, labels, and interactions
+  - [x] Task 6.1 Replace floating relationship card with right-side inspector
+  - [x] Task 6.2 Relationship breadcrumbs
+  - [x] Task 6.3 Copy name, object ID, Intune, Entra, and Graph query actions
+  - [x] Task 7.1 Compact summary cards
+  - [x] Task 7.2 Expandable People, Devices, Groups, Apps, and Policies sections
+  - [x] Task 7.3 Prioritize search results by exact match, selected object type, and relationship relevance
+  - [x] Task 8.1 Group graph controls for search, focus, depth, view, and fit
+  - [x] Task 8.2 Move account actions to avatar menu
+  - [x] Task 8.3 Replace Audience/Readable terminology with Display Mode/Friendly Names
+  - [x] Task 9.1 Minimap viewport indicator
+  - [x] Task 9.2 Minimap selected node marker
+  - [x] Task 9.3 Minimap cluster coloring
+  - [x] Task 10.1 Reduce glow intensity to 60%
+  - [x] Task 10.2 Fluent typography hierarchy
+  - [x] Task 10.3 Surface consistency for radii, borders, shadows, and padding
+- [x] Sign-in log and Conditional Access investigation plan
+  - [x] Add `AuditLog.Read.All` and `Policy.Read.ConditionalAccess` as incremental scopes, app-registration scopes, and README setup notes
+  - [x] Extend `GraphClient` to support request headers such as `Prefer: include-unknown-enum-members`
+  - [x] Add typed sign-in models for sign-in event, status, device/location/resource, risk, and applied Conditional Access policy results
+  - [x] Add Graph adapter/query module for `/auditLogs/signIns` with required date-range filters, `$top`, paging, and safe query encoding
+  - [x] Add Conditional Access classifier for Applied, Failed, Not applied, Report-only, Unknown, and Missing CA detail states
+  - [x] Add contextual Sign-ins panel for selected user/device/app/resource with date range, CA status filter, result filter, and load more
+  - [x] Add sign-in detail view with policy result, grant controls, session controls, sign-in error/failure reason, client app, IP, location, device, risk, correlation ID, and raw IDs
+  - [x] Add permission/role states for missing log permission, missing CA permission, and CA details omitted by Microsoft Graph
+  - [x] Add optional graph projection for selected sign-in events without cluttering the default graph
+  - [x] Add tests for query building, CA classification, adapters, and permission-state handling
+  - [x] Verify with lint, tests, build, audit, and browser sign-in-screen smoke
+  - [x] Run live tenant sign-in-log check after a fresh authenticated browser session
+- [x] Make interfaces feel better polish pass
+  - [x] Add text wrapping and tabular-number polish
+  - [x] Add tactile press states and explicit transitions
+  - [x] Improve surface depth, image outlines, and dense hit areas
+  - [x] Verify lint, tests, build, audit, and browser smoke
+- [x] Thermo-nuclear maintainability review
+  - [x] Scan oversized and high-responsibility files
+  - [x] Inspect sign-in, graph canvas, workspace reducer, and stylesheet boundaries
+  - [x] Report structural findings with file/line references
+- [x] Fix thermo-nuclear maintainability findings
+  - [x] Tighten `TenantNode` and `TenantEdge` type contracts
+  - [x] Split sign-in log data layer by query, adapter, Conditional Access evaluation, and graph projection
+  - [x] Move sign-in investigation async state into a hook
+  - [x] Move sign-in inspector styles out of graph-stage CSS
+  - [x] Replace loose GraphClient test casts with typed mocks
+  - [x] Extract Three.js graph visual policy and label visibility helpers
+  - [x] Run lint, tests, build, audit, and final residual scan
+- [x] Feature story audit and UX testing loop
+  - [x] Inventory every feature from current source
+  - [x] Create the single canonical feature/user-story spreadsheet
+  - [x] Run authenticated browser pass for sign-in, overview, search, reset, sign-in logs, projection, empty state, and mobile layout
+  - [x] Verify graph hover, edge click, cluster click, and sign-out flow
+  - [x] Verify keyboard search/result selection, relationship filters, external links, admin evidence, and direct graph interactions
+  - [x] Test every user story and document errors in the spreadsheet
+    - [x] Target remaining graph-only interaction: no-selection state
+    - [x] Target remaining auth/account interaction: canceled sign-in
+    - [x] Target keyboard-only tour
+  - [x] Fix every confirmed logistical or UX error
+  - [x] Retest fixed UX behavior after fixes
+  - [x] Retest every user behavior after fixes
+  - [x] Record final verification evidence
+- [x] Fix managed-device expansion BadRequest warning
+  - [x] Confirm the warning path for device `JRGSRS763`
+- [x] Address latest thermo-nuclear review findings
+  - [x] Model sign-in resources as distinct cloud app/resource nodes instead of Intune app nodes
+  - [x] Move sign-in supported-subject contract into the graph query layer and fail closed
+  - [x] Derive node labels, colors, sidebar groups, and graph legend from one presentation registry
+  - [x] Extract workspace selectors/actions so the workspace hook stops owning every concern directly
+  - [x] Group relationship inspector rows by stable relationship type
+  - [x] Add regression coverage and run lint, tests, build, knip, and audit
+  - [x] Suppress optional managed-device child-collection 400s without hiding permission errors
+  - [x] Add regression coverage for partial device expansion
+  - [x] Run lint, tests, build, and audit
+- [x] Add Conditional Access projected graph filters
+  - [x] Add a typed projection filter for all, blocked, and evaluated CA policies
+  - [x] Add a compact filter control next to Show on graph
+  - [x] Thread the filter through the workspace projection action
+  - [x] Add regression coverage for blocked/evaluated policy projection
+  - [x] Run lint, tests, build, and audit
+- [x] Make Reset restore original signed-in-user view
+  - [x] Reset search, filters, focus, depth, limits, warnings, and projected/expanded graph state
+  - [x] Keep overview reload centered on the signed-in user
+  - [x] Add reducer regression coverage
+  - [x] Run lint, tests, build, and audit
+- [x] Add subtle graph background grid
+  - [x] Add low-contrast grid layers behind the Three.js canvas
+  - [x] Keep canvas interactions and overlays unaffected
+  - [x] Verify build and browser smoke
+- [x] Try hexagon graph background
+  - [x] Replace square graph grid with one reference-style flat-top hexagon tile layer
+  - [x] Keep overlays and Three.js canvas interactions unaffected
+  - [x] Verify lint, tests, build, and browser-rendered background
+- [x] Fix load-more and legend overlay collision
+  - [x] Move the object-limit banner out of the legend's desktop anchor
+- [x] Fix graph load-more notice overlap
+  - [x] Inspect current graph overlay structure and responsive CSS
+  - [x] Stack the load-more notice and legend in one left overlay column
+  - [x] Verify desktop and mobile layout measurements do not overlap
+  - [x] Run lint, tests, build, and audit
+  - [x] Add a responsive flow position for narrow layouts
+  - [x] Verify overlay bounding boxes in browser
+  - [x] Run lint, tests, build, and audit
+- [x] Conditional Access user-story audit and failure projection fix
+  - [x] Inspect current sign-in log, CA evaluation, and graph projection code
+  - [x] Confirm `conditionalAccessStatus` is filterable from the local Microsoft Graph index
+  - [x] Fix graph projection selection so the clicked failed sign-in remains selected
+  - [x] Keep projected sign-in follow-up filters scoped to the original user
+  - [x] Update the canonical feature-story workbook with CA expected behavior and test status
+  - [x] Browser-test CA user stories with Jorge Suarez as the subject
+  - [x] Fix confirmed UX/logistical errors and retest
+  - [x] Run full lint, test, build, and audit
+- [x] Full post-fix feature-story regression sweep
+  - [x] Inspect all 74 canonical workbook stories and current status fields
+  - [x] Run full automated quality gates after the CA fixes
+  - [x] Run live browser regression covering auth/workspace/search/filters/details/graph/sign-ins/mobile
+  - [x] Document post-fix evidence for every user story in the canonical workbook
+  - [x] Document any new UX/logistical errors in the Errors sheet
+  - [x] Fix confirmed errors and retest affected behavior
+  - [x] Run final completion audit against the original goal
+
+## Review
+
+- Added a low-contrast cyan graph grid directly to `.graph-viewport`, layered under the transparent Three.js canvas with a non-interactive vignette overlay. Checks pass: `npm run lint`, `npm run test` (45 tests), `npm run build`, `npm audit --audit-level=high`, and Playwright computed-style smoke for the grid and canvas layer.
+- Replaced the graph background with a single repeating flat-top white honeycomb tile over charcoal to match the provided reference. Checks pass: `npm run lint`, `npm run test` (48 tests), `npm run build`, and Playwright desktop/mobile computed-style smoke. Browser screenshot: `tasks/browser-smoke/hex-background-reference-style-desktop.png`.
+- The load-more banner now uses a separate desktop position from the legend and stacks in normal flow on narrow layouts.
+- Overlay verification passed in Playwright with the limit banner inserted in the real DOM order: no desktop legend collision, no mobile legend/minimap collision, and no mobile horizontal overflow. Checks pass: `npm run lint`, `npm run test` (45 tests), `npm run build`, and `npm audit --audit-level=high`. Build still emits the existing large Three.js/MSAL chunk warning.
+- Root cause for the failure-view graph issue: `projectSignInEvent` selected the first `signInEvent` node in the merged graph, so an older successful projection could steal focus from the clicked failed event. The reducer now selects `signInEvent:<clicked event id>`.
+- Second CA UX root cause: after projecting a successful sign-in, the selected node became that event and follow-up filters were trapped on the success event ID. Projected sign-in nodes now carry user metadata, and sign-in event contexts query/filter by the original user so Jorge Suarez failures remain discoverable.
+- Canonical workbook `tasks/tenant-graph-feature-stories.xlsx` now tracks `TG-073`, `TG-074`, `ERR-006`, `ERR-007`, `TR-022`, and `TR-023`. Workbook formula scan found no errors, and preview renders were checked.
+- Live Playwright retest with Jorge Suarez passed: success projection selected `Success / Tenant Graph`; CA Failed + Result Failure from that projected context returned 5 failures; projecting one selected `Failure / Tenant Graph`.
+- Full verification passes: `npm run lint`, `npm run test` (48 tests), `npm run build`, and `npm audit --audit-level=high`. Build still emits the existing large Three.js/MSAL chunk warning.
+
+- Reset now restores the original workspace shape instead of only reloading Graph data: search, remote results, filters, focus, depth, limits, selected edge, expanded state, warnings, permission state, and projected graph state are cleared before reloading the overview.
+- The fresh overview still selects and centers the first overview node, which is the signed-in `/me` user from the source order. The Reset tooltip now says `Reset to signed-in user`.
+- Regression coverage added for the reset reducer path. Checks pass: targeted reset test, `npm run lint`, `npm run test` (45 tests), `npm run build`, and `npm audit --audit-level=high`. Build still emits the existing large Three.js/MSAL chunk warning.
+- Live Playwright smoke dirtied the search, clicked `Reset`, and confirmed the search cleared, the signed-in user was visible again, and no Graph warning banner rendered.
+
+- Conditional Access graph projection now has a `Graph policies` selector next to `Show on graph` with `All`, `Blocked`, and `Evaluated` options. The selected mode is passed through the inspector and workspace reducer into the sign-in graph adapter.
+- Re-projecting the same sign-in event now replaces that event's prior projected CA graph before adding the filtered version, so switching from `All` to `Blocked` or `Evaluated` does not leave stale policy nodes behind.
+- The sign-in graph adapter now classifies report-only and not-applied policy results as evaluated relationships before checking for failure/success text, so report-only failures no longer appear as blocking policies in the graph.
+- Regression coverage verifies all, blocked-only, and evaluated-only CA policy projection. Checks pass: targeted sign-in graph tests, `npm run lint`, `npm run test` (44 tests), `npm run build`, and `npm audit --audit-level=high`. Build still emits the existing large Three.js/MSAL chunk warning.
+
+- Fixed the `JRGSRS763: 400 BadRequest` Graph warning by treating managed-device `users` and `detectedApps` expansion calls as optional child lookups. A 400 from either one now returns an empty relationship set while preserving any successful child data; 401/403 and unexpected errors still surface as warnings.
+- Regression coverage added for partial device expansion and permission-error propagation. Checks pass: targeted graph tests, `npm run lint`, `npm run test` (43 tests), `npm run build`, and `npm audit --audit-level=high`. Build still emits the existing large Three.js/MSAL chunk warning.
+- Live Playwright check selected `JRGSRS763`, verified it was expanded to depth 1 with related nodes visible, and confirmed no `JRGSRS763: 400` Graph warning is rendered.
+
+- Feature story workbook updated at `tasks/tenant-graph-feature-stories.xlsx` with 72 stories, 9 test runs, and 3 documented observations. Live browser coverage now includes Sign In click, authenticated overview, search, result paging, selection details, reset, empty filter state, sign-in logs with Conditional Access, sign-in detail projection, and mobile responsive layout.
+- Additional live coverage verified graph hover tooltip, edge click relationship inspector, cluster click isolation, and sign-out through Microsoft's account picker. Workbook status is now 47 verified, 23 partially verified, and 2 needing live targeted coverage.
+- Fixed canceled MSAL popup feedback: closing the auth popup now shows `Sign-in was canceled. Use Sign in when you are ready.` Retest passed, and the workbook records `ERR-004` as fixed.
+- Fixed stale remote search results after object-type filters change: searched rows now honor active type filters and show `No matches` when all relevant types are disabled. Retest passed, and the workbook records `ERR-005` as fixed.
+- Additional live coverage verified keyboard-only search/result selection, relationship filters, account/admin external links through intercepted `window.open`, Admin evidence drawer, raw Graph IDs, direct graph node click, zoom/pan/rotate, and focus-depth controls.
+- Final feature-story audit status: `tasks/tenant-graph-feature-stories.xlsx` contains 72 user stories, 21 test runs, 5 documented observations/errors, 69 Verified rows, 3 Retested passed rows, and 0 remaining partial/blocked/needs-test rows.
+- Final post-fix browser smoke passed after the two UX fixes: overview loads, remote search obeys filters, keyboard selection pins details, and the Three.js canvas remains visible.
+- Other documented observations were optional Microsoft Graph profile-photo 404 fallback noise and two Playwright test-harness false positives that passed after stricter targeting/waits.
+
+- Thermo-nuclear finding remediation tightens normalized node/edge type contracts, splits sign-in log ownership, extracts sign-in panel state, isolates sign-in CSS, removes loose GraphClient test casts, and reduces `TenantGraphCanvas.tsx` to 449 lines by moving visual policy, labels, hover copy, and camera fitting helpers.
+- Remediation checks pass: `npm run lint`, `npm run test`, `npm run build`, `npm audit --audit-level=high`, residual scans for `as unknown as GraphClient` and untyped TenantNode/TenantEdge model fields, and Playwright sign-in-screen smoke. Build still emits the existing large Three.js/MSAL chunk warning.
+- `npm run lint`, `npm run test`, `npm run build`, and `npm audit --audit-level=high` pass.
+- Playwright smoke checked desktop and mobile sign-in graph canvas pixels and drag interaction.
+- Build emits a large chunk warning from Three.js/MSAL; code splitting can wait until route-level growth exists.
+- Replaced sign-in background with CDN Vanta NET snippet; lint, tests, build, audit, and browser smoke pass.
+- MSAL popup cancellation is caught so it does not leave an unhandled rejection.
+- Vanta iframe now hides non-canvas content and ignores pointer events, preventing demo text from showing over Tenant Graph.
+- MSAL popup sign-in uses the configured app redirect URI and redirects local `127.0.0.1` access to the configured `localhost` origin.
+- Live Playwright sign-in reload shows 177 nodes / 97 edges with no Graph warning lines.
+- Selecting `jorge@jorgeasaur.us` expands through `/memberOf` and filtered `/managedDevices`; both return 200 and the graph grows to 179 nodes / 99 edges.
+- Added `DeviceManagementServiceConfig.Read.All` for Autopilot deployment profiles.
+- Showcase UI pass adds particle depth, luminous curved edges, node halos, focus rings, clearer labels, and higher-contrast shell styling.
+- Playwright desktop screenshot `artifacts/live-auth/showcase-ui-desktop.png` has live Graph data, no warning lines, and a nonblank WebGL canvas.
+- Playwright mobile entry screenshot `artifacts/live-auth/showcase-ui-mobile-entry.png` fits 390px width without horizontal overflow.
+- Icon node pass replaces per-node spheres with canvas sprite glyphs for Windows/iOS/macOS/Android devices, users, groups, apps, policies/configuration, filters, assignments, and scope tags.
+- Playwright screenshot `artifacts/live-auth/icon-node-showcase-desktop.png` verifies sprite-node hover picking and a nonblank WebGL canvas; Microsoft Graph returned one `429 TooManyRequests` on a beta settings-catalog next page during that reload.
+- Advanced UX pass adds graph modes, focus depth, icon legend, mini map, relationship inspector, and selected-node impact preview.
+- Strict review fixes: extracted node icon rendering out of the canvas, centralized stable hashing, centralized relationship labels, and capped mobile canvas height.
+- Final checks pass: `npm run lint`, `npm run test`, `npm run build`, and `npm audit --audit-level=high`.
+- Playwright live checks pass at 1440px and replayed 390px mobile: 177 nodes, 97 edges, no warning banners, nonblank WebGL pixels, and no mobile horizontal overflow.
+- React Doctor is not configured in this repo; no `react-doctor`/`doctor` script, package, or CI command exists, so no React Doctor score can be produced yet.
+- Cutting-edge color refresh applies the `ui-ux-pro-max` cybersecurity/HUD direction: void background, signal green, electric cyan, magenta, amber, and sharper semantic graph colors.
+- Final color checks pass: `npm run lint`, `npm run test`, `npm run build`, and `npm audit --audit-level=high`.
+- Playwright captured unauthenticated desktop/mobile color screenshots with no mobile horizontal overflow; signed-in workspace screenshot requires a fresh MSAL login because the saved session expired.
+- Expand action fix tracks selected-node expanded depth in React state, disables terminal/already-expanded nodes with explanatory copy, and disables empty sidebar Search submits.
+- Final Expand fix checks pass: `npm run lint`, `npm run test`, `npm run build`, and `npm audit --audit-level=high`.
+- Readable Mode adds a toolbar audience selector, plain-English selected-object summaries, glossary hints, relationship sentences, readable search-result labels, and hidden technical metadata.
+- Readable Mode checks pass: `npm run lint`, `npm run test`, `npm run build`, `npm audit --audit-level=high`, and Playwright sign-in smoke with no horizontal overflow. The build still emits the existing large Three.js/MSAL chunk warning.
+- Cluster summaries add a Readable Mode "At a glance" section for visible people, devices, groups, apps, policies, assignments, and guardrails.
+- Cluster summary checks pass: `npm run lint`, `npm run test`, `npm run build`, `npm audit --audit-level=high`, and Playwright mobile/desktop smoke with no console errors or horizontal overflow. The build still emits the existing large Three.js/MSAL chunk warning.
+- Impact badges now show assigned apps, required/available/uninstall assignment intent, broad targets, filters, scope tags, recent updates, missing permissions, and partial data.
+- Impact badge checks pass: `npm run lint`, `npm run test`, `npm run build`, `npm audit --audit-level=high`, and Playwright mobile/desktop smoke with no console errors or horizontal overflow. The build still emits the existing large Three.js/MSAL chunk warning.
+- The "Why does this apply?" path finder adds shortest-path explanation, target candidates, explicit no-path states, and step-by-step readable relationship sentences.
+- Path finder checks pass: `npm run lint`, `npm run test`, `npm run build`, `npm audit --audit-level=high`, and Playwright mobile/desktop smoke with no console errors or horizontal overflow. The build still emits the existing large Three.js/MSAL chunk warning.
+- Broad assignment targets now stay terminal: `All users` / `All devices` no longer queue invalid `/groups/{id}/members` calls.
+- Broad-target warning fix checks pass: `npm run lint`, `npm run test`, `npm run build`, `npm audit --audit-level=high`, and Playwright mobile/desktop smoke with no console errors or horizontal overflow. The build still emits the existing large Three.js/MSAL chunk warning.
+- Directory roles are first-class graph nodes with shield icons, readable summaries, search support, expansion to members, least-privileged `RoleManagement.Read.Directory` scope, and display-name hydration from `/directoryRoles` when `/memberOf` returns role IDs.
+- Directory role naming checks pass: `npm run lint`, `npm run test`, `npm run build`, `npm audit --audit-level=high`, and Playwright mobile/desktop smoke with no console errors or horizontal overflow. The build still emits the existing large Three.js/MSAL chunk warning.
+- Live Playwright verification after granting `RoleManagement.Read.Directory`: expanding `Break Glass Emergency Access` shows `Global Administrator` as a directory role and no raw GUID role label.
+- Evidence drawer adds collapsed-by-default verification for normalized fields, metadata, raw Graph fields, raw JSON, and loaded relationships without exposing untyped Graph payloads directly in JSX.
+- Evidence drawer checks pass: `npm run lint`, `npm run test`, `npm run build`, `npm audit --audit-level=high`, live Playwright signed-in drawer smoke, and mobile/desktop overflow smoke. The build still emits the existing large Three.js/MSAL chunk warning.
+- Remove AI-slop cleanup flattens CSS-only decorative gradients, repeated glass panels, glow effects, all-caps transforms, left-border accents, numbered story labels, and old neon cyan/green constants while keeping semantic graph colors.
+- Remove AI-slop checks pass: `npm run lint`, `npm run test`, `npm run build`, `npm audit --audit-level=high`, targeted style scan, and Playwright desktop/mobile smoke with no console errors or horizontal overflow. The build still emits the existing large Three.js/MSAL chunk warning.
+- Directory role search and role-name hydration now enumerate active roles with `/directoryRoles?$select=id,displayName,description,roleTemplateId`; `$top` was removed because Graph rejects it for that collection with `Request_UnsupportedQuery`.
+- Directory role unsupported-query checks pass: `npm run lint`, `npm run test` (13 tests), `npm run build`, `npm audit --audit-level=high`, and a targeted scan for `/directoryRoles` plus `$top`. The build still emits the existing large Three.js/MSAL chunk warning.
+- Intune app icon rendering requests `largeIcon` for mobile apps, stores valid image mimeContent on `TenantNode.iconDataUrl`, sanitizes the raw Graph icon payload from evidence, and uses the existing app glyph when icon content is missing, invalid, or fails to load.
+- Intune app icon checks pass: `npm run lint`, `npm run test` (17 tests), `npm run build`, `npm audit --audit-level=high`, and Playwright desktop/mobile sign-in smoke with no console errors or horizontal overflow. Authenticated live icon smoke still needs a signed-in session.
+- Mobile app BadRequest fix removes `largeIcon` from collection list queries and hydrates icons through capped per-app detail calls; icon failures now fall back without adding Graph warnings.
+- Mobile app warning checks pass: `npm run lint`, `npm run test` (20 tests), `npm run build`, `npm audit --audit-level=high`, targeted Graph path scan, and Playwright signed-out smoke with no console errors or horizontal overflow. Live authenticated replay still needs a fresh signed-in session.
+- Ponytail audit cleanup removes Comparison Mode, Guided Story, graph view presets, duplicate sidebar search input, unused `configurationPolicy`/`related` model entries, dead helper exports, and custom rounded-rect drawing. Source dropped from 8402 to 6832 lines.
+- Ponytail audit checks pass: `npm run lint`, `npm run test` (16 tests), `npm run build`, `npm audit --audit-level=high`, targeted dead-code scan, and Playwright signed-out smoke with no console errors or horizontal overflow. The build still emits the existing large Three.js/MSAL chunk warning.
+- Mobile app selected-field warning fix keeps collection `$select` to `id,displayName,publisher` and retries `/deviceAppManagement/mobileApps?$top=...` if Graph returns 400.
+- Sign-in investigation adds a right-inspector Sign-ins panel, `/auditLogs/signIns` adapter, CA result classifier, optional CA policy detail scope, graph projection for selected events, and setup docs.
+- Sign-in checks pass: `npm run test` (29 tests), `npm run lint`, `npm run build`, `npm audit --audit-level=high`, and Playwright desktop/mobile sign-in-screen smoke. Live tenant sign-in-log smoke still needs a fresh authenticated browser session.
+- Mobile app selected-field checks pass: `npm run lint`, `npm run test` (18 tests), `npm run build`, `npm audit --audit-level=high`, targeted service-path scan, and Playwright signed-out smoke with no console errors or horizontal overflow. The build still emits the existing large Three.js/MSAL chunk warning.
+- User profile photos now hydrate through capped, batched `/users/{id}/photos/48x48/$value` media calls for loaded user nodes only, with silent fallback to the user glyph when photos are missing or blocked.
+- User photo checks pass: `npm run lint`, `npm run test` (21 tests), `npm run build`, `npm audit --audit-level=high`, and Playwright signed-out smoke with no console errors or horizontal overflow. The build still emits the existing large Three.js/MSAL chunk warning.
+- Graph display now defaults to 180 rendered objects, keeps the selected object and direct neighbors first, and exposes Load more controls in the sidebar and canvas when loaded objects are hidden.
+- Sidebar results now default to 30 visible items with explicit Load more results controls instead of a silent slice.
+- Display-limit checks pass: `npm run lint`, `npm run test` (23 tests), `npm run build`, `npm audit --audit-level=high`, and Playwright signed-out smoke with no console errors or horizontal overflow. The build still emits the existing large Three.js/MSAL chunk warning.
+- Thermo-nuclear remediation splits the Graph data layer into source definitions, expansion, call execution, media enrichment, and a thin service orchestrator.
+- Workspace state now lives in a reducer-backed hook; `AppShell` is composition-only and the sidebar Expand action no longer routes through selection.
+- Three.js canvas support code is split into image cache, layout, and object lifecycle helpers; `TenantGraphCanvas.tsx` stays focused on scene wiring and interaction.
+- Readable node policy now lives in `readableNodeConfig.ts`, with path/summary algorithms kept in `readableGraph.ts`.
+- CSS is split by ownership under `src/styles/`; no production TS/TSX/CSS file is over 1k lines after the remediation.
+- Thermo-nuclear remediation checks pass: `npm run lint`, `npm run test` (23 tests), `npm run build`, `npm audit --audit-level=high`, final strict size/dead-code scans, and Playwright desktop/mobile signed-out smoke. The build still emits the existing large Three.js/MSAL chunk warning.
+- Ponytail cuts removed the unused Playwright package, deleted `tenantGraphService.ts`, collapsed Graph call collection to `Promise.allSettled`, switched media conversion to native `FileReader`, centralized text extraction helpers, and inlined `ImpactPreview` / `DataConfidence`.
+- Ponytail cut checks pass: `npm run lint`, `npm run test` (23 tests), `npm run build`, `npm audit --audit-level=high`, stale-reference scan, `npm ls @playwright/test`, file-size scan, and local `curl` smoke. The build still emits the existing large Three.js/MSAL chunk warning.
+- Graph visual pass adds semantic zone layout/fields, relationship-specific edge labels/styles, selected-object constellation dimming, layered node rings/badges, and readable hover summaries.
+- Graph visual checks pass: `npm run lint`, `npm run test` (23 tests), `npm run build`, `npm audit --audit-level=high`, Playwright MCP desktop/mobile screenshots, and a PNG pixel check on the graph canvas crop. Screenshots: `tenant-graph-visual-pass-desktop-final.png`, `tenant-graph-visual-pass-mobile-final.png`. The browser console still records expected Microsoft Graph `404` responses for missing user profile photos.
+- README adds a visual hook, install path, Azure app registration setup, required env vars, Graph scopes, usage, features, development commands, troubleshooting, and license status.
+- `make-interfaces-feel-better` pass adds root font smoothing, balanced/pretty wrapping, tabular metrics, 40px hit areas, `scale(0.96)` press states, explicit transition properties, neutral image outlines, and soft dark-mode shadow rings.
+- UI polish checks pass: `npm run lint`, `npm run test` (29 tests), `npm run build`, `npm audit --audit-level=high`, targeted scan for `transition: all` / `will-change: all` / sub-40px interactive min-heights, and Playwright desktop/mobile sign-in-screen smoke. The browser console still records expected Microsoft Graph `404` responses for missing user profile photos.
+- README checks pass: `npm run lint`, `npm run test` (23 tests), `npm run build`, screenshot asset/link sanity, README length check. The app-registration helper now includes `RoleManagement.Read.Directory`.
+- Tenant Graph UI Refinement Sprint adds exact relationship-distance dimming, zoom/collision-managed labels, relationship arrows/styles, dynamic cluster hulls, cluster click isolation, grayscale background particles, render-layer ordering, right-side inspector sections, breadcrumbs, copy/open actions, compact sidebar summaries, collapsed object-type sections, search ranking, grouped toolbar controls, avatar account menu, updated terminology, minimap viewport/selected/cluster coloring, and reduced glow intensity.
+- Refinement checks pass: `npm run lint`, `npm run test` (23 tests), `npm run build`, `npm audit --audit-level=high`, Playwright screenshots `tenant-graph-refinement-final-desktop.png` / `tenant-graph-refinement-final-mobile.png`, and PNG pixel checks for nonblank graph regions (`nonDarkRatio` 0.1074 desktop, 0.2162 mobile). The browser console still records expected Microsoft Graph `404` responses for missing user profile photos.
+
+- [x] Soften single-layer hex background
+  - [x] Reduce honeycomb contrast and stroke weight while keeping one repeating tile layer
+  - [x] Keep canvas and overlays unaffected
+  - [x] Verify lint, tests, build, and browser screenshot
+
+- Softened the graph honeycomb to a single low-opacity cyan SVG tile over the app's near-black graph field. Checks pass: `npm run lint`, `npm run test` (48 tests), `npm run build`, and Playwright desktop/mobile smoke with one background URL layer, no white stroke, no pseudo-overlay, canvas present, and no horizontal overflow. Screenshot: `tasks/browser-smoke/hex-background-subtle-single-layer-desktop.png`.
+
+- [x] Further reduce graph background salience
+  - [x] Lower hex stroke opacity and weight
+  - [x] Increase tile scale while keeping one repeating layer
+  - [x] Verify checks and browser-rendered background
+
+- Reduced the graph background from visible grid to quiet spatial texture: stroke opacity `.075`, stroke width `.85`, and tile size `176px 203px`. Checks pass: `npm run lint`, `npm run test` (48 tests), `npm run build`, and Playwright live graph smoke with 177 objects / 96 relationships, one background URL layer, canvas present, and no horizontal overflow. Screenshot: `tasks/browser-smoke/hex-background-ultra-subtle-data-desktop.png`.
+
+- [x] Implement ponytail-audit findings
+  - [x] Remove admin/friendly mode split and EvidenceDrawer
+  - [x] Remove fake minimap and duplicate relationship sections
+  - [x] Centralize type presentation and shrink graph-call/export surface
+  - [x] Move test-only mock graph and prune stale browser-smoke screenshots
+  - [x] Replace remote Vanta iframe with local background rendering
+  - [x] Verify lint, tests, build, audit scan, and browser smoke
+
+- Ponytail-audit implementation removed the admin/friendly display branch, EvidenceDrawer, fake minimap, duplicate inspector relationship panels, remote Vanta iframe/CDN scripts, stale smoke screenshots, and production mock fixture. It adds shared type presentation and a local canvas network background. Checks pass: `npx tsc -b --pretty false`, `npm run lint`, `npm run test` (47 tests), `npm run build`, `npm audit --audit-level=high`, `npx --yes knip --no-exit-code`, targeted dead-code/CDN scans, and Playwright workspace/sign-in smoke. Source dropped from 11,944 to 11,393 TS/TSX/CSS lines; `tasks/browser-smoke` dropped to 412 KB.
+
+- Latest thermo-nuclear findings are addressed: sign-in resources now project as `cloudApp` nodes, sign-in log subjects fail closed through the graph query layer, type labels/colors/legend derive from `typePresentation`, workspace reducer/selectors are split from the hook, and relationship groups use stable relationship types. Checks pass: `npx tsc -b --pretty false`, `npm run lint`, `npm run test -- --run` (49 tests), `npm run build`, `npx knip`, `npm audit --audit-level=high`, and local Vite `curl` smoke on `http://127.0.0.1:5175/`. Build still emits the existing large Three.js/MSAL chunk warning.
+
+- [x] Restore Vanta NET sign-in background
+  - [x] Add Vanta NET and Three r134 CDN scripts back to `index.html`
+  - [x] Mount Vanta NET behind sign-in and missing-config screens
+  - [x] Use requested NET options and clean up the Vanta effect on unmount
+  - [x] Verify lint, tests, build, knip, and audit
+
+- Restored the sign-in background to Vanta NET using the CDN scripts and requested settings: mouse/touch controls on, gyro off, color `0x3fbbff`, black background, and spacing `12`. The auth background is isolated in `VantaNetBackground.tsx` and destroys the Vanta effect on unmount. Checks pass: `npx tsc -b --pretty false`, `npm run lint`, `npm run test -- --run` (49 tests), `npm run build`, `npx knip`, `npm audit --audit-level=high`, stale-reference scan, and local Vite `curl` smoke on `http://127.0.0.1:5175/`. Build still emits the existing large Three.js/MSAL chunk warning.
+
+- [x] React Doctor top-three pass
+  - [x] Read diagnostics and canonical rule recipes
+  - [x] Raise the Vitest minimum away from the vulnerable range
+  - [x] Replace `forwardRef` with React 19 ref-as-prop wiring
+  - [x] Lazily initialize render-path `Map` refs
+  - [x] Re-run React Doctor and project verification
+
+- React Doctor top-three checks pass: `vitest` now starts at `^4.1.9`, `TenantGraphCanvas` uses React 19 ref-as-prop instead of `forwardRef`, and the graph/image-cache maps initialize through a lazy ref helper. Fresh `npx react-doctor@latest --verbose` output no longer includes `socket/low-supply-chain-score`, `no-react19-deprecated-apis`, or `rerender-lazy-ref-init`; 30 unrelated warnings remain for the follow-up pass. Verification passes: `npx tsc -b --pretty false`, `npm run lint`, `npm run test -- --run` (49 tests), `npm audit --audit-level=high`, `npx react-doctor@latest --verbose`, `npx react-doctor@latest --verbose --scope changed`, and `npm run build`. Build still emits the existing large Three.js/MSAL chunk warning.
+
+- [x] Enterprise cloud-map graph background
+  - [x] Replace honeycomb background with dark radial Azure/Defender-style map surface
+  - [x] Add faint blueprint grid, selected-node cyan glow, and mild vignette
+  - [x] Remove star-like Three.js atmosphere points
+  - [x] Verify lint, tests, build, and targeted background scan
+
+- Graph canvas now uses a quiet enterprise cloud-map surface: deep navy/black radial field, faint blueprint grid, selected-node cyan glow tracked from Three.js screen projection, and an edge vignette behind the transparent canvas. Removed the Three.js background point atmosphere so no star-like layer competes with graph data. Checks pass: `npx tsc -b --pretty false`, `npm run lint`, `npm run test -- --run` (49 tests), `npm run build`, Playwright computed-style probe, and targeted scan for star/noise/honeycomb/hex/background-image URL paths. Build still emits the existing large Three.js/MSAL chunk warning.
+
+- [ ] Private GitHub and Vercel deploy
+  - [x] Confirm GitHub and Vercel CLI authentication
+  - [x] Confirm `.env` is ignored and generated browser-smoke screenshots are excluded
+  - [ ] Commit source and push to a private GitHub repository
+  - [ ] Link/create Vercel project and configure public Vite env values
+  - [ ] Deploy production build and verify the URL

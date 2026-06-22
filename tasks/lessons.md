@@ -1,0 +1,26 @@
+# Lessons
+
+- Do not add a new MSAL popup redirect URI unless the existing app registration already has it. Prefer fixing origin mismatch first.
+- For responsive graph layouts, never leave a WebGL canvas percentage-height inside an auto-height mobile grid; give it a bounded viewport height.
+- Before claiming a tool-specific score, verify the repo actually defines that tool command.
+- Visible controls must not silently return; disable them or show state-specific helper text when no action is available.
+- Synthetic Graph nodes such as All users / All devices are tenant-wide targets, not real directory groups; never queue them for `/groups/{id}` expansion.
+- Directory role objects from user membership must be labeled by `displayName`; raw role IDs are fallback-only and should be hydrated from `/directoryRoles` when possible.
+- `/directoryRoles` supports `$select` but not `$top`; enumerate active roles with `/directoryRoles?$select=...` and filter client-side.
+- Do not request `largeIcon` from the `/deviceAppManagement/mobileApps` collection query; list apps with safe fields and hydrate icons separately with fallback.
+- Keep `/deviceAppManagement/mobileApps` collection `$select` to base `mobileApp` fields only; if Graph returns 400, retry without `$select` before surfacing a warning.
+- Photo and icon enrichment must be capped and visual-only; never block graph load or warn on missing profile photos.
+- When an audit finds a busy service, component, or stylesheet, split by ownership before adding more behavior; thin orchestrators and policy modules age better than feature branches inside giant files.
+- Optional managed-device child lookups can return tenant/data-specific 400s; keep successful relationships and suppress only those optional BadRequest results, while still surfacing permission errors.
+- A user-facing Reset action should clear transient workspace state, filters, projections, search, and selection; do not treat it as only a data reload.
+- Graph overlays that share an anchor need explicit spacing or a shared stack; do not anchor independent banners and legends to the same bottom-left coordinates.
+- When adding a new graph overlay, group it with nearby overlays in a single layout container and verify bounding boxes at realistic data counts.
+- When a visual request specifies a pattern layer count, implement that exact count; avoid adding secondary texture, glow, or vignette layers unless requested.
+- When a user supplies a visual reference, match the visible geometry, orientation, contrast, and stroke weight before preserving the app's existing accent palette.
+- When tuning a strong reference into an app background, preserve the requested geometry but reduce contrast before the pattern competes with graph data.
+- For information-dense graph canvases, tune background patterns against real nodes and labels; the pattern should be visible mainly in empty space.
+- When projecting an item into an existing graph, select by the newly projected item's stable ID, not by the first node of that type in the merged graph.
+- If a projected drill-in changes the selected object, follow-up investigation panels must preserve the human investigation context, such as the original user, instead of narrowing silently to the projected event ID.
+- Do not overload Intune app nodes for Entra sign-in resources; cloud resources need distinct node types, copy, query behavior, and icons.
+- Preserve the auth screen's requested Vanta NET visual when changing sign-in backgrounds; do not replace it with a CSS approximation unless explicitly asked.
+- Graph canvas backgrounds should support topology readability first: keep them quiet, non-noisy, and behind the WebGL data layer unless the user explicitly asks for decorative motion.
