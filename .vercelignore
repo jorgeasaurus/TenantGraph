@@ -1,0 +1,13 @@
+node_modules
+dist
+artifacts
+.git
+.vercel
+.env
+.env.*
+!.env.example
+.DS_Store
+*.tsbuildinfo
+.playwright-mcp
+.agents
+tasks/browser-smoke/*.png

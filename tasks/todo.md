@@ -439,9 +439,11 @@
 
 - Graph canvas now uses a quiet enterprise cloud-map surface: deep navy/black radial field, faint blueprint grid, selected-node cyan glow tracked from Three.js screen projection, and an edge vignette behind the transparent canvas. Removed the Three.js background point atmosphere so no star-like layer competes with graph data. Checks pass: `npx tsc -b --pretty false`, `npm run lint`, `npm run test -- --run` (49 tests), `npm run build`, Playwright computed-style probe, and targeted scan for star/noise/honeycomb/hex/background-image URL paths. Build still emits the existing large Three.js/MSAL chunk warning.
 
-- [ ] Private GitHub and Vercel deploy
+- [x] Private GitHub and Vercel deploy
   - [x] Confirm GitHub and Vercel CLI authentication
   - [x] Confirm `.env` is ignored and generated browser-smoke screenshots are excluded
-  - [ ] Commit source and push to a private GitHub repository
-  - [ ] Link/create Vercel project and configure public Vite env values
-  - [ ] Deploy production build and verify the URL
+  - [x] Commit source and push to a private GitHub repository
+  - [x] Link/create Vercel project and configure public Vite env values
+  - [x] Deploy production build and verify the URL
+
+- Tenant Graph is pushed to private GitHub repo `https://github.com/jorgeasaurus/TenantGraph` and deployed to Vercel project `jorgeasaurus-projects/tenant-graph`. Production URL: `https://tenant-graph.vercel.app`. Vercel production env vars are configured for `VITE_AAD_CLIENT_ID`, `VITE_AAD_TENANT_ID`, and `VITE_REDIRECT_URI=https://tenant-graph.vercel.app`; Entra ID must include that exact URL as a SPA redirect URI for sign-in to work. Checks pass: GitHub push, Vercel production build/deploy, `curl -I` HTTP 200, `vercel inspect` Ready, Playwright production smoke showing sign-in screen without missing-config state, and local `npm run build`. Build still emits the existing large Three.js/MSAL chunk warning; browser console still has the expected duplicate Three.js warning from Vanta plus app Three.js.

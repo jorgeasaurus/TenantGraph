@@ -4,6 +4,7 @@ artifacts
 tasks/browser-smoke/*.png
 .env
 .env.local
+.vercel
 .DS_Store
 *.tsbuildinfo
 .playwright-mcp/*
