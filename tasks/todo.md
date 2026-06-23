@@ -658,10 +658,12 @@
 
 - Landing access resources are live at `https://tenant-graph.vercel.app`. Deployment `dpl_EBqnC6EU3Xbnujcy7EHUyHftfxBi` is Ready and aliased to production. Checks pass: `npx tsc -b --pretty false`, `npm run lint`, `npm run test` (65 tests), `npm run build`, `npm audit --audit-level=high`, `git diff --check`, `npx --yes vercel@latest deploy --prod --yes`, `npx --yes vercel@latest inspect tenant-graph-49u5suk7j-jorgeasaurus-projects.vercel.app`, `curl -I https://tenant-graph.vercel.app`, `curl -I 'https://tenant-graph.vercel.app/?sampleTenant=1'`, and Playwright production landing smoke confirming the access requirements panel and GitHub href with zero console errors. Build still emits the existing large bundle warning; Vercel remote build output still reports CLI 54.14.0 inside the platform build image.
 
-- [ ] Push current Tenant Graph state to GitHub
+- [x] Push current Tenant Graph state to GitHub
   - [x] Confirm `origin` remote and authenticated GitHub CLI
   - [x] Confirm local `main` is even with `origin/main`
   - [x] Stage the current workspace state
-  - [ ] Commit the current workspace state
-  - [ ] Push `main` to GitHub
-  - [ ] Verify remote branch contains the commit
+  - [x] Commit the current workspace state
+  - [x] Push `main` to GitHub
+  - [x] Verify remote branch contains the commit
+
+- Current Tenant Graph state is pushed to private GitHub repo `https://github.com/jorgeasaurus/TenantGraph`. Commit `46bc71459b450e6525c27cfe7250847dca2c3c5f` (`Ship sample tenant and graph UX updates`) is present on `origin/main` and GitHub reports `main` as the default branch. The pushed commit includes the sample tenant experience, guide scrolling, landing access resources, renderer split, graph visual updates, tests, task notes, and the canonical feature tracker workbook.
