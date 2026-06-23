@@ -1,14 +1,16 @@
-import { Building2, LogOut, Maximize2, RefreshCw, RotateCcw, Search, UserCircle } from 'lucide-react';
+import { Building2, HelpCircle, LogOut, Maximize2, RefreshCw, RotateCcw, Search, UserCircle } from 'lucide-react';
 
 type ToolbarProps = {
   accountName: string;
   depth: number;
   focusDepth: number;
+  isSampleTenant?: boolean;
   loading: boolean;
   searchTerm: string;
   onDepthChange: (depth: number) => void;
   onFitGraph: () => void;
   onFocusDepthChange: (depth: number) => void;
+  onOpenGuide?: () => void;
   onResetGraph: () => void;
   onResetView: () => void;
   onSearch: () => void;
@@ -20,11 +22,13 @@ export function Toolbar({
   accountName,
   depth,
   focusDepth,
+  isSampleTenant = false,
   loading,
   searchTerm,
   onDepthChange,
   onFitGraph,
   onFocusDepthChange,
+  onOpenGuide,
   onResetGraph,
   onResetView,
   onSearch,
@@ -44,6 +48,7 @@ export function Toolbar({
       <section className="graph-control-group" aria-label="Graph controls">
         <form
           className="toolbar-search"
+          data-guide="toolbar-search"
           onSubmit={(event) => {
             event.preventDefault();
             onSearch();
@@ -88,6 +93,12 @@ export function Toolbar({
           <Maximize2 size={16} />
           Fit
         </button>
+        {onOpenGuide && (
+          <button data-guide="guide-button" type="button" title="Open sample tenant guide" onClick={onOpenGuide}>
+            <HelpCircle size={16} />
+            Guide
+          </button>
+        )}
       </section>
 
       <details className="account-menu">
@@ -97,17 +108,21 @@ export function Toolbar({
         </summary>
         <div className="account-menu-popover">
           <strong>{accountName}</strong>
-          <button type="button" onClick={() => openAccountUrl('https://myaccount.microsoft.com/')}>
-            <UserCircle size={15} />
-            Profile
-          </button>
-          <button type="button" onClick={() => openAccountUrl('https://myaccount.microsoft.com/organizations')}>
-            <Building2 size={15} />
-            Tenant switch
-          </button>
+          {!isSampleTenant && (
+            <>
+              <button type="button" onClick={() => openAccountUrl('https://myaccount.microsoft.com/')}>
+                <UserCircle size={15} />
+                Profile
+              </button>
+              <button type="button" onClick={() => openAccountUrl('https://myaccount.microsoft.com/organizations')}>
+                <Building2 size={15} />
+                Tenant switch
+              </button>
+            </>
+          )}
           <button type="button" onClick={onSignOut}>
             <LogOut size={15} />
-            Sign out
+            {isSampleTenant ? 'Exit sample' : 'Sign out'}
           </button>
         </div>
       </details>

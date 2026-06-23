@@ -19,7 +19,8 @@ describe('graph camera focus', () => {
 
     const pose = cameraPoseForGraph(camera, controls, positions);
 
-    expect(pose.position.distanceTo(pose.target)).toBeLessThan(170);
+    expect(pose.position.distanceTo(pose.target)).toBeLessThan(150);
+    expect(pose.target.y).toBeLessThan(-12);
   });
 
   it('fits a zone to its actual node bounds instead of its loose boundary center', () => {
@@ -52,6 +53,7 @@ describe('graph camera focus', () => {
     ]);
 
     expect(pose.target.x).toBeCloseTo(114, 0);
+    expect(pose.target.y).toBeLessThan(0);
     expect(pose.target.z).toBeCloseTo(-30, 0);
     expect(pose.target.distanceTo(zone.center)).toBeGreaterThan(100);
   });

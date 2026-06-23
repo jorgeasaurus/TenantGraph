@@ -106,3 +106,68 @@
 .secondary-action {
   margin: 14px 0 8px;
 }
+
+.ghost-action {
+  width: 100%;
+  min-height: 40px;
+  border-color: rgba(63, 209, 255, 0.18);
+  background: rgba(3, 8, 18, 0.56);
+  color: rgba(232, 243, 255, 0.9);
+}
+
+.ghost-action:hover:not(:disabled) {
+  border-color: rgba(var(--accent-rgb), 0.5);
+  background: rgba(6, 16, 34, 0.88);
+}
+
+.access-resources {
+  display: grid;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.access-requirements {
+  border: 1px solid rgba(63, 209, 255, 0.16);
+  border-radius: var(--surface-radius);
+  background: rgba(2, 6, 16, 0.72);
+  padding: 12px;
+}
+
+.access-requirements p,
+.access-requirements ul {
+  margin: 0;
+}
+
+.access-requirements p {
+  color: #e8f3ff;
+  font-size: var(--type-subtitle);
+  font-weight: 700;
+}
+
+.access-requirements ul {
+  display: grid;
+  gap: 7px;
+  padding: 10px 0 0 18px;
+}
+
+.access-requirements li {
+  color: var(--muted);
+  font-size: var(--type-body);
+  line-height: 1.42;
+}
+
+.access-requirements a {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 12px;
+  color: var(--accent);
+  font-size: var(--type-subtitle);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.access-requirements a:hover {
+  text-decoration: underline;
+}

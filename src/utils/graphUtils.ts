@@ -307,7 +307,13 @@ export function defaultRelationshipFilter(): Record<string, boolean> {
 }
 
 export function enabledKeys(filter: Record<string, boolean>): Set<string> {
-  return new Set(Object.entries(filter).filter(([, enabled]) => enabled).map(([key]) => key));
+  const enabledKeys = new Set<string>();
+  for (const [key, enabled] of Object.entries(filter)) {
+    if (enabled) {
+      enabledKeys.add(key);
+    }
+  }
+  return enabledKeys;
 }
 
 export function nodeApiId(node: TenantNode): string {

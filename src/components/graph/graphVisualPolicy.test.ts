@@ -5,12 +5,12 @@ import { directionEndpoints, edgeVisual, labelPriority, nodeDisplayOpacity } fro
 
 describe('graph visual policy', () => {
   it('assigns distinct line styles for key relationship types', () => {
-    expect(edgeVisual('assignment')).toMatchObject({ opacity: 0.62 });
+    expect(edgeVisual('assignment')).toMatchObject({ opacity: 0.74 });
     expect(edgeVisual('memberOf')).toMatchObject({ dashSize: 8.4, gapSize: 5.8 });
     expect(edgeVisual('primaryUser')).toMatchObject({ doubleLine: true });
     expect(edgeVisual('filteredBy')).toMatchObject({ dashSize: 1.4, gapSize: 4.4 });
     expect(edgeVisual('detectedApp')).toMatchObject({ animated: true });
-    expect(edgeVisual('scopeTag')).toMatchObject({ opacity: 0.34 });
+    expect(edgeVisual('scopeTag')).toMatchObject({ opacity: 0.42 });
   });
 
   it('points primary-user arrows from user to device regardless of edge order', () => {
@@ -33,8 +33,8 @@ describe('graph visual policy', () => {
   });
 
   it('keeps object icons slightly translucent unless they are already relationship-dimmed', () => {
-    expect(nodeDisplayOpacity(1, false)).toBe(0.88);
-    expect(nodeDisplayOpacity(1, true)).toBe(0.96);
+    expect(nodeDisplayOpacity(1, false)).toBe(0.97);
+    expect(nodeDisplayOpacity(1, true)).toBe(1);
     expect(nodeDisplayOpacity(0.6, false)).toBe(0.6);
   });
 });

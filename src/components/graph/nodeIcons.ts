@@ -22,6 +22,8 @@ type IconKind =
   | 'windowsDevice';
 
 const policyTypeSet = new Set<TenantNode['type']>(policyNodeTypes);
+const iconCanvasCache = new Map<string, HTMLCanvasElement>();
+const maxIconCanvasCacheEntries = 360;
 
 export function makeNodeIcon(
   node: TenantNode,
@@ -29,60 +31,64 @@ export function makeNodeIcon(
   prominent: boolean,
   nodeImage?: HTMLImageElement,
 ): THREE.Sprite {
-  const canvas = document.createElement('canvas');
-  const context = canvas.getContext('2d');
-  canvas.width = 256;
-  canvas.height = 256;
+  const kind = nodeIconKind(node);
+  const canvas = getCachedCanvas(iconCanvasCache, nodeIconCanvasCacheKey(kind, color, prominent, nodeImage), () => {
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    canvas.width = 256;
+    canvas.height = 256;
 
-  if (context) {
-    const kind = nodeIconKind(node);
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    context.shadowColor = color;
-    context.shadowBlur = prominent ? 36 : 22;
-    context.fillStyle = color;
-    context.globalAlpha = prominent ? 0.24 : 0.16;
-    context.beginPath();
-    context.roundRect(44, 44, 168, 168, prominent ? 48 : 42);
-    context.fill();
-    context.globalAlpha = 1;
-    context.shadowBlur = 0;
+    if (context) {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      context.shadowColor = color;
+      context.shadowBlur = prominent ? 50 : 38;
+      context.fillStyle = color;
+      context.globalAlpha = prominent ? 0.44 : 0.36;
+      context.beginPath();
+      context.roundRect(44, 44, 168, 168, prominent ? 48 : 42);
+      context.fill();
+      context.globalAlpha = 1;
+      context.shadowBlur = 0;
 
-    const background = context.createLinearGradient(62, 48, 198, 214);
-    background.addColorStop(0, tint(color, 0.32));
-    background.addColorStop(1, tint(color, -0.42));
-    context.fillStyle = background;
-    context.beginPath();
-    context.roundRect(58, 48, 140, 152, 34);
-    context.fill();
+      const background = context.createLinearGradient(62, 48, 198, 214);
+      background.addColorStop(0, tint(color, 0.48));
+      background.addColorStop(1, tint(color, -0.22));
+      context.fillStyle = background;
+      context.beginPath();
+      context.roundRect(58, 48, 140, 152, 34);
+      context.fill();
 
-    context.strokeStyle = tint(color, 0.5);
-    context.lineWidth = prominent ? 6 : 5;
-    context.beginPath();
-    context.roundRect(58, 48, 140, 152, 34);
-    context.stroke();
+      context.strokeStyle = tint(color, 0.78);
+      context.lineWidth = prominent ? 8 : 7;
+      context.beginPath();
+      context.roundRect(58, 48, 140, 152, 34);
+      context.stroke();
 
-    context.strokeStyle = 'rgba(255, 255, 255, 0.18)';
-    context.lineWidth = 2;
-    context.beginPath();
-    context.moveTo(82, 60);
-    context.lineTo(174, 60);
-    context.stroke();
+      context.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+      context.lineWidth = 3;
+      context.beginPath();
+      context.moveTo(82, 60);
+      context.lineTo(174, 60);
+      context.stroke();
 
-    if (kind === 'app' && nodeImage) {
-      drawAppIconImage(context, nodeImage);
-    } else if (kind === 'user' && nodeImage) {
-      drawUserPhotoImage(context, nodeImage);
-    } else {
-      drawGlyph(context, kind);
+      if (kind === 'app' && nodeImage) {
+        drawAppIconImage(context, nodeImage);
+      } else if (kind === 'user' && nodeImage) {
+        drawUserPhotoImage(context, nodeImage);
+      } else {
+        drawGlyph(context, kind);
+      }
+
+      context.fillStyle = color;
+      context.shadowColor = color;
+      context.shadowBlur = 16;
+      context.beginPath();
+      context.arc(184, 64, prominent ? 8 : 6, 0, Math.PI * 2);
+      context.fill();
     }
 
-    context.fillStyle = color;
-    context.shadowColor = color;
-    context.shadowBlur = 8;
-    context.beginPath();
-    context.arc(184, 64, prominent ? 8 : 6, 0, Math.PI * 2);
-    context.fill();
-  }
+    return canvas;
+  });
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
@@ -166,11 +172,11 @@ function drawGlyph(context: CanvasRenderingContext2D, kind: IconKind): void {
   context.save();
   context.strokeStyle = '#f8fbff';
   context.fillStyle = '#f8fbff';
-  context.lineWidth = 9;
+  context.lineWidth = 11;
   context.lineCap = 'round';
   context.lineJoin = 'round';
-  context.shadowColor = 'rgba(0, 0, 0, 0.58)';
-  context.shadowBlur = 8;
+  context.shadowColor = 'rgba(0, 0, 0, 0.72)';
+  context.shadowBlur = 10;
 
   switch (kind) {
     case 'windowsDevice':
@@ -465,4 +471,46 @@ function tint(color: string, amount: number): string {
   const green = Math.round(((value >> 8) & 255) * (1 - ratio) + target * ratio);
   const blue = Math.round((value & 255) * (1 - ratio) + target * ratio);
   return `rgb(${red}, ${green}, ${blue})`;
+}
+
+function nodeIconCanvasCacheKey(
+  kind: IconKind,
+  color: string,
+  prominent: boolean,
+  nodeImage?: HTMLImageElement,
+): string {
+  const imageKey = nodeImage
+    ? `${hashText(nodeImage.src)}:${nodeImage.naturalWidth || nodeImage.width}:${nodeImage.naturalHeight || nodeImage.height}`
+    : 'glyph';
+  return [kind, color, prominent ? 'prominent' : 'normal', imageKey].join('|');
+}
+
+function getCachedCanvas(
+  cache: Map<string, HTMLCanvasElement>,
+  key: string,
+  createCanvas: () => HTMLCanvasElement,
+): HTMLCanvasElement {
+  const cached = cache.get(key);
+  if (cached) {
+    return cached;
+  }
+
+  const canvas = createCanvas();
+  cache.set(key, canvas);
+  while (cache.size > maxIconCanvasCacheEntries) {
+    const oldestKey = cache.keys().next().value;
+    if (!oldestKey) {
+      break;
+    }
+    cache.delete(oldestKey);
+  }
+  return canvas;
+}
+
+function hashText(value: string): string {
+  let hash = 0;
+  for (let index = 0; index < value.length; index += 1) {
+    hash = Math.imul(31, hash) + value.charCodeAt(index);
+  }
+  return (hash >>> 0).toString(36);
 }

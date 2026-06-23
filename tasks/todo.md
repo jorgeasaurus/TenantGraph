@@ -464,3 +464,204 @@
   - [x] Run focused and full verification
 
 - Reset and fresh-load graph framing now use a closer full-graph camera fit: full-graph minimum radius changed from 80 to 68, wide padding from 1.28 to 1.14, and narrow padding from 1.42 to 1.28. Reset view now fits the current graph positions instead of using the old fixed farther pose, with a closer fallback before data exists. Node object sprites are slightly translucent by default (`0.88`, prominent `0.96`), with supporting rings/underlays softened. Checks pass: `npx tsc -b --pretty false`, focused graph camera/visual policy tests, `npm run lint`, `npm run test -- --run` (54 tests), `npm run build`, and `npm audit --audit-level=high`. Build still emits the existing large Three.js/MSAL chunk warning.
+
+- [x] Three.js performance pass
+  - [x] Reuse raycaster and pointer vectors for graph picking
+  - [x] Throttle hover picking to animation frames
+  - [x] Cache label sprites instead of traversing the graph every frame
+  - [x] Avoid per-label vector clones during visibility updates
+  - [x] Cache repeated icon and label canvas rasterization
+  - [x] Cache pulse objects instead of traversing the graph every frame
+  - [x] Run typecheck, lint, tests, build, and audit
+
+- Three.js performance pass reduces render-loop work without changing graph behavior: hover picking now reuses one `Raycaster`/pointer and runs at most once per animation frame, label visibility uses a cached sprite list and scratch vector, idle frames skip label recalculation when camera/hover/size are unchanged, pulse animation uses a cached pulse-object list, and repeated icon/label canvas drawing is cached before new Three.js textures are created. Checks pass: `npx tsc -b --pretty false`, `npm run lint`, `npm run test -- --run` (54 tests), `npm run build`, and `npm audit --audit-level=high`. Build still emits the existing large Three.js/MSAL chunk warning.
+
+- [x] Reset-view object prominence
+  - [x] Increase default object sprite opacity
+  - [x] Make reset/fresh-load nodes slightly larger
+  - [x] Strengthen non-dimmed node support rings and underlays
+  - [x] Run focused tests, lint, typecheck, build, and audit
+
+- Reset/fresh-load graph objects are more prominent without changing camera framing: default node sprites now render at `0.97` opacity, selected/central sprites can reach `1`, normal node size increased from `14` to `16`, central from `18` to `20`, selected from `20` to `22`, and the non-dimmed ring/underlay layers are stronger. Checks pass: focused graph visual policy test, `npx tsc -b --pretty false`, `npm run lint`, `npm run test -- --run` (54 tests), `npm run build`, and `npm audit --audit-level=high`. Build still emits the existing large Three.js/MSAL chunk warning.
+
+- Follow-up reset visibility pass further raises object readability from the screenshot feedback: icon canvas glow/fill is stronger, icon border/highlight contrast is higher, the graph surface is slightly lighter around the center, focus glow is stronger, and the edge vignette is less aggressive. Playwright ran against `http://localhost:5173/` with the saved profile and confirmed app boot/sign-in screen rendering, but the profile is no longer authenticated so it could not inspect the signed-in graph canvas. Checks pass: `npx tsc -b --pretty false`, `npm run lint`, focused graph visual policy test, `npm run test -- --run` (54 tests), `npm run build`, `npm audit --audit-level=high`, and `git diff --check`. Build still emits the existing large Three.js/MSAL chunk warning.
+
+- Strong reset visibility pass makes the graph objects visibly dominate the surface: normal nodes are now `20` world units, central `26`, selected `28`; icon artwork uses fuller color fill, thicker strokes, stronger glyphs, and more glow; node rings/underlays and cluster boundaries are materially stronger; the background grid/focus/vignette is pulled back so it no longer competes with the data. Checks pass: focused graph visual policy test, `npx tsc -b --pretty false`, `npm run lint`, `npm run test -- --run` (54 tests), `npm run build`, `npm audit --audit-level=high`, and `git diff --check`. Build still emits the existing large Three.js/MSAL chunk warning.
+
+- [x] Reset/fresh-sign-in illumination
+  - [x] Add transient additive node illumination objects to the Three.js graph
+  - [x] Trigger illumination on fresh graph load, Reset View, and Reset Graph
+  - [x] Keep the effect short-lived so the steady-state graph stays readable
+  - [x] Run typecheck, lint, tests, build, audit, and smoke checks
+
+- Reset/fresh sign-in now lights graph objects with short-lived additive geometry: each node gets a hidden floor bloom and ring that brighten on first loaded graph data, Reset View, and Reset Graph, then fade to zero. Checks pass: focused graph object tests, `npx tsc -b --pretty false`, `npm run lint`, `npm run test -- --run` (55 tests), `npm run build`, `npm audit --audit-level=high`, `git diff --check`, `curl -I http://localhost:5173/`, and Playwright sign-in smoke with zero console errors. Playwright used a separate unauthenticated profile, so authenticated graph visual confirmation still needs a fresh sign-in there.
+
+- [x] Visual hierarchy implementation pass
+  - [x] Reframe reset/fresh-load graph composition larger and more centered
+  - [x] Make the graph layer visually dominant over chrome
+  - [x] Improve selected object presence and persistent anchor treatment
+  - [x] Strengthen cluster labels and direct relationship edge meaning
+  - [x] Quiet inspector actions, sidebar divider, scrollbar, and legend
+  - [x] Verify with checks and signed-in Playwright screenshot
+
+- Visual hierarchy pass brings the graph forward: reset framing is tighter, the zone orbit is closer to the selected object, selected/central nodes are larger with a persistent anchor beam, direct anchor relationships get capped flow markers, cluster labels are larger and higher contrast, and inspector/legend/scrollbar chrome is quieter. Checks pass: `npx tsc -b --pretty false`, `npm run lint`, focused graph tests, `npm run test -- --run` (56 tests), `npm run build`, `npm audit --audit-level=high`, `git diff --check`, `curl -I http://localhost:5173/`, and signed-in Playwright screenshot `tenant-graph-visual-pass-tight.png`. Build still emits the existing large Three.js/MSAL chunk warning; live console only shows the expected Microsoft Graph profile-photo 404.
+
+- [x] React Doctor full cleanup
+  - [x] Run the real React Doctor checker and capture baseline findings
+  - [x] Fix every reported root cause without suppressions
+  - [x] Rerun React Doctor until clean
+  - [x] Run typecheck, lint, tests, build, audit, and diff hygiene
+
+- React Doctor full cleanup is complete: `npx react-doctor@latest --verbose` reports 100/100 with no issues. The main fix splits the graph canvas into renderer lifecycle and scene-building modules, moves React 19 effect events into the renderer hook, fixes stale cleanup ownership, removes unused exports, and replaces repeated array scans/chained iterations in graph utilities and Graph adapters. Checks pass: `npx tsc -b --pretty false`, `npm run lint`, `npm run test -- --run` (56 tests), `npm run build`, `npm audit --audit-level=high`, `git diff --check`, and Playwright fresh-load smoke on `http://localhost:5173/` with zero console errors. Build still emits the existing large Three.js/MSAL chunk warning; the browser still reports the known duplicate Three.js warning from Vanta plus app Three.js.
+
+- [x] Address thermo-nuclear review findings
+  - [x] Move disposable Three.js scene construction out of render-phase `useMemo`
+  - [x] Collapse renderer hook ref bag behind a smaller runtime state boundary
+  - [x] Register animation objects explicitly while building the graph scene
+  - [x] Keep relationship flow cap mutation in one place
+  - [x] Simplify media hydration concurrency flow
+  - [x] Fix mechanical indentation damage in `TenantGraphCanvas`
+  - [x] Run React Doctor, typecheck, lint, tests, build, audit, diff check, and browser smoke
+
+- Thermo-nuclear review findings are addressed: `TenantGraphCanvas` is now a small React shell, Three.js object creation happens inside renderer effects, graph scene construction explicitly returns pickables/flow/pulse/illumination objects, relationship flow cap state is owned by one helper, and media hydration uses capped `Promise.allSettled` instead of recursive worker state. Checks pass: `npx tsc -b --pretty false`, `npm run lint`, `npm run doctor -- --verbose` (100/100, no issues), `npm run test` (56 tests), `npm run build`, `npm audit --audit-level=high`, `git diff --check`, and Playwright fresh-load smoke on `http://127.0.0.1:5173/` with zero console errors. Build still emits the existing large Three.js/MSAL chunk warning; dev browser still reports the known duplicate Three.js warning from the animated sign-in background plus app Three.js.
+
+- [x] Push latest Tenant Graph to Vercel
+  - [x] Confirm linked Vercel project and account
+  - [x] Run local verification before deploying
+  - [x] Deploy production build to Vercel
+  - [x] Inspect deployment and smoke test production URL
+  - [x] Document deployment result
+
+- Tenant Graph production deployment is live at `https://tenant-graph.vercel.app`. Deployment `dpl_CZuHCGAFyQakajziDLHtTeGyiTps` is Ready and aliased to the production domain. Checks pass: `npm run lint`, `npm run test` (56 tests), `npm run build`, `npm audit --audit-level=high`, `git diff --check`, `vercel deploy --prod --yes`, `vercel inspect tenant-graph-nwrd9kyj0-jorgeasaurus-projects.vercel.app`, `curl -I https://tenant-graph.vercel.app` HTTP 200, and Playwright production smoke with zero console errors. Build still emits the existing large Three.js/MSAL chunk warning; browser still shows the known duplicate Three.js warning from the animated sign-in background plus app Three.js.
+
+- [x] Remove selected-node cone spotlight
+  - [x] Delete the tapered spotlight mesh from the selected-node anchor
+  - [x] Keep the lower anchor ring/pulse selection affordance
+  - [x] Add regression coverage so cylinder/cone geometry is not reintroduced
+  - [x] Run focused tests, lint, typecheck, build, and diff check
+
+- Selected nodes no longer render the tapered cone spotlight. The selected-node anchor keeps the lower pulsing ring, and `threeGraphObjects.test.ts` now asserts the anchor does not include `CylinderGeometry`. Checks pass: `npx vitest run src/components/graph/threeGraphObjects.test.ts` (3 tests), `npx tsc -b --pretty false`, `npm run lint`, `npm run test` (57 tests), `npm run build`, and `git diff --check`. Build still emits the existing large Three.js/MSAL chunk warning.
+
+- [x] Push cone-spotlight removal to Vercel
+  - [x] Confirm linked Vercel project and CLI path
+  - [x] Run pre-deploy verification
+  - [x] Deploy production build to Vercel
+  - [x] Inspect deployment and smoke test production URL
+  - [x] Document deployment result
+
+- Cone-spotlight removal is live at `https://tenant-graph.vercel.app`. Deployment `dpl_4JFhDmkUzMzbYtnH47Fy5ByseJej` is Ready and aliased to the production domain. Checks pass: `npm run lint`, `npm run test` (57 tests), `npm run build`, `git diff --check`, `npm audit --audit-level=high`, `npx --yes vercel@latest deploy --prod --yes`, `npx --yes vercel@latest inspect tenant-graph-56eelsruc-jorgeasaurus-projects.vercel.app`, `curl -I https://tenant-graph.vercel.app` HTTP 200, and Playwright production smoke with zero console errors. Build still emits the existing large Three.js/MSAL chunk warning; browser still shows the known duplicate Three.js warning from the animated sign-in background plus app Three.js.
+
+- [x] Add sample tenant experience
+  - [x] Add a sign-in-screen Sample tenant entry point that does not fake MSAL auth
+  - [x] Refactor `AppShell` so live and sample modes can share the same workspace UI
+  - [x] Build a deterministic sample Graph client with users, devices, groups, apps, assignments, policies, filters, scope tags, roles, sign-in logs, and Conditional Access outcomes
+  - [x] Add an in-app click-through guide for the sample tenant
+  - [x] Cover sample routing and guide behavior with tests
+  - [x] Run lint, typecheck, tests, build, audit, diff check, and browser smoke
+
+- Sample tenant mode is implemented through the same workspace UI as live Entra mode. The sign-in and missing-config screens now expose `Sample tenant`, `?sampleTenant=1` opens the sample directly, and the account menu exits sample mode. The sample Graph client includes representative users, devices, groups, directory roles, apps, assignments, compliance/configuration/settings/enrollment policies, assignment filters, scope tags, detected apps, user photos, app icons, sign-in logs, and Conditional Access applied/blocked/report-only/not-applied outcomes. The sample guide opens automatically and can be reopened from the toolbar. Checks pass: `npx tsc -b --pretty false`, `npm run lint`, `npm run doctor -- --verbose` (100/100), `npx vitest run src/demo/sampleTenantClient.test.ts` (5 tests), `npm run test` (62 tests), `npm run build`, `npm audit --audit-level=high`, `git diff --check`, and Playwright smoke on `http://127.0.0.1:5173/?sampleTenant=1` with zero console errors. Build still emits the existing large Three.js/MSAL chunk warning; dev browser still shows the known duplicate Three.js warning from Vanta plus app Three.js.
+
+- [x] Push sample tenant experience to Vercel
+  - [x] Confirm linked Vercel project and deployment context
+  - [x] Run pre-deploy verification
+  - [x] Deploy production build with current workspace changes
+  - [x] Inspect deployment and smoke test production URL
+  - [x] Document deployment result
+
+- Sample tenant experience is live at `https://tenant-graph.vercel.app/?sampleTenant=1`. Deployment `dpl_CuRczAK1ARn3vwxYrM6bB5HCAroK` is Ready and aliased to `https://tenant-graph.vercel.app`. Checks pass: `npx tsc -b --pretty false`, `npm run lint`, `npm run test` (62 tests), `npm run build`, `npm audit --audit-level=high`, `git diff --check`, `npx --yes vercel@latest deploy --prod --yes`, `npx --yes vercel@latest inspect tenant-graph-pz9ag7rkc-jorgeasaurus-projects.vercel.app`, `curl -I https://tenant-graph.vercel.app`, `curl -I 'https://tenant-graph.vercel.app/?sampleTenant=1'`, and Playwright production smoke with zero console errors. Build still emits the existing large Three.js/MSAL chunk warning; browser still shows the known duplicate Three.js warning from Vanta plus app Three.js.
+
+- [x] Auto-scroll tutorial to object type filters
+  - [x] Add guide step scroll metadata for the Object types step
+  - [x] Scroll the target into view before measuring the tutorial highlight
+  - [x] Verify guide behavior and run focused checks
+  - [x] Capture the correction lesson
+
+- Tutorial step 3 now scrolls the left sidebar to the Object types section before measuring the highlight target. Checks pass: `npx tsc -b --pretty false`, `npm run lint`, `npx vitest run src/demo/sampleTenantClient.test.ts` (6 tests), `curl -I 'http://127.0.0.1:5173/?sampleTenant=1'`, and Playwright click-through to step 3 confirming Object types is fully visible in the sidebar with zero console errors.
+
+- [x] Make interfaces feel better polish pass
+  - [x] Apply the local `make-interfaces-feel-better` skill checklist to the sample guide and shared UI details
+  - [x] Tune guide radii, shadow depth, entrance motion, and highlight alignment
+  - [x] Add/adjust focused tests where behavior is encoded
+  - [x] Verify with typecheck, lint, focused tests, and browser smoke
+  - [x] Document before/after results
+
+- Sample guide polish pass is complete: the guide panel now uses concentric `20px` radii around its `14px` padding, the target highlight uses a matching `14px` expanded radius, the close button is restored to a `40px` hit area, guide steps remount with split/staggered content animation, progress bars animate only explicit properties, and reduced-motion disables the new motion. Checks pass: `npx tsc -b --pretty false`, `npm run lint`, `npx vitest run src/demo/sampleTenantClient.test.ts` (6 tests), `npm run build`, Playwright sample guide click-through to step 3 with zero console errors, and `git diff --check`. Build still emits the existing large Three.js/MSAL chunk warning; browser still shows the known duplicate Three.js warning from Vanta plus app Three.js.
+
+- [x] Replace sample app placeholders with real app icons
+  - [x] Verify sample app names and icon sources against official web/store pages
+  - [x] Replace the policy-shaped sample app with a real app entry
+  - [x] Add per-app sample icons through Graph-style `largeIcon` data
+  - [x] Update related sample assignments, detected apps, sign-ins, and guide examples
+  - [x] Add focused tests that prevent policy-like app names and missing sample app icons
+  - [x] Run typecheck, lint, focused tests, build, and browser smoke
+
+- Sample apps now use real app names and distinct App Store icon payloads: Intune Company Portal, Microsoft Edge, Microsoft Defender, Windows App Mobile, SAP Concur, and Microsoft Outlook. The policy-like `[IHD] Win365...Connectivity Settings` app was replaced with Windows App Mobile; the Win365 connectivity item remains only as a settings catalog policy. Checks pass: `npx tsc -b --pretty false`, `npm run lint`, `npx vitest run src/demo/sampleTenantClient.test.ts src/utils/graphUtils.test.ts` (32 tests), `npm run test` (64 tests), `npm run build`, Playwright sample tenant smoke confirming the real app names and no policy-shaped app label, and `git diff --check`. Build still emits the existing large Three.js/MSAL chunk warning.
+
+- [x] Push real sample app icons to Vercel
+  - [x] Confirm linked Vercel project and production deployment scope
+  - [x] Run pre-deploy verification
+  - [x] Deploy production build with current workspace changes
+  - [x] Inspect deployment and smoke test production URL
+  - [x] Document deployment result
+
+- Real sample app icons are live at `https://tenant-graph.vercel.app/?sampleTenant=1`. Deployment `dpl_BvsJqUQtoib9Xsaf7wzn5oTvuKrj` is Ready and aliased to `https://tenant-graph.vercel.app`. Checks pass: `npx tsc -b --pretty false`, `npm run lint`, `npm run test` (64 tests), `npm run build`, `npm audit --audit-level=high`, `git diff --check`, `npx --yes vercel@latest deploy --prod --yes`, `npx --yes vercel@latest inspect tenant-graph-e3bykr0ae-jorgeasaurus-projects.vercel.app`, `curl -I https://tenant-graph.vercel.app`, `curl -I 'https://tenant-graph.vercel.app/?sampleTenant=1'`, and Playwright production smoke confirming Intune Company Portal, Windows App Mobile, and SAP Concur are visible while the policy-shaped app label is not. Build still emits the existing large Three.js/MSAL chunk warning, now with the bundled sample app icon payloads; browser still shows the known duplicate Three.js warning from Vanta plus app Three.js.
+
+- [ ] Refresh canonical feature tracker after latest product changes
+  - [x] Inspect the current code and existing tracker workbook
+  - [x] Add current-code user stories for sample tenant, guide, CA projection filters, reset behavior, background, icons, and renderer lifecycle
+  - [x] Remove the duplicate noncanonical tracker workbook
+  - [x] Verify workbook structure and feature counts
+  - [x] Resume testing every user story from the refreshed tracker
+
+- Refreshed tracker verification is complete in `tasks/tenant-graph-feature-stories.xlsx`: 88 feature stories are tracked, with 83 `Verified`, 5 `Retested passed`, and 0 unresolved `Needs test` / `Error found` / `Fix pending` rows. Added `TR-027` for the latest sample-tenant/browser pass covering `TG-075..TG-088`. Checks pass: `npx tsc -b --pretty false`, `npm run lint`, focused Vitest sample/graph/workspace tests, `npm run test` (64 tests), `npm run build`, `npm audit --audit-level=high`, workbook integrity parse, `git diff --check`, and Playwright sample route smoke with zero console errors. Existing build still emits the known large bundle warning.
+
+- [x] Push refreshed tracker pass to Vercel
+  - [x] Confirm linked Vercel project and production scope
+  - [x] Run pre-deploy verification
+  - [x] Deploy production build with current workspace changes
+  - [x] Inspect deployment and smoke test production URL
+  - [x] Document deployment result
+
+- Refreshed tracker pass is live at `https://tenant-graph.vercel.app`. Deployment `dpl_8dNGHgteQYz2wZKAPyZJiMgWVMFw` is Ready and aliased to production. Checks pass: `npx tsc -b --pretty false`, `npm run lint`, `npm run test` (64 tests), `npm run build`, `npm audit --audit-level=high`, `git diff --check`, `npx --yes vercel@latest deploy --prod --yes`, `npx --yes vercel@latest inspect tenant-graph-fg4a4urgi-jorgeasaurus-projects.vercel.app`, `curl -I https://tenant-graph.vercel.app`, `curl -I 'https://tenant-graph.vercel.app/?sampleTenant=1'`, and Playwright production sample smoke with zero console errors. Build still emits the existing large bundle warning; Vercel remote build output still reports CLI 54.14.0 inside the platform build image.
+
+- [x] Scroll every tutorial target
+  - [x] Give every sample guide step with a target an explicit scroll position
+  - [x] Add regression coverage for the guide-step invariant
+  - [x] Verify with focused tests and browser walkthrough
+  - [x] Document verification result
+
+- Tutorial guide target scrolling now applies to every referenced section, not only Object types. Every targeted step declares `scrollBlock: center`, and the focused test enforces that invariant. Checks pass: `npx vitest run src/demo/sampleTenantClient.test.ts` (7 tests), `npx tsc -b --pretty false`, `npm run lint`, `npm run test` (64 tests), `npm run build`, `npm audit --audit-level=high`, `git diff --check`, workbook integrity parse, and a Playwright sample guide walkthrough confirming all eight targets are visible with zero console errors. Updated `TG-080` and added `TR-028` in `tasks/tenant-graph-feature-stories.xlsx`.
+
+- [x] Push tutorial target scrolling to Vercel
+  - [x] Confirm linked Vercel project and production scope
+  - [x] Run pre-deploy verification
+  - [x] Deploy production build with current workspace changes
+  - [x] Inspect deployment and smoke test production URL
+  - [x] Document deployment result
+
+- Tutorial target scrolling is live at `https://tenant-graph.vercel.app/?sampleTenant=1`. Deployment `dpl_J8hZuaFwAdZZMt8mcRUnFJUNUpfM` is Ready and aliased to production. Checks pass: `npx tsc -b --pretty false`, `npm run lint`, `npm run test` (64 tests), `npm run build`, `npm audit --audit-level=high`, `git diff --check`, `npx --yes vercel@latest deploy --prod --yes`, `npx --yes vercel@latest inspect tenant-graph-fojdk4k97-jorgeasaurus-projects.vercel.app`, `curl -I https://tenant-graph.vercel.app`, `curl -I 'https://tenant-graph.vercel.app/?sampleTenant=1'`, and Playwright production guide walkthrough confirming all eight tutorial targets visible with zero console errors. Build still emits the existing large bundle warning; Vercel remote build output still reports CLI 54.14.0 inside the platform build image.
+
+- [x] Landing page access resources
+  - [x] Add access requirements control to sign-in and missing-config landing panels
+  - [x] Add direct GitHub repository link
+  - [x] Verify focused tests, build checks, and browser behavior
+  - [x] Document verification result
+
+- Landing page now has an `Access requirements` button on both sign-in and missing-config panels. It expands inline details for Entra app registration, Microsoft Graph consent, Intune/sign-in-log reader access, Conditional Access policy scope, and links to `https://github.com/jorgeasaurus/TenantGraph`. Checks pass: `npx vitest run src/components/auth/SignInScreen.test.ts` (3 tests), `npx tsc -b --pretty false`, `npm run lint`, `npm run test` (65 tests), `npm run build`, `npm audit --audit-level=high`, `git diff --check`, and Playwright landing smoke confirming the expanded content and GitHub href with zero console errors. Build still emits the existing large bundle warning.
+
+- [x] Push landing access resources to Vercel
+  - [x] Confirm linked Vercel project and production scope
+  - [x] Run pre-deploy verification
+  - [x] Deploy production build with current workspace changes
+  - [x] Inspect deployment and smoke test production URL
+  - [x] Document deployment result
+
+- Landing access resources are live at `https://tenant-graph.vercel.app`. Deployment `dpl_EBqnC6EU3Xbnujcy7EHUyHftfxBi` is Ready and aliased to production. Checks pass: `npx tsc -b --pretty false`, `npm run lint`, `npm run test` (65 tests), `npm run build`, `npm audit --audit-level=high`, `git diff --check`, `npx --yes vercel@latest deploy --prod --yes`, `npx --yes vercel@latest inspect tenant-graph-49u5suk7j-jorgeasaurus-projects.vercel.app`, `curl -I https://tenant-graph.vercel.app`, `curl -I 'https://tenant-graph.vercel.app/?sampleTenant=1'`, and Playwright production landing smoke confirming the access requirements panel and GitHub href with zero console errors. Build still emits the existing large bundle warning; Vercel remote build output still reports CLI 54.14.0 inside the platform build image.
+
+- [ ] Push current Tenant Graph state to GitHub
+  - [x] Confirm `origin` remote and authenticated GitHub CLI
+  - [x] Confirm local `main` is even with `origin/main`
+  - [x] Stage the current workspace state
+  - [ ] Commit the current workspace state
+  - [ ] Push `main` to GitHub
+  - [ ] Verify remote branch contains the commit

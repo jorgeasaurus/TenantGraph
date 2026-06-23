@@ -108,10 +108,15 @@ export async function loadTenantOverview(client: GraphClient): Promise<TenantGra
 function tenantSearchCalls(client: GraphClient, query: string, types: string[]): SourceCall[] {
   const term = query.trim();
   const selected = new Set(types);
+  const calls: SourceCall[] = [];
 
-  return searchSources(term)
-    .filter((source) => selected.has(source.type))
-    .map((source) => bindSource(client, source));
+  for (const source of searchSources(term)) {
+    if (selected.has(source.type)) {
+      calls.push(bindSource(client, source));
+    }
+  }
+
+  return calls;
 }
 
 export async function searchTenantObjects(

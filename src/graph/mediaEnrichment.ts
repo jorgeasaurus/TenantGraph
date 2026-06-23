@@ -4,7 +4,6 @@ import { mobileAppToNode, type GraphObject } from './adapters';
 import type { GraphClient, GraphVersion } from './client';
 
 type MediaSpec = {
-  batchSize?: number;
   fetch: (client: GraphClient, node: TenantNode) => Promise<string | undefined>;
   limit: number;
   matches: (node: TenantNode) => boolean;
@@ -14,7 +13,6 @@ const mobileAppIconSelect = '$select=id,largeIcon';
 const mobileAppIconLimit = 24;
 const userPhotoSize = '48x48';
 const userPhotoLimit = 32;
-const userPhotoBatchSize = 6;
 
 export async function hydrateResultMedia(
   client: GraphClient,
@@ -48,7 +46,6 @@ function mobileAppIconSpec(version: GraphVersion = 'v1.0'): MediaSpec {
 
 function userPhotoSpec(): MediaSpec {
   return {
-    batchSize: userPhotoBatchSize,
     limit: userPhotoLimit,
     matches: (node) => node.type === 'user' && !node.iconDataUrl,
     fetch: async (client, node) => {
@@ -70,22 +67,17 @@ async function hydrateNodeMedia(
     return graph;
   }
 
+  const hydratedMedia = await Promise.allSettled(
+    nodes.map(async (node) => {
+      const media = await spec.fetch(client, node);
+      return media ? ([node.id, media] as const) : undefined;
+    }),
+  );
   const mediaByNodeId = new Map<string, string>();
-  const batchSize = spec.batchSize ?? spec.limit;
 
-  for (let index = 0; index < nodes.length; index += batchSize) {
-    const batch = nodes.slice(index, index + batchSize);
-    const results = await Promise.allSettled(
-      batch.map(async (node) => {
-        const media = await spec.fetch(client, node);
-        return media ? ([node.id, media] as const) : undefined;
-      }),
-    );
-
-    for (const result of results) {
-      if (result.status === 'fulfilled' && result.value) {
-        mediaByNodeId.set(result.value[0], result.value[1]);
-      }
+  for (const result of hydratedMedia) {
+    if (result.status === 'fulfilled' && result.value) {
+      mediaByNodeId.set(result.value[0], result.value[1]);
     }
   }
 

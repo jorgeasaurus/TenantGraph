@@ -22,13 +22,13 @@
   min-width: 0;
   min-height: 0;
   overflow: hidden;
-  background-color: #010714;
+  background-color: #020815;
   background-image:
-    radial-gradient(ellipse at 52% 44%, rgba(18, 66, 112, 0.34) 0%, rgba(8, 29, 58, 0.24) 31%, rgba(1, 7, 20, 0) 69%),
-    linear-gradient(rgba(117, 199, 255, 0.032) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(117, 199, 255, 0.032) 1px, transparent 1px),
-    linear-gradient(rgba(117, 199, 255, 0.016) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(117, 199, 255, 0.016) 1px, transparent 1px);
+    radial-gradient(ellipse at 52% 44%, rgba(18, 78, 126, 0.34) 0%, rgba(8, 35, 65, 0.2) 31%, rgba(1, 7, 20, 0) 69%),
+    linear-gradient(rgba(117, 199, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(117, 199, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(rgba(117, 199, 255, 0.012) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(117, 199, 255, 0.012) 1px, transparent 1px);
   background-position: center, center, center, center, center;
   background-repeat: repeat;
   background-size: auto, 96px 96px, 96px 96px, 24px 24px, 24px 24px;
@@ -40,12 +40,12 @@
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  opacity: var(--graph-focus-opacity, 0.78);
+  opacity: var(--graph-focus-opacity, 0.72);
   background:
     radial-gradient(
       circle at var(--graph-focus-x, 50%) var(--graph-focus-y, 48%),
-      rgba(63, 209, 255, 0.2) 0%,
-      rgba(63, 209, 255, 0.115) 13%,
+      rgba(63, 209, 255, 0.18) 0%,
+      rgba(63, 209, 255, 0.105) 13%,
       rgba(20, 241, 149, 0.045) 29%,
       rgba(3, 11, 27, 0) 53%
     );
@@ -58,7 +58,7 @@
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(ellipse at center, rgba(1, 7, 20, 0) 48%, rgba(0, 0, 0, 0.24) 78%, rgba(0, 0, 0, 0.48) 100%);
+    radial-gradient(ellipse at center, rgba(1, 7, 20, 0) 58%, rgba(0, 0, 0, 0.12) 84%, rgba(0, 0, 0, 0.26) 100%);
 }
 
 .graph-canvas {
@@ -81,11 +81,11 @@
 .graph-left-stack {
   left: 14px;
   right: 14px;
-  bottom: 14px;
+  bottom: 10px;
   z-index: 5;
   display: grid;
   gap: 10px;
-  max-width: 420px;
+  max-width: min(560px, calc(100% - 28px));
   pointer-events: none;
 }
 
@@ -95,33 +95,45 @@
 
 .graph-legend {
   z-index: 5;
-  border: 1px solid rgba(0, 212, 255, 0.28);
+  border: 1px solid rgba(0, 212, 255, 0.18);
   border-radius: var(--surface-radius);
-  background: rgba(3, 8, 18, 0.92);
-  box-shadow: var(--shadow-border);
+  background: rgba(3, 8, 18, 0.62);
+  opacity: 0.66;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.04);
+  transition:
+    background-color 150ms var(--ease-out),
+    border-color 150ms var(--ease-out),
+    opacity 150ms var(--ease-out);
+}
+
+.graph-legend:hover,
+.graph-legend:focus-within {
+  border-color: rgba(0, 212, 255, 0.38);
+  background: rgba(3, 8, 18, 0.9);
+  opacity: 1;
 }
 
 .graph-legend {
   display: flex;
   flex-wrap: wrap;
-  gap: 7px;
-  padding: 9px;
+  gap: 6px 10px;
+  padding: 7px 9px;
 }
 
 .graph-legend span {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  color: #e8f3ff;
-  font-size: var(--type-body);
+  color: rgba(232, 243, 255, 0.84);
+  font-size: var(--type-caption);
 }
 
 .relationship-inspector {
   min-width: 0;
   overflow-y: auto;
-  border-left: 1px solid rgba(0, 212, 255, 0.24);
-  background: rgba(4, 8, 18, 0.96);
-  padding: 12px;
+  border-left: 1px solid rgba(63, 209, 255, 0.14);
+  background: rgba(3, 7, 16, 0.93);
+  padding: 11px;
 }
 
 .inspector-heading {
@@ -163,21 +175,27 @@
 
 .inspector-actions {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 7px;
-  margin-top: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 10px;
 }
 
 .inspector-actions button {
   min-width: 0;
-  min-height: 40px;
-  padding: 0 8px;
-  font-size: var(--type-body);
+  min-height: 34px;
+  padding: 0 6px;
+  color: rgba(232, 243, 255, 0.88);
+  font-size: var(--type-caption);
+}
+
+.inspector-actions button svg {
+  width: 14px;
+  height: 14px;
 }
 
 .inspector-section {
   margin-top: 14px;
-  border-top: 1px solid rgba(37, 81, 106, 0.58);
+  border-top: 1px solid rgba(37, 81, 106, 0.4);
   padding-top: 12px;
 }
 

@@ -10,56 +10,58 @@ export type GraphLabelData = {
 };
 
 export function updateGraphLabels(
-  root: THREE.Object3D | null,
+  labels: THREE.Sprite[],
   camera: THREE.PerspectiveCamera,
   controls: OrbitControls,
   renderer: THREE.WebGLRenderer,
   hoverNodeId: string | undefined,
+  scratchVector = new THREE.Vector3(),
 ): void {
-  if (!root) {
+  if (labels.length === 0) {
     return;
   }
-
-  const labels: THREE.Sprite[] = [];
-  root.traverse((child) => {
-    if (child instanceof THREE.Sprite && child.userData.graphLabel) {
-      labels.push(child);
-    }
-  });
 
   const distance = camera.position.distanceTo(controls.target);
   const zoomLevel = distance > 320 ? 'far' : distance > 155 ? 'medium' : 'close';
   const rect = renderer.domElement.getBoundingClientRect();
-  const candidates = labels
-    .map((label) => {
-      const data = label.userData.graphLabel as GraphLabelData;
-      const hovered = data.nodeId === hoverNodeId;
-      const selected = data.selected;
-      const direct = data.direct;
-      const zoomVisible =
-        zoomLevel === 'close' ||
-        (zoomLevel === 'medium' && (data.priority >= 70 || direct)) ||
-        selected ||
-        hovered;
+  const candidates: Array<{
+    data: GraphLabelData;
+    hovered: boolean;
+    label: THREE.Sprite;
+    priority: number;
+    selected: boolean;
+  }> = [];
 
-      return {
+  for (const label of labels) {
+    const data = label.userData.graphLabel as GraphLabelData;
+    const hovered = data.nodeId === hoverNodeId;
+    const selected = data.selected;
+    const direct = data.direct;
+    const zoomVisible =
+      zoomLevel === 'close' ||
+      (zoomLevel === 'medium' && (data.priority >= 70 || direct)) ||
+      selected ||
+      hovered;
+
+    if (zoomVisible) {
+      candidates.push({
         data,
         hovered,
         label,
         priority: hovered ? 98 : data.priority,
         selected,
-        visible: zoomVisible,
-      };
-    })
-    .filter((candidate) => candidate.visible)
-    .sort((first, second) => second.priority - first.priority);
+      });
+    }
+  }
+
+  const sortedCandidates = candidates.toSorted((first, second) => second.priority - first.priority);
 
   const accepted: Array<{ height: number; width: number; x: number; y: number }> = [];
   const visibleIds = new Set<string>();
   const fadedIds = new Set<string>();
 
-  for (const candidate of candidates) {
-    const screen = candidate.label.position.clone().project(camera);
+  for (const candidate of sortedCandidates) {
+    const screen = scratchVector.copy(candidate.label.position).project(camera);
     const x = ((screen.x + 1) / 2) * rect.width;
     const y = ((-screen.y + 1) / 2) * rect.height;
     const width = candidate.selected ? 156 : 118;

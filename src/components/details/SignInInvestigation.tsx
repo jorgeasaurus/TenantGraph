@@ -29,7 +29,7 @@ export function SignInInvestigation({ client, node, onProjectEvent }: SignInInve
   }
 
   return (
-    <div className="signins-panel">
+    <div className="signins-panel" data-guide="signins">
       <div className="signins-context">
         <ShieldCheck size={15} />
         <span>{contextLabel(node)}</span>

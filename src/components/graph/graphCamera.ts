@@ -10,11 +10,13 @@ export type CameraPose = {
 type CameraFitOptions = {
   minRadius?: number;
   padding?: number;
+  targetYOffset?: number;
 };
 
-const graphFitMinRadius = 68;
-const graphFitPaddingWide = 1.14;
-const graphFitPaddingNarrow = 1.28;
+const graphFitMinRadius = 58;
+const graphFitPaddingWide = 1.02;
+const graphFitPaddingNarrow = 1.16;
+const graphFitTargetYOffset = -16;
 
 export function fitCameraToGraph(
   camera: THREE.PerspectiveCamera,
@@ -24,16 +26,8 @@ export function fitCameraToGraph(
   applyCameraPose(camera, controls, cameraPoseForPoints(camera, controls, positions.values(), {
     minRadius: graphFitMinRadius,
     padding: camera.aspect < 0.78 ? graphFitPaddingNarrow : graphFitPaddingWide,
+    targetYOffset: graphFitTargetYOffset,
   }));
-}
-
-export function fitCameraToZone(
-  camera: THREE.PerspectiveCamera,
-  controls: OrbitControls,
-  zone: GraphZone,
-  nodePositions: Iterable<THREE.Vector3> = zone.boundary,
-): void {
-  applyCameraPose(camera, controls, cameraPoseForZone(camera, controls, zone, nodePositions));
 }
 
 export function cameraPoseForGraph(
@@ -44,6 +38,7 @@ export function cameraPoseForGraph(
   return cameraPoseForPoints(camera, controls, positions.values(), {
     minRadius: graphFitMinRadius,
     padding: camera.aspect < 0.78 ? graphFitPaddingNarrow : graphFitPaddingWide,
+    targetYOffset: graphFitTargetYOffset,
   });
 }
 
@@ -57,6 +52,7 @@ export function cameraPoseForZone(
   return cameraPoseForPoints(camera, controls, points.length > 0 ? points : zone.boundary, {
     minRadius: 44,
     padding: camera.aspect < 0.78 ? 1.38 : 1.22,
+    targetYOffset: -7,
   });
 }
 
@@ -77,8 +73,10 @@ function cameraPoseForPoints(
   options: CameraFitOptions,
 ): CameraPose {
   const pointList = [...points];
-  const target = pointList.length > 0 ? centerForPoints(pointList) : new THREE.Vector3();
-  const radius = Math.max(options.minRadius ?? 42, radiusForPoints(pointList, target) * (options.padding ?? 1.25));
+  const center = pointList.length > 0 ? centerForPoints(pointList) : new THREE.Vector3();
+  const target = center.clone();
+  target.y += options.targetYOffset ?? 0;
+  const radius = Math.max(options.minRadius ?? 42, radiusForPoints(pointList, center) * (options.padding ?? 1.25));
   const distance = distanceForRadius(camera, radius);
   const direction = currentOrbitDirection(camera, controls);
 

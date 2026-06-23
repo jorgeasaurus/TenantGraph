@@ -35,15 +35,17 @@ export function layoutGraph(graph: TenantGraph, centralNodeId?: string): GraphLa
     zones.set(definition.id, zone);
   }
 
-  const orderedZones = [...zones.values()].sort((first, second) => first.definition.order - second.definition.order);
-  const zoneOrbit = Math.max(58, Math.min(210, 25 * Math.sqrt(Math.max(graph.nodes.length, 2))));
+  const orderedZones = Array.from(zones.values()).toSorted(
+    (first, second) => first.definition.order - second.definition.order,
+  );
+  const zoneOrbit = Math.max(54, Math.min(170, 21 * Math.sqrt(Math.max(graph.nodes.length, 2))));
   const renderedZones: GraphZone[] = [];
 
   orderedZones.forEach((zone, zoneIndex) => {
     const zoneAngle = -Math.PI / 2 + (zoneIndex / Math.max(orderedZones.length, 1)) * Math.PI * 2;
     const zoneCenter = new THREE.Vector3(Math.cos(zoneAngle) * zoneOrbit, 0, Math.sin(zoneAngle) * zoneOrbit);
     const typeBuckets = bucketByType(zone.nodes);
-    const bucketTypes = [...typeBuckets.keys()].sort();
+    const bucketTypes = Array.from(typeBuckets.keys()).toSorted();
     let zoneRadius = 42;
 
     bucketTypes.forEach((type, typeIndex) => {
@@ -69,9 +71,13 @@ export function layoutGraph(graph: TenantGraph, centralNodeId?: string): GraphLa
       });
     });
 
-    const zonePositions = zone.nodes
-      .map((node) => positions.get(node.id))
-      .filter((position): position is THREE.Vector3 => Boolean(position));
+    const zonePositions: THREE.Vector3[] = [];
+    for (const node of zone.nodes) {
+      const position = positions.get(node.id);
+      if (position) {
+        zonePositions.push(position);
+      }
+    }
 
     renderedZones.push({
       ...zone.definition,
@@ -105,7 +111,9 @@ function bucketByType(nodes: TenantNode[]): Map<string, TenantNode[]> {
   const buckets = new Map<string, TenantNode[]>();
 
   for (const node of nodes) {
-    buckets.set(node.type, [...(buckets.get(node.type) ?? []), node]);
+    const bucket = buckets.get(node.type) ?? [];
+    bucket.push(node);
+    buckets.set(node.type, bucket);
   }
 
   return buckets;
@@ -116,11 +124,13 @@ function makeZoneBoundary(
   positions: THREE.Vector3[],
   fallbackRadius: number,
 ): THREE.Vector3[] {
-  const uniquePoints = positions
-    .map((position) => new THREE.Vector2(position.x, position.z))
-    .filter((point, index, points) =>
-      points.findIndex((candidate) => candidate.distanceToSquared(point) < 0.01) === index,
-    );
+  const uniquePoints: THREE.Vector2[] = [];
+  for (const position of positions) {
+    const point = new THREE.Vector2(position.x, position.z);
+    if (!uniquePoints.some((candidate) => candidate.distanceToSquared(point) < 0.01)) {
+      uniquePoints.push(point);
+    }
+  }
 
   if (uniquePoints.length < 3) {
     return makeFallbackBoundary(center, fallbackRadius);
@@ -151,7 +161,7 @@ function makeFallbackBoundary(center: THREE.Vector3, radius: number): THREE.Vect
 }
 
 function convexHull(points: THREE.Vector2[]): THREE.Vector2[] {
-  const sorted = [...points].sort((first, second) => first.x - second.x || first.y - second.y);
+  const sorted = points.toSorted((first, second) => first.x - second.x || first.y - second.y);
   const lower: THREE.Vector2[] = [];
   const upper: THREE.Vector2[] = [];
 
@@ -162,7 +172,8 @@ function convexHull(points: THREE.Vector2[]): THREE.Vector2[] {
     lower.push(point);
   }
 
-  for (const point of [...sorted].reverse()) {
+  for (let index = sorted.length - 1; index >= 0; index -= 1) {
+    const point = sorted[index];
     while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], point) <= 0) {
       upper.pop();
     }

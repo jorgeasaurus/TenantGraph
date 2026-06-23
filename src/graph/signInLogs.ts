@@ -24,11 +24,17 @@ export async function loadSignInLogs(
   const page = await client.getPage<GraphSignIn>(path, scopes, 'v1.0', {
     headers: caPreferHeader,
   });
-  const events = (page.value ?? [])
-    .map(signInEventFromGraph)
-    .filter((event) => eventMatchesNode(event, query.node))
-    .filter((event) => eventMatchesResult(event, query.resultFilter))
-    .filter((event) => eventMatchesCa(event, query.caFilter));
+  const events: SignInQueryResult['events'] = [];
+  for (const item of page.value ?? []) {
+    const event = signInEventFromGraph(item);
+    if (
+      eventMatchesNode(event, query.node) &&
+      eventMatchesResult(event, query.resultFilter) &&
+      eventMatchesCa(event, query.caFilter)
+    ) {
+      events.push(event);
+    }
+  }
 
   return {
     events,

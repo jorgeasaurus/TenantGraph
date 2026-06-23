@@ -274,11 +274,19 @@ export function readablePathCandidates(
     ...policyNodeTypes,
   ]);
 
-  return graph.nodes
-    .filter((node) => node.id !== selectedNode.id)
-    .filter((node) => fallbackTypes.has(node.type))
-    .filter((node) => explainReadablePath(graph, selectedNode.id, node.id))
-    .sort((first, second) => {
+  const candidates: TenantNode[] = [];
+  for (const node of graph.nodes) {
+    if (
+      node.id !== selectedNode.id &&
+      fallbackTypes.has(node.type) &&
+      explainReadablePath(graph, selectedNode.id, node.id)
+    ) {
+      candidates.push(node);
+    }
+  }
+
+  return candidates
+    .toSorted((first, second) => {
       const firstRank = preferredTypes.has(first.type) ? 0 : 1;
       const secondRank = preferredTypes.has(second.type) ? 0 : 1;
       return (
@@ -477,12 +485,13 @@ function policyDetail(counts: Map<string, number>): string | undefined {
     ['deviceConfigurationProfile', 'profiles'],
     ['enrollmentProfile', 'enrollment'],
   ];
-  const parts = labels
-    .map(([type, label]) => {
-      const count = counts.get(type) ?? 0;
-      return count > 0 ? `${count} ${label}` : undefined;
-    })
-    .filter(Boolean);
+  const parts: string[] = [];
+  for (const [type, label] of labels) {
+    const count = counts.get(type) ?? 0;
+    if (count > 0) {
+      parts.push(`${count} ${label}`);
+    }
+  }
 
   return parts.length > 0 ? parts.join(', ') : undefined;
 }
@@ -490,10 +499,13 @@ function policyDetail(counts: Map<string, number>): string | undefined {
 function guardrailDetail(counts: Map<string, number>): string | undefined {
   const filters = counts.get('assignmentFilter') ?? 0;
   const scopeTags = counts.get('scopeTag') ?? 0;
-  const parts = [
-    filters > 0 ? `${filters} ${pluralize('filter', filters)}` : undefined,
-    scopeTags > 0 ? `${scopeTags} scope ${pluralize('tag', scopeTags)}` : undefined,
-  ].filter(Boolean);
+  const parts: string[] = [];
+  if (filters > 0) {
+    parts.push(`${filters} ${pluralize('filter', filters)}`);
+  }
+  if (scopeTags > 0) {
+    parts.push(`${scopeTags} scope ${pluralize('tag', scopeTags)}`);
+  }
 
   return parts.length > 0 ? parts.join(', ') : undefined;
 }
@@ -584,8 +596,8 @@ function normalizeDevicePlatform(value: string | undefined): string {
 }
 
 function compactTopEntries(entries: Map<string, number>): string | undefined {
-  const parts = [...entries.entries()]
-    .sort((first, second) => second[1] - first[1] || first[0].localeCompare(second[0]))
+  const parts = Array.from(entries.entries())
+    .toSorted((first, second) => second[1] - first[1] || first[0].localeCompare(second[0]))
     .slice(0, 3)
     .map(([label, count]) => `${count} ${label}`);
 

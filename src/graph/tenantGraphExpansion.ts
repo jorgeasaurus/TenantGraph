@@ -1,4 +1,4 @@
-import type { TenantGraph, TenantGraphResult, TenantNode } from '../models/tenantGraph';
+import type { TenantEdge, TenantGraph, TenantGraphResult, TenantNode } from '../models/tenantGraph';
 import { emptyTenantGraph } from '../models/tenantGraph';
 import {
   graphText,
@@ -186,15 +186,16 @@ async function expandAssignments(
 
 function primaryUserDevicesToGraph(node: TenantNode, devices: GraphObject[]): TenantGraph {
   const deviceGraph = managedDevicesToGraph(devices);
+  const primaryUserEdges: TenantEdge[] = [];
+  for (const deviceNode of deviceGraph.nodes) {
+    if (deviceNode.type === 'device') {
+      primaryUserEdges.push(edge(node.id, deviceNode.id, 'primaryUser', 'Primary user'));
+    }
+  }
 
   return {
     nodes: deviceGraph.nodes,
-    edges: [
-      ...deviceGraph.edges,
-      ...deviceGraph.nodes
-        .filter((deviceNode) => deviceNode.type === 'device')
-        .map((deviceNode) => edge(node.id, deviceNode.id, 'primaryUser', 'Primary user')),
-    ],
+    edges: [...deviceGraph.edges, ...primaryUserEdges],
   };
 }
 
@@ -204,8 +205,19 @@ async function directoryMembershipsToGraph(
   objects: GraphObject[],
 ): Promise<TenantGraph> {
   const graph = directoryObjectsToGraph(objects);
-  const roleIds = new Set(graph.nodes.filter((node) => node.type === 'directoryRole').map((node) => node.id));
-  if (roleIds.size === 0 || graph.nodes.every((node) => node.type !== 'directoryRole' || hasFriendlyRoleName(node))) {
+  const roleIds = new Set<string>();
+  let allRolesHaveFriendlyNames = true;
+  for (const node of graph.nodes) {
+    if (node.type !== 'directoryRole') {
+      continue;
+    }
+    roleIds.add(node.id);
+    if (!hasFriendlyRoleName(node)) {
+      allRolesHaveFriendlyNames = false;
+    }
+  }
+
+  if (roleIds.size === 0 || allRolesHaveFriendlyNames) {
     return connectRelated(owner, graph, 'memberOf', 'Member of');
   }
 

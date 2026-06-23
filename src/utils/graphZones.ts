@@ -11,13 +11,17 @@ export {
   type GraphZoneDefinition,
 } from './typePresentation';
 
+const graphZoneNodeTypeSets = Object.fromEntries(
+  Object.entries(graphZoneNodeTypes).map(([zoneId, nodeTypes]) => [zoneId, new Set(nodeTypes)]),
+) as Record<GraphZoneId, Set<TenantNodeType>>;
+
 export function zoneForNode(node: Pick<TenantNode, 'type'>): GraphZoneDefinition {
   return zoneForNodeType(node.type);
 }
 
 function zoneForNodeType(type: TenantNodeType): GraphZoneDefinition {
-  for (const [zoneId, nodeTypes] of Object.entries(graphZoneNodeTypes)) {
-    if (nodeTypes.includes(type)) {
+  for (const [zoneId, nodeTypes] of Object.entries(graphZoneNodeTypeSets)) {
+    if (nodeTypes.has(type)) {
       return graphZoneDefinitions[zoneId as GraphZoneId];
     }
   }

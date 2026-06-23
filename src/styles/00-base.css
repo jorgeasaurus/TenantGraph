@@ -44,6 +44,8 @@
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  scrollbar-color: rgba(63, 209, 255, 0.22) rgba(2, 6, 16, 0.82);
+  scrollbar-width: thin;
 }
 
 body {
@@ -157,4 +159,23 @@ code {
   background: #070c18;
   padding: 6px 8px;
   color: var(--accent);
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: rgba(2, 6, 16, 0.82);
+}
+
+*::-webkit-scrollbar-thumb {
+  border: 2px solid rgba(2, 6, 16, 0.82);
+  border-radius: 999px;
+  background: rgba(63, 209, 255, 0.2);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(63, 209, 255, 0.34);
 }

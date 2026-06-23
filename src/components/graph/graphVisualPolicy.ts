@@ -60,7 +60,7 @@ export function nodeRelevanceOpacity(distance: number | undefined, hasRelationsh
 }
 
 export function nodeDisplayOpacity(relevanceOpacity: number, prominent: boolean): number {
-  const maximum = prominent ? 0.96 : 0.88;
+  const maximum = prominent ? 1 : 0.97;
   return Math.min(maximum, relevanceOpacity);
 }
 
@@ -112,20 +112,20 @@ export function labelPriority(
 export function edgeVisual(type: TenantRelationshipType): EdgeVisual {
   switch (type) {
     case 'assignment':
-      return { activeOpacity: 0.98, dimOpacity: 0.08, opacity: 0.62 };
+      return { activeOpacity: 1, dimOpacity: 0.1, opacity: 0.74 };
     case 'filteredBy':
-      return { activeOpacity: 0.96, dashSize: 1.4, dimOpacity: 0.07, gapSize: 4.4, opacity: 0.58 };
+      return { activeOpacity: 0.98, dashSize: 1.4, dimOpacity: 0.08, gapSize: 4.4, opacity: 0.66 };
     case 'scopeTag':
-      return { activeOpacity: 0.82, dimOpacity: 0.05, opacity: 0.34 };
+      return { activeOpacity: 0.9, dimOpacity: 0.06, opacity: 0.42 };
     case 'member':
     case 'memberOf':
-      return { activeOpacity: 0.84, dashSize: 8.4, dimOpacity: 0.06, gapSize: 5.8, opacity: 0.42 };
+      return { activeOpacity: 0.9, dashSize: 8.4, dimOpacity: 0.07, gapSize: 5.8, opacity: 0.52 };
     case 'primaryUser':
-      return { activeOpacity: 0.94, dimOpacity: 0.08, doubleLine: true, opacity: 0.54 };
+      return { activeOpacity: 0.98, dimOpacity: 0.09, doubleLine: true, opacity: 0.64 };
     case 'detectedApp':
-      return { activeOpacity: 0.82, animated: true, dashSize: 1.6, dimOpacity: 0.05, gapSize: 5.4, opacity: 0.34 };
+      return { activeOpacity: 0.9, animated: true, dashSize: 1.6, dimOpacity: 0.06, gapSize: 5.4, opacity: 0.44 };
     default:
-      return { activeOpacity: 0.78, dimOpacity: 0.05, opacity: 0.38 };
+      return { activeOpacity: 0.86, dimOpacity: 0.06, opacity: 0.46 };
   }
 }
 

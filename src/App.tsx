@@ -1,21 +1,74 @@
-import { AuthenticatedTemplate, UnauthenticatedTemplate } from '@azure/msal-react';
+import { AuthenticatedTemplate, UnauthenticatedTemplate, useMsal } from '@azure/msal-react';
+import { useMemo, useState } from 'react';
+import { useGraphToken } from './auth/useGraphToken';
 import { MissingConfigScreen, SignInScreen } from './components/auth/SignInScreen';
 import { AppShell } from './components/layout/AppShell';
 import { hasMsalConfig, missingEnvVars } from './auth/msal';
+import { createGraphClient } from './graph/client';
+import { sampleTenantClient } from './demo/sampleTenantClient';
 
 export default function App() {
+  const [sampleMode, setSampleMode] = useState(() => sampleTenantRequested());
+  const openSampleTenant = () => {
+    setSampleTenantUrlState(true);
+    setSampleMode(true);
+  };
+  const closeSampleTenant = () => {
+    setSampleTenantUrlState(false);
+    setSampleMode(false);
+  };
+
+  if (sampleMode) {
+    return (
+      <AppShell
+        accountName="Sample tenant / Contoso"
+        client={sampleTenantClient}
+        isSampleTenant
+        onSignOut={closeSampleTenant}
+      />
+    );
+  }
+
   if (!hasMsalConfig) {
-    return <MissingConfigScreen missing={missingEnvVars} />;
+    return <MissingConfigScreen missing={missingEnvVars} onOpenSampleTenant={openSampleTenant} />;
   }
 
   return (
     <>
       <AuthenticatedTemplate>
-        <AppShell />
+        <LiveAppShell />
       </AuthenticatedTemplate>
       <UnauthenticatedTemplate>
-        <SignInScreen />
+        <SignInScreen onOpenSampleTenant={openSampleTenant} />
       </UnauthenticatedTemplate>
     </>
+  );
+}
+
+function sampleTenantRequested(): boolean {
+  return new URLSearchParams(window.location.search).get('sampleTenant') === '1';
+}
+
+function setSampleTenantUrlState(enabled: boolean): void {
+  const url = new URL(window.location.href);
+  if (enabled) {
+    url.searchParams.set('sampleTenant', '1');
+  } else {
+    url.searchParams.delete('sampleTenant');
+  }
+  window.history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`);
+}
+
+function LiveAppShell() {
+  const { instance } = useMsal();
+  const { account, getAccessToken } = useGraphToken();
+  const client = useMemo(() => createGraphClient(getAccessToken), [getAccessToken]);
+
+  return (
+    <AppShell
+      accountName={account?.name ?? account?.username ?? 'Signed in'}
+      client={client}
+      onSignOut={() => instance.logoutRedirect()}
+    />
   );
 }

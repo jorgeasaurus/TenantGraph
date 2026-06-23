@@ -85,7 +85,7 @@ function prioritizeSearchResults(
     }
   }
 
-  return [...nodes].sort((first, second) => {
+  return nodes.toSorted((first, second) => {
     const firstRank = searchResultRank(first, normalizedQuery, selectedNode, relatedIds);
     const secondRank = searchResultRank(second, normalizedQuery, selectedNode, relatedIds);
     return firstRank - secondRank || first.label.localeCompare(second.label);

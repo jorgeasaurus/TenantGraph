@@ -1,11 +1,22 @@
 import { useMsal } from '@azure/msal-react';
-import { Network, ShieldCheck } from 'lucide-react';
+import { ExternalLink, Info, Network, PlayCircle, ShieldCheck } from 'lucide-react';
 import { useState } from 'react';
 import { loginRequest } from '../../auth/msal';
 import { signInErrorMessage } from '../../auth/signInErrors';
+import { accessRequirementItems, tenantGraphGitHubUrl } from './accessResources';
 import { VantaNetBackground } from './VantaNetBackground';
 
-export function MissingConfigScreen({ missing }: { missing: readonly string[] }) {
+type AuthScreenProps = {
+  onOpenSampleTenant: () => void;
+};
+
+export function MissingConfigScreen({
+  missing,
+  onOpenSampleTenant,
+}: {
+  missing: readonly string[];
+  onOpenSampleTenant: () => void;
+}) {
   return (
     <main className="signin-screen">
       <VantaNetBackground />
@@ -20,12 +31,17 @@ export function MissingConfigScreen({ missing }: { missing: readonly string[] })
             <code key={key}>{key}</code>
           ))}
         </div>
+        <button className="secondary-action" type="button" onClick={onOpenSampleTenant}>
+          <PlayCircle size={18} />
+          Sample tenant
+        </button>
+        <AccessResources />
       </section>
     </main>
   );
 }
 
-export function SignInScreen() {
+export function SignInScreen({ onOpenSampleTenant }: AuthScreenProps) {
   const { instance } = useMsal();
   const [authError, setAuthError] = useState('');
 
@@ -53,6 +69,11 @@ export function SignInScreen() {
           <ShieldCheck size={18} />
           Sign in
         </button>
+        <button className="secondary-action" type="button" onClick={onOpenSampleTenant}>
+          <PlayCircle size={18} />
+          Sample tenant
+        </button>
+        <AccessResources />
         {authError && (
           <p className="auth-error" role="alert">
             {authError}
@@ -60,5 +81,32 @@ export function SignInScreen() {
         )}
       </section>
     </main>
+  );
+}
+
+function AccessResources() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="access-resources">
+      <button className="ghost-action" type="button" aria-expanded={open} onClick={() => setOpen((current) => !current)}>
+        <Info size={17} />
+        Access requirements
+      </button>
+      {open && (
+        <div className="access-requirements">
+          <p>To connect a live tenant, Tenant Graph needs:</p>
+          <ul>
+            {accessRequirementItems.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          <a href={tenantGraphGitHubUrl} target="_blank" rel="noreferrer">
+            <ExternalLink size={15} />
+            GitHub repository
+          </a>
+        </div>
+      )}
+    </div>
   );
 }

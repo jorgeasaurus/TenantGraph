@@ -1,7 +1,6 @@
-import { useMsal } from '@azure/msal-react';
-import { useMemo, useRef } from 'react';
-import { useGraphToken } from '../../auth/useGraphToken';
-import { createGraphClient } from '../../graph/client';
+import { useMemo, useRef, useState } from 'react';
+import type { GraphClient } from '../../graph/client';
+import { SampleTenantGuide } from '../demo/SampleTenantGuide';
 import { GraphOverlays } from '../graph/GraphOverlays';
 import { RelationshipInspector } from '../graph/RelationshipInspector';
 import { TenantGraphCanvas, type TenantGraphCanvasHandle } from '../graph/TenantGraphCanvas';
@@ -9,29 +8,59 @@ import { Sidebar } from './Sidebar';
 import { Toolbar } from './Toolbar';
 import { useTenantGraphWorkspace } from './useTenantGraphWorkspace';
 
-export function AppShell() {
-  const { instance } = useMsal();
-  const { account, getAccessToken } = useGraphToken();
-  const client = useMemo(() => createGraphClient(getAccessToken), [getAccessToken]);
+type AppShellProps = {
+  accountName: string;
+  client: GraphClient;
+  isSampleTenant?: boolean;
+  onSignOut: () => void;
+};
+
+export function AppShell({ accountName, client, isSampleTenant = false, onSignOut }: AppShellProps) {
   const canvasRef = useRef<TenantGraphCanvasHandle>(null);
+  const [sampleGuideDismissed, setSampleGuideDismissed] = useState(false);
   const { actions, derived, state } = useTenantGraphWorkspace(client);
+  const guideOpen = isSampleTenant && !sampleGuideDismissed;
+  const resetGraph = () => {
+    void actions.loadGraph().finally(() => {
+      canvasRef.current?.resetView();
+    });
+  };
+  const graphLimitOverlay = useMemo(
+    () =>
+      derived.graphLimitResult.hiddenNodeCount > 0 ? (
+        <div className="state-banner graph-limit-state">
+          Showing {derived.visibleGraph.nodes.length} of {derived.graphLimitResult.totalNodeCount} loaded objects.
+          <button type="button" onClick={actions.showMoreGraphObjects}>
+            Load more
+          </button>
+        </div>
+      ) : null,
+    [
+      actions.showMoreGraphObjects,
+      derived.graphLimitResult.hiddenNodeCount,
+      derived.graphLimitResult.totalNodeCount,
+      derived.visibleGraph.nodes.length,
+    ],
+  );
 
   return (
     <div className="app-shell">
       <Toolbar
-        accountName={account?.name ?? account?.username ?? 'Signed in'}
+        accountName={accountName}
         depth={state.depth}
         focusDepth={state.focusDepth}
+        isSampleTenant={isSampleTenant}
         loading={Boolean(state.loading || state.busyNodeId)}
         searchTerm={state.searchTerm}
         onDepthChange={actions.setDepth}
         onFitGraph={() => canvasRef.current?.fitView()}
         onFocusDepthChange={actions.setFocusDepth}
-        onResetGraph={actions.loadGraph}
+        onResetGraph={resetGraph}
         onResetView={() => canvasRef.current?.resetView()}
+        onOpenGuide={isSampleTenant ? () => setSampleGuideDismissed(false) : undefined}
         onSearch={actions.runSearch}
         onSearchTermChange={actions.setSearchTerm}
-        onSignOut={() => instance.logoutRedirect()}
+        onSignOut={onSignOut}
       />
       <div className="workspace">
         <Sidebar
@@ -83,6 +112,7 @@ export function AppShell() {
             <TenantGraphCanvas
               ref={canvasRef}
               centralNodeId={state.centralNodeId}
+              data-guide="graph-canvas"
               focusedZoneId={state.focusedZoneId}
               graph={derived.visibleGraph}
               selectedEdgeId={state.selectedEdgeId}
@@ -91,19 +121,7 @@ export function AppShell() {
               onSelectEdge={actions.selectEdge}
               onSelectNode={actions.selectNode}
             />
-            <GraphOverlays
-              leftStackTop={
-                derived.graphLimitResult.hiddenNodeCount > 0 ? (
-                  <div className="state-banner graph-limit-state">
-                    Showing {derived.visibleGraph.nodes.length} of {derived.graphLimitResult.totalNodeCount} loaded
-                    objects.
-                    <button type="button" onClick={actions.showMoreGraphObjects}>
-                      Load more
-                    </button>
-                  </div>
-                ) : null
-              }
-            />
+            <GraphOverlays leftStackTop={graphLimitOverlay} />
             {state.loading && <div className="loading-state">{state.loading}</div>}
           </div>
           {state.inspectorOpen && (
@@ -119,6 +137,7 @@ export function AppShell() {
           )}
         </main>
       </div>
+      {isSampleTenant && <SampleTenantGuide open={guideOpen} onClose={() => setSampleGuideDismissed(true)} />}
     </div>
   );
 }

@@ -90,7 +90,7 @@ export function Sidebar({
   const showDataConfidence = Boolean(permissionError) || warnings.length > 0;
 
   return (
-    <aside className="sidebar">
+    <aside className="sidebar" data-guide="sidebar">
       <section className="sidebar-section summary-row">
         <div>
           <span className="metric-value">{graphNodeCount}</span>
@@ -140,7 +140,7 @@ export function Sidebar({
         </section>
       )}
 
-      <section className="sidebar-section">
+      <section className="sidebar-section" data-guide="results">
         <div className="section-title">
           <Search size={15} />
           Results
@@ -174,7 +174,7 @@ export function Sidebar({
         </div>
       </section>
 
-      <section className="sidebar-section">
+      <section className="sidebar-section" data-guide="object-types">
         <div className="section-title">
           <Filter size={15} />
           Object types
@@ -200,7 +200,7 @@ export function Sidebar({
         </div>
       </section>
 
-      <section className="sidebar-section">
+      <section className="sidebar-section" data-guide="relationships">
         <div className="section-title">Relationships</div>
         <div className="check-grid compact">
           {tenantRelationshipTypes.map((type) => (
@@ -216,23 +216,27 @@ export function Sidebar({
         </div>
       </section>
 
-      <DetailsPanel
-        busy={selectedNode?.id === busyNodeId}
-        expansion={expansion}
-        impactMetrics={impactMetrics}
-        node={selectedNode}
-        readableSummary={selectedReadableSummary}
-        onExpand={onExpandSelected}
-      />
+      <div data-guide="details">
+        <DetailsPanel
+          busy={selectedNode?.id === busyNodeId}
+          expansion={expansion}
+          impactMetrics={impactMetrics}
+          node={selectedNode}
+          readableSummary={selectedReadableSummary}
+          onExpand={onExpandSelected}
+        />
+      </div>
 
-      <PathFinder
-        candidates={pathCandidates}
-        path={path}
-        selectedNode={selectedNode}
-        selectedTargetId={selectedPathTargetId}
-        onSelectNode={onSelectNode}
-        onTargetChange={onPathTargetChange}
-      />
+      <div data-guide="path-finder">
+        <PathFinder
+          candidates={pathCandidates}
+          path={path}
+          selectedNode={selectedNode}
+          selectedTargetId={selectedPathTargetId}
+          onSelectNode={onSelectNode}
+          onTargetChange={onPathTargetChange}
+        />
+      </div>
 
       {warnings.length > 0 && (
         <section className="sidebar-section warning-list">

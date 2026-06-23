@@ -24,3 +24,10 @@
 - Do not overload Intune app nodes for Entra sign-in resources; cloud resources need distinct node types, copy, query behavior, and icons.
 - Preserve the auth screen's requested Vanta NET visual when changing sign-in backgrounds; do not replace it with a CSS approximation unless explicitly asked.
 - Graph canvas backgrounds should support topology readability first: keep them quiet, non-noisy, and behind the WebGL data layer unless the user explicitly asks for decorative motion.
+- Do not reduce graph object opacity without checking the reset/fresh-load view against realistic data; default nodes must stay legible before the user selects anything.
+- When graph objects are still muted after opacity fixes, increase physical sprite scale and icon drawing contrast before further brightening the background.
+- When reset/fresh-load visibility still feels weak, add a short-lived graph illumination cue instead of permanently increasing background or steady-state glow.
+- Avoid cone or spotlight beams for selected graph nodes unless explicitly requested; prefer flat rings, halos, or labels that do not obscure nearby data.
+- Tutorial overlays that target content inside scrollable panels must scroll the target into view before measuring and drawing the highlight.
+- Tutorial guide steps should scroll every referenced target into view, not only the first section that was reported as hidden.
+- Sample tenant app catalogs must contain real apps only; policy/configuration names belong in policy collections even when they are imported from the same hydration kit.

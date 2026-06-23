@@ -44,19 +44,20 @@ export function describeHover(hover: GraphHoverTarget, graph: TenantGraph): Hove
 
 function describeNodeHover(node: TenantNode, graph: TenantGraph): HoverCopy {
   const edges = relatedEdges(graph, node.id);
+  const nodeById = new Map(graph.nodes.map((candidate) => [candidate.id, candidate]));
   const relatedTypes = new Map<string, number>();
 
   for (const edge of edges) {
     const relatedId = edge.source === node.id ? edge.target : edge.source;
-    const relatedNode = graph.nodes.find((candidate) => candidate.id === relatedId);
+    const relatedNode = nodeById.get(relatedId);
     if (relatedNode) {
       const type = readableObjectType(relatedNode);
       relatedTypes.set(type, (relatedTypes.get(type) ?? 0) + 1);
     }
   }
 
-  const detail = [...relatedTypes.entries()]
-    .sort((first, second) => second[1] - first[1] || first[0].localeCompare(second[0]))
+  const detail = Array.from(relatedTypes.entries())
+    .toSorted((first, second) => second[1] - first[1] || first[0].localeCompare(second[0]))
     .slice(0, 3)
     .map(([type, count]) => `${count} ${type}`)
     .join(', ');
