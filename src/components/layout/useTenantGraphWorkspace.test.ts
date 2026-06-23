@@ -66,6 +66,34 @@ describe('workspace reset', () => {
   });
 });
 
+describe('workspace cluster focus', () => {
+  it('stores the focused zone and filters to that zone family', () => {
+    const state = workspaceReducer(initialWorkspaceState(), { type: 'selectCluster', zoneId: 'apps' });
+
+    expect(state.focusedZoneId).toBe('apps');
+    expect(state.typeFilter.app).toBe(true);
+    expect(state.typeFilter.cloudApp).toBe(true);
+    expect(state.typeFilter.user).toBe(false);
+    expect(state.inspectorOpen).toBe(false);
+  });
+
+  it('clears focused zone when the user returns to a node-centered view', () => {
+    let state = workspaceReducer(initialWorkspaceState(), { type: 'selectCluster', zoneId: 'apps' });
+    state = {
+      ...state,
+      graph: {
+        nodes: [{ id: 'app:portal', type: 'app', label: 'Company Portal' }],
+        edges: [],
+      },
+    };
+
+    state = workspaceReducer(state, { type: 'selectNode', nodeId: 'app:portal' });
+
+    expect(state.focusedZoneId).toBeUndefined();
+    expect(state.selectedNodeId).toBe('app:portal');
+  });
+});
+
 describe('workspace sign-in projection', () => {
   it('selects the clicked failure event instead of an earlier successful sign-in projection', () => {
     const overview = {

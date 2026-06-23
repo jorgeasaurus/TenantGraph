@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useImperativeHandle, useRef, useState, type Ref } from 'react';
+import { useCallback, useEffect, useImperativeHandle, useRef, useState, type MutableRefObject, type Ref } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import type { TenantEdge, TenantGraph, TenantNode } from '../../models/tenantGraph';
 import { edgeColors, relationshipLabel, stableHash } from '../../utils/graphUtils';
 import { useLazyRef } from '../../utils/useLazyRef';
-import { fitCameraToGraph, fitCameraToZone } from './graphCamera';
+import { applyCameraPose, cameraPoseForGraph, cameraPoseForZone, fitCameraToGraph, type CameraPose } from './graphCamera';
 import { describeHover, type GraphHoverTarget } from './graphHoverCopy';
 import { type GraphLabelData, updateGraphLabels } from './graphLabelVisibility';
 import { type GraphZone, layoutGraph, makeEdgeGeometry } from './graphLayout';
@@ -16,6 +16,7 @@ import {
   edgeRelevanceOpacity,
   edgeVisual,
   labelPriority,
+  nodeDisplayOpacity,
   nodeRelevanceOpacity,
   nodeSignalColor,
 } from './graphVisualPolicy';
@@ -42,6 +43,7 @@ export type TenantGraphCanvasHandle = {
 
 type TenantGraphCanvasProps = {
   centralNodeId?: string;
+  focusedZoneId?: string;
   graph: TenantGraph;
   ref?: Ref<TenantGraphCanvasHandle>;
   selectedEdgeId?: string;
@@ -56,8 +58,18 @@ type HoverState = GraphHoverTarget & {
   y: number;
 };
 
+type CameraFlight = {
+  duration: number;
+  fromPosition: THREE.Vector3;
+  fromTarget: THREE.Vector3;
+  startedAt: number;
+  toPosition: THREE.Vector3;
+  toTarget: THREE.Vector3;
+};
+
 export function TenantGraphCanvas({
   centralNodeId,
+  focusedZoneId,
   graph,
   ref,
   selectedEdgeId,
@@ -72,6 +84,8 @@ export function TenantGraphCanvas({
     const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
     const controlsRef = useRef<OrbitControls | null>(null);
     const groupRef = useRef<THREE.Group | null>(null);
+    const cameraFlightRef = useRef<CameraFlight | undefined>(undefined);
+    const cameraFocusKeyRef = useRef<string | undefined>(undefined);
     const edgePickablesRef = useRef<THREE.Object3D[]>([]);
     const nodePickablesRef = useRef<THREE.Object3D[]>([]);
     const zonePickablesRef = useRef<THREE.Object3D[]>([]);
@@ -79,7 +93,7 @@ export function TenantGraphCanvas({
     const edgeSelectRef = useRef(onSelectEdge);
     const selectClusterRef = useRef(onSelectCluster);
     const selectRef = useRef(onSelectNode);
-    const focusNodeIdRef = useRef<string | undefined>(centralNodeId);
+    const focusPointRef = useRef<THREE.Vector3 | undefined>(undefined);
     const hoverNodeIdRef = useRef<string | undefined>(undefined);
     const [hover, setHover] = useState<HoverState>();
     const { getImage, version: nodeImageVersion } = useNodeImageCache(graph.nodes);
@@ -96,10 +110,6 @@ export function TenantGraphCanvas({
       selectClusterRef.current = onSelectCluster;
     }, [onSelectCluster]);
 
-    useEffect(() => {
-      focusNodeIdRef.current = selectedNodeId ?? centralNodeId;
-    }, [centralNodeId, selectedNodeId]);
-
     const resetView = useCallback(() => {
       const camera = cameraRef.current;
       const controls = controlsRef.current;
@@ -107,9 +117,37 @@ export function TenantGraphCanvas({
         return;
       }
 
-      camera.position.set(120, 110, 180);
-      controls.target.set(0, 0, 0);
-      controls.update();
+      cameraFlightRef.current = undefined;
+      if (positionsRef.current.size > 0) {
+        applyCameraPose(camera, controls, cameraPoseForGraph(camera, controls, positionsRef.current));
+      } else {
+        camera.position.set(98, 90, 148);
+        controls.target.set(0, 0, 0);
+        controls.update();
+      }
+    }, [positionsRef]);
+
+    const moveCameraToPose = useCallback((pose: CameraPose, animated = true) => {
+      const camera = cameraRef.current;
+      const controls = controlsRef.current;
+      if (!camera || !controls) {
+        return;
+      }
+
+      if (!animated) {
+        cameraFlightRef.current = undefined;
+        applyCameraPose(camera, controls, pose);
+        return;
+      }
+
+      cameraFlightRef.current = {
+        duration: 620,
+        fromPosition: camera.position.clone(),
+        fromTarget: controls.target.clone(),
+        startedAt: performance.now(),
+        toPosition: pose.position.clone(),
+        toTarget: pose.target.clone(),
+      };
     }, []);
 
     const fitView = useCallback(() => {
@@ -119,8 +157,8 @@ export function TenantGraphCanvas({
         return;
       }
 
-      fitCameraToGraph(camera, controls, positionsRef.current);
-    }, [positionsRef]);
+      moveCameraToPose(cameraPoseForGraph(camera, controls, positionsRef.current));
+    }, [moveCameraToPose, positionsRef]);
 
     useImperativeHandle(ref, () => ({ fitView, resetView }), [fitView, resetView]);
 
@@ -181,7 +219,7 @@ export function TenantGraphCanvas({
         if (positionsRef.current.size > 0) {
           fitCameraToGraph(camera, controls, positionsRef.current);
         }
-        updateFocusGlow(container, camera, positionsRef.current, focusNodeIdRef.current);
+        updateFocusGlow(container, camera, focusPointRef.current);
       };
 
       const pickTarget = (event: PointerEvent | MouseEvent): Pick<HoverState, 'edge' | 'node' | 'zone'> => {
@@ -227,7 +265,8 @@ export function TenantGraphCanvas({
         } else if (target.edge) {
           edgeSelectRef.current(target.edge.id);
         } else if (target.zone) {
-          fitCameraToZone(camera, controls, target.zone);
+          moveCameraToPose(cameraPoseForZone(camera, controls, target.zone, pointsForZone(target.zone, positionsRef.current)));
+          focusPointRef.current = target.zone.center;
           selectClusterRef.current?.(target.zone.id);
         }
       };
@@ -245,8 +284,9 @@ export function TenantGraphCanvas({
       const animate = () => {
         const elapsed = clock.getElapsedTime();
         animatePulses(groupRef.current, elapsed);
+        updateCameraFlight(cameraFlightRef, camera, controls, performance.now());
         controls.update();
-        updateFocusGlow(container, camera, positionsRef.current, focusNodeIdRef.current);
+        updateFocusGlow(container, camera, focusPointRef.current);
         updateGraphLabels(groupRef.current, camera, controls, renderer, hoverNodeIdRef.current);
         renderer.render(scene, camera);
         frame = window.requestAnimationFrame(animate);
@@ -266,7 +306,7 @@ export function TenantGraphCanvas({
         renderer.dispose();
         renderer.domElement.remove();
       };
-    }, [positionsRef, resetView]);
+    }, [moveCameraToPose, positionsRef, resetView]);
 
     useEffect(() => {
       const scene = sceneRef.current;
@@ -285,6 +325,10 @@ export function TenantGraphCanvas({
       const relationshipDistances = buildRelationshipDistances(graph, selectedNodeId);
       const hasRelationshipFocus = Boolean(selectedNodeId && relationshipDistances.size > 0);
       positionsRef.current = positions;
+      const focusedZone = focusedZoneId ? zones.find((zone) => zone.id === focusedZoneId) : undefined;
+      const focusedZoneNodeIds = new Set(focusedZone?.nodeIds ?? []);
+      const hasZoneFocus = Boolean(focusedZone && focusedZoneNodeIds.size > 0);
+      focusPointRef.current = focusedZone?.center ?? focusPointForNode(positions, selectedNodeId ?? centralNodeId);
 
       for (const zone of zones) {
         const zoneObject = makeSemanticZone(zone);
@@ -308,8 +352,11 @@ export function TenantGraphCanvas({
         const color = edgeColors[edge.type] ?? '#64748b';
         const visual = edgeVisual(edge.type);
         const activeEdge = edge.id === selectedEdgeId || edge.source === selectedNodeId || edge.target === selectedNodeId;
+        const edgeInFocusedZone = focusedZoneNodeIds.has(edge.source) && focusedZoneNodeIds.has(edge.target);
         const relevanceOpacity = edgeRelevanceOpacity(edge, relationshipDistances, hasRelationshipFocus);
-        const dimmedEdge = hasRelationshipFocus && relevanceOpacity <= 0.25 && !activeEdge;
+        const dimmedEdge =
+          (hasRelationshipFocus && relevanceOpacity <= 0.25 && !activeEdge) ||
+          (hasZoneFocus && !edgeInFocusedZone && !activeEdge);
         const opacity = dimmedEdge
           ? visual.dimOpacity
           : activeEdge
@@ -381,7 +428,8 @@ export function TenantGraphCanvas({
         const isSelected = node.id === selectedNodeId;
         const relationshipDistance = relationshipDistances.get(node.id);
         const nodeOpacity = nodeRelevanceOpacity(relationshipDistance, hasRelationshipFocus);
-        const dimmed = hasRelationshipFocus && nodeOpacity <= 0.25;
+        const dimmedByZone = hasZoneFocus && !focusedZoneNodeIds.has(node.id);
+        const dimmed = (hasRelationshipFocus && nodeOpacity <= 0.25) || dimmedByZone;
         const isActive = isCentral || isSelected || relationshipDistance === 0 || relationshipDistance === 1;
         const iconSize = isSelected ? 20 : isCentral ? 18 : 14;
         const color = iconColor(node);
@@ -394,7 +442,7 @@ export function TenantGraphCanvas({
         );
 
         if (isCentral || isSelected) {
-          const haloOpacity = isCentral ? 0.16 : 0.12;
+          const haloOpacity = isCentral ? 0.135 : 0.105;
           const halo = new THREE.Mesh(
             new THREE.SphereGeometry(iconSize * 0.72, 18, 10),
             new THREE.MeshBasicMaterial({
@@ -417,7 +465,9 @@ export function TenantGraphCanvas({
         icon.scale.set(iconSize, iconSize, 1);
         icon.userData.node = node;
         icon.renderOrder = isSelected ? renderLayers.interactions + 3 : renderLayers.nodes + 2;
-        (icon.material as THREE.SpriteMaterial).opacity = nodeOpacity;
+        (icon.material as THREE.SpriteMaterial).opacity = dimmedByZone
+          ? 0.14
+          : nodeDisplayOpacity(nodeOpacity, isCentral || isSelected);
         nodePickablesRef.current.push(icon);
         group.add(icon);
 
@@ -437,8 +487,29 @@ export function TenantGraphCanvas({
 
       scene.add(group);
       groupRef.current = group;
-      fitView();
-    }, [nodeImageVersion, centralNodeId, fitView, getImage, graph, positionsRef, selectedEdgeId, selectedNodeId]);
+      const focusKey = cameraFocusKey(graph, centralNodeId, focusedZoneId);
+      if (focusKey !== cameraFocusKeyRef.current) {
+        cameraFocusKeyRef.current = focusKey;
+        const camera = cameraRef.current;
+        const controls = controlsRef.current;
+        if (camera && controls && focusedZone) {
+          moveCameraToPose(cameraPoseForZone(camera, controls, focusedZone, pointsForZone(focusedZone, positions)));
+        } else {
+          fitView();
+        }
+      }
+    }, [
+      nodeImageVersion,
+      centralNodeId,
+      fitView,
+      focusedZoneId,
+      getImage,
+      graph,
+      moveCameraToPose,
+      positionsRef,
+      selectedEdgeId,
+      selectedNodeId,
+    ]);
 
     const hoverCopy = hover ? describeHover(hover, graph) : undefined;
 
@@ -458,11 +529,9 @@ export function TenantGraphCanvas({
 function updateFocusGlow(
   container: HTMLDivElement,
   camera: THREE.PerspectiveCamera,
-  positions: Map<string, THREE.Vector3>,
-  focusNodeId?: string,
+  focusPosition?: THREE.Vector3,
 ): void {
   const host = container.parentElement ?? container;
-  const focusPosition = focusNodeId ? positions.get(focusNodeId) : undefined;
   if (!focusPosition) {
     host.style.setProperty('--graph-focus-opacity', '0.38');
     host.style.setProperty('--graph-focus-x', '50%');
@@ -479,6 +548,58 @@ function updateFocusGlow(
   host.style.setProperty('--graph-focus-opacity', '0.82');
   host.style.setProperty('--graph-focus-x', `${x}px`);
   host.style.setProperty('--graph-focus-y', `${y}px`);
+}
+
+function updateCameraFlight(
+  flightRef: MutableRefObject<CameraFlight | undefined>,
+  camera: THREE.PerspectiveCamera,
+  controls: OrbitControls,
+  now: number,
+): void {
+  const flight = flightRef.current;
+  if (!flight) {
+    return;
+  }
+
+  const progress = Math.min(1, (now - flight.startedAt) / flight.duration);
+  const eased = easeInOutCubic(progress);
+  camera.position.copy(flight.fromPosition).lerp(flight.toPosition, eased);
+  controls.target.copy(flight.fromTarget).lerp(flight.toTarget, eased);
+
+  if (progress >= 1) {
+    flightRef.current = undefined;
+  }
+}
+
+function pointsForZone(zone: GraphZone, positions: Map<string, THREE.Vector3>): THREE.Vector3[] {
+  const points: THREE.Vector3[] = [];
+  for (const nodeId of zone.nodeIds) {
+    const position = positions.get(nodeId);
+    if (position) {
+      points.push(position);
+    }
+  }
+  return points;
+}
+
+function focusPointForNode(positions: Map<string, THREE.Vector3>, nodeId: string | undefined): THREE.Vector3 | undefined {
+  return nodeId ? positions.get(nodeId) : undefined;
+}
+
+function cameraFocusKey(graph: TenantGraph, centralNodeId: string | undefined, focusedZoneId: string | undefined): string {
+  return [
+    focusedZoneId ?? 'graph',
+    centralNodeId ?? '',
+    graph.nodes.length,
+    graph.edges.length,
+    graph.nodes.map((node) => node.id).join('|'),
+  ].join(':');
+}
+
+function easeInOutCubic(value: number): number {
+  return value < 0.5
+    ? 4 * value * value * value
+    : 1 - Math.pow(-2 * value + 2, 3) / 2;
 }
 
 function clearFocusGlow(container: HTMLDivElement): void {

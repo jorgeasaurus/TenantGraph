@@ -22,7 +22,7 @@ export function makeFocusRings(position: THREE.Vector3, size: number, color: str
   const ringColor = new THREE.Color(color);
 
   for (let index = 0; index < 2; index += 1) {
-    const opacity = index === 0 ? 0.25 : 0.17;
+    const opacity = index === 0 ? 0.22 : 0.15;
     const ring = new THREE.Mesh(
       new THREE.TorusGeometry(size * (2.05 + index * 0.52), 0.11, 8, 96),
       new THREE.MeshBasicMaterial({
@@ -90,7 +90,7 @@ export function makeNodeLayers(
   options: { active: boolean; dimmed: boolean; signalColor?: string },
 ): THREE.Group {
   const group = new THREE.Group();
-  const opacity = options.dimmed ? 0.04 : options.active ? 0.2 : 0.1;
+  const opacity = options.dimmed ? 0.035 : options.active ? 0.17 : 0.085;
   const ring = new THREE.Mesh(
     new THREE.TorusGeometry(size * 0.86, 0.08, 8, 56),
     new THREE.MeshBasicMaterial({
@@ -111,7 +111,7 @@ export function makeNodeLayers(
     new THREE.MeshBasicMaterial({
       color,
       transparent: true,
-      opacity: options.dimmed ? 0.025 : options.active ? 0.11 : 0.055,
+      opacity: options.dimmed ? 0.022 : options.active ? 0.095 : 0.047,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
     }),

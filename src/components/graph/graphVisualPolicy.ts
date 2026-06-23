@@ -59,6 +59,11 @@ export function nodeRelevanceOpacity(distance: number | undefined, hasRelationsh
   }
 }
 
+export function nodeDisplayOpacity(relevanceOpacity: number, prominent: boolean): number {
+  const maximum = prominent ? 0.96 : 0.88;
+  return Math.min(maximum, relevanceOpacity);
+}
+
 export function edgeRelevanceOpacity(
   edge: TenantEdge,
   distances: Map<string, number>,

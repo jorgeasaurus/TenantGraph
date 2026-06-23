@@ -447,3 +447,20 @@
   - [x] Deploy production build and verify the URL
 
 - Tenant Graph is pushed to private GitHub repo `https://github.com/jorgeasaurus/TenantGraph` and deployed to Vercel project `jorgeasaurus-projects/tenant-graph`. Production URL: `https://tenant-graph.vercel.app`. Vercel production env vars are configured for `VITE_AAD_CLIENT_ID`, `VITE_AAD_TENANT_ID`, and `VITE_REDIRECT_URI=https://tenant-graph.vercel.app`; Entra ID must include that exact URL as a SPA redirect URI for sign-in to work. Checks pass: GitHub push, Vercel production build/deploy, `curl -I` HTTP 200, `vercel inspect` Ready, Playwright production smoke showing sign-in screen without missing-config state, and local `npm run build`. Build still emits the existing large Three.js/MSAL chunk warning; browser console still has the expected duplicate Three.js warning from Vanta plus app Three.js.
+
+- [x] Smooth object-section camera focus
+  - [x] Preserve focused graph zone after cluster/object-section selection
+  - [x] Fit camera to actual visible node bounds instead of origin or loose zone radius
+  - [x] Animate camera movement while preserving the current orbit direction
+  - [x] Keep selected-zone glow aligned to the focused object family
+  - [x] Run tests, lint, typecheck, and build
+
+- Object-section focus now keeps the clicked zone through filtering and fits to the actual visible node bounds, so Apps/Policies/Devices no longer frame around an off-origin empty radius. Camera movement is eased over 620ms and preserves the current orbit direction instead of snapping to a fixed diagonal. The cyan graph-surface glow follows the focused zone center while non-focused visible objects can dim for context. Checks pass: `npx tsc -b --pretty false`, `npm run lint`, `npm run test -- --run` (52 tests), `npm run build`, and `npm audit --audit-level=high`. Build still emits the existing large Three.js/MSAL chunk warning.
+
+- [x] Closer reset and softer object opacity
+  - [x] Pull default graph fit closer on fresh load
+  - [x] Make reset view use the same closer graph-fit framing
+  - [x] Slightly reduce node object opacity without weakening selected focus
+  - [x] Run focused and full verification
+
+- Reset and fresh-load graph framing now use a closer full-graph camera fit: full-graph minimum radius changed from 80 to 68, wide padding from 1.28 to 1.14, and narrow padding from 1.42 to 1.28. Reset view now fits the current graph positions instead of using the old fixed farther pose, with a closer fallback before data exists. Node object sprites are slightly translucent by default (`0.88`, prominent `0.96`), with supporting rings/underlays softened. Checks pass: `npx tsc -b --pretty false`, focused graph camera/visual policy tests, `npm run lint`, `npm run test -- --run` (54 tests), `npm run build`, and `npm audit --audit-level=high`. Build still emits the existing large Three.js/MSAL chunk warning.

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import * as THREE from 'three';
 import type { TenantEdge, TenantNode } from '../../models/tenantGraph';
-import { directionEndpoints, edgeVisual, labelPriority } from './graphVisualPolicy';
+import { directionEndpoints, edgeVisual, labelPriority, nodeDisplayOpacity } from './graphVisualPolicy';
 
 describe('graph visual policy', () => {
   it('assigns distinct line styles for key relationship types', () => {
@@ -30,5 +30,11 @@ describe('graph visual policy', () => {
     expect(labelPriority(true, false, undefined)).toBeGreaterThan(labelPriority(false, true, undefined));
     expect(labelPriority(false, false, 1)).toBeGreaterThan(labelPriority(false, false, 2));
     expect(labelPriority(false, false, 2)).toBeGreaterThan(labelPriority(false, false, undefined));
+  });
+
+  it('keeps object icons slightly translucent unless they are already relationship-dimmed', () => {
+    expect(nodeDisplayOpacity(1, false)).toBe(0.88);
+    expect(nodeDisplayOpacity(1, true)).toBe(0.96);
+    expect(nodeDisplayOpacity(0.6, false)).toBe(0.6);
   });
 });

@@ -31,6 +31,7 @@ export type WorkspaceState = {
   error?: string;
   expandedDepthByNode: Record<string, number>;
   focusDepth: number;
+  focusedZoneId?: string;
   graph: TenantGraph;
   graphObjectLimit: number;
   inspectorOpen: boolean;
@@ -117,6 +118,7 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
         selectedEdgeId: undefined,
         selectedNodeId: firstNode?.id,
         centralNodeId: firstNode?.id,
+        focusedZoneId: undefined,
         loading: '',
       };
     }
@@ -129,6 +131,7 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
       return {
         ...state,
         centralNodeId: selectedNodeId ?? state.centralNodeId,
+        focusedZoneId: undefined,
         graph,
         inspectorOpen: true,
         selectedEdgeId: undefined,
@@ -152,6 +155,7 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
       return {
         ...state,
         focusDepth: 0,
+        focusedZoneId: action.zoneId,
         inspectorOpen: false,
         resultLimit: defaultResultLimit,
         selectedEdgeId: undefined,
@@ -165,6 +169,7 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
         ...state,
         selectedNodeId: action.nodeId,
         centralNodeId: action.nodeId,
+        focusedZoneId: undefined,
         selectedEdgeId: undefined,
         pathTargetId: undefined,
         inspectorOpen: true,
@@ -180,6 +185,7 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
         ...state,
         searchTerm: action.searchTerm,
         remoteResults: [],
+        focusedZoneId: undefined,
         resultLimit: defaultResultLimit,
       };
     case 'showMoreGraph':
@@ -206,6 +212,7 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
           ...state.relationshipFilter,
           [action.relationshipType]: !state.relationshipFilter[action.relationshipType],
         },
+        focusedZoneId: undefined,
       };
     case 'toggleType':
       return {
@@ -214,6 +221,7 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
           ...state.typeFilter,
           [action.nodeType]: !state.typeFilter[action.nodeType],
         },
+        focusedZoneId: undefined,
       };
     default:
       return state;

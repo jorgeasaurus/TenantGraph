@@ -6,6 +6,7 @@ import { type GraphZoneDefinition, zoneForNode } from '../../utils/graphZones';
 export type GraphZone = GraphZoneDefinition & {
   boundary: THREE.Vector3[];
   center: THREE.Vector3;
+  nodeIds: string[];
   nodeCount: number;
   radius: number;
 };
@@ -76,6 +77,7 @@ export function layoutGraph(graph: TenantGraph, centralNodeId?: string): GraphLa
       ...zone.definition,
       boundary: makeZoneBoundary(zoneCenter, zonePositions, Math.min(150, zoneRadius)),
       center: zoneCenter,
+      nodeIds: zone.nodes.map((node) => node.id),
       nodeCount: zone.nodes.length,
       radius: Math.min(150, zoneRadius),
     });

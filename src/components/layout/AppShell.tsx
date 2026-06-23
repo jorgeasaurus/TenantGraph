@@ -83,6 +83,7 @@ export function AppShell() {
             <TenantGraphCanvas
               ref={canvasRef}
               centralNodeId={state.centralNodeId}
+              focusedZoneId={state.focusedZoneId}
               graph={derived.visibleGraph}
               selectedEdgeId={state.selectedEdgeId}
               selectedNodeId={state.selectedNodeId}
