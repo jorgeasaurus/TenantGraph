@@ -182,10 +182,11 @@ export function managedDevicesToGraph(devices: GraphObject[]): TenantGraph {
     const userId = text(device, 'userId');
     if (userId && userId !== '00000000-0000-0000-0000-000000000000') {
       const upn = text(device, 'userPrincipalName');
+      const displayName = text(device, 'userDisplayName');
       const userNode: TenantNode = {
         id: nodeId('user', userId),
         type: 'user',
-        label: upn ?? 'Primary user',
+        label: displayName ?? upn ?? 'Primary user',
         subtitle: upn,
         metadata: compactMetadata({ upn }),
       };

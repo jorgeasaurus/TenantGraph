@@ -1,5 +1,55 @@
 # Tenant Graph Plan
 
+- [ ] Main merge and production deploy
+  - [x] Run pre-merge verification
+  - [ ] Commit branch changes
+  - [ ] Merge current branch into `main`
+  - [ ] Push `main` to GitHub
+  - [ ] Deploy production to Vercel
+- [x] README setup split
+  - [x] Move setup, Azure app registration, troubleshooting, and security notes into a separate markdown file
+  - [x] Refocus README on visual showcase, sample tenant, and core features
+  - [x] Verify links and markdown hygiene
+  - Review: moved local install, environment variables, app registration, delegated scopes, development commands, troubleshooting, and security notes to `docs/setup.md`.
+  - Review: README is now a 118-line showcase with screenshots, sample tenant quick start, feature summary, modeled object families, architecture, contribution links, and setup link.
+  - Review: verified referenced local files exist, `README.md` and `docs/setup.md` line counts, `npm run lint`, and `git diff --check`.
+- [x] Default group overview
+  - [x] Add capped group source to initial overview
+  - [x] Keep group membership loading progressive through expansion
+  - [x] Update regression coverage
+  - [x] Run focused and full verification
+  - Review: default overview now includes a capped `/groups?$top=25` source so Lumon groups such as Severed Floor, Macrodata Refinement, and Optics and Design appear without requiring expansion.
+  - Review: regression coverage confirms initial group nodes load without member/memberOf edges; memberships still load through progressive node expansion.
+  - Review: verified with focused sample tenant tests, typecheck, lint, full tests, build, React Doctor 100/100, and `git diff --check`.
+- [x] Repository docs and screenshots
+  - [x] Add license, issue templates, and PR template
+  - [x] Capture fresh sample tenant screenshots for README
+  - [x] Update README with screenshots and license status
+  - [x] Run documentation and build verification
+  - Review: added MIT license, package license metadata, GitHub bug/feature issue forms, PR template, and three README screenshots from the Lumon sample tenant.
+  - Review: verified README image/link paths, parsed issue-template YAML, captured Playwright screenshots for overview/user-device/CA block views, confirmed no `Save view` control in the screenshot flow, and ran `npm run lint`, `npx tsc -b --pretty false`, `npm run test` (70 tests), `npm run build`, `npm run doctor -- --verbose` (100/100), and `git diff --check`. Build still emits the existing large Three.js/MSAL chunk warning.
+- [x] Remove non-loadable saved views
+  - [x] Trace Save view state, storage, and UI
+  - [x] Remove Save view and Saved investigations UI until loading exists
+  - [x] Update tests and lessons
+  - [x] Run focused and full verification
+  - Review: deleted the localStorage-only saved investigation workflow from the impact panel; only Copy evidence remains.
+  - Review: verified with `rg` for removed saved-view strings in `src`, `npm run lint`, `npx tsc -b --pretty false`, `npm run test` (70 tests), `npm run build`, `git diff --check`, and Playwright sample smoke on `http://127.0.0.1:5173/?sampleTenant=1` with zero console errors. Build still emits the existing large Three.js/MSAL chunk warning; dev browser still shows the known duplicate Three.js warning.
+- [x] Lumon sample profile photos
+  - [x] Move supplied character images into served sample assets
+  - [x] Map Mark, Helly, Irving, Dylan, and Milchick to the supplied photos
+  - [x] Keep generated initials avatars as fallback for other users
+  - [x] Run focused and full verification
+  - Review: supplied PNGs now live in `public/sample-users/` and hydrate Mark Scout, Helly Riggs, Irving Bailiff, Dylan George, and Seth Milchick in sample mode.
+  - Review: verified with `npx vitest run src/demo/sampleTenantClient.test.ts`, `npx tsc -b --pretty false`, `npm run lint`, `npm run doctor -- --verbose` (100/100), `npm run test` (70 tests), `npm run build`, `git diff --check`, static asset `curl -I` checks for all five PNGs, and Playwright smoke on `http://127.0.0.1:5173/?sampleTenant=1` with zero console errors. Build still emits the existing large Three.js/MSAL chunk warning; dev browser still shows the known duplicate Three.js warning.
+- [x] Lumon sample tenant retheme
+  - [x] Replace generic Contoso-style sample objects with Lumon-themed users, groups, devices, apps, policies, assignments, and sign-ins
+  - [x] Make the default sample overview visibly larger and coherent without requiring search first
+  - [x] Update sample guide copy and account label
+  - [x] Update regression coverage for Lumon search, app icons, expansion, and Conditional Access samples
+  - [x] Run focused tests, full verification, and sample browser smoke
+  - Review: sample mode now loads a Lumon tenant with 123 visible objects / 63 relationships, 24 people, 38 devices, 18 Kier-themed apps, 20 groups, 5 roles, 27 policy/profile objects, 8 filters, 8 scope tags, detected apps, app icons, profile photos, assignments, and Conditional Access sign-ins.
+  - Review: verified with `npx vitest run src/demo/sampleTenantClient.test.ts`, `npx tsc -b --pretty false`, `npm run lint`, `npm run doctor -- --verbose` (100/100), `npm run test` (69 tests), `npm run build`, `git diff --check`, and Playwright smoke on `http://127.0.0.1:5173/?sampleTenant=1` with zero console errors. Build still emits the existing large Three.js/MSAL chunk warning; dev browser still shows the known duplicate Three.js warning.
 - [x] Thermo-nuclear QA loop
   - [x] Run lint baseline and fix findings
   - [x] Run React Doctor baseline and fix findings from root causes

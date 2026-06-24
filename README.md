@@ -6,108 +6,79 @@ Visualize Intune and Entra relationships as an interactive Three.js graph.
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178c6)
 ![Vite](https://img.shields.io/badge/Vite-8-646cff)
 ![Microsoft Graph](https://img.shields.io/badge/Microsoft%20Graph-Intune%20%2B%20Entra-00a4ef)
+![License](https://img.shields.io/github/license/jorgeasaurus/TenantGraph)
 
-![Tenant Graph workspace](docs/tenant-graph-screenshot.png)
+![Tenant Graph sample overview](docs/screenshots/sample-overview.png)
 
 Tenant Graph helps tenant admins, endpoint engineers, and security reviewers understand Microsoft Intune impact. Sign in with Microsoft Entra ID, search for a user, device, app, group, role, or policy, then explore related assignments and dependencies in an Obsidian-style graph.
 
-## Install
+## Why It Exists
 
-Prerequisites:
+Intune and Entra relationships are hard to reason about in tables. Tenant Graph turns those relationships into a visual investigation workspace so teams can answer practical questions faster:
 
-- Node.js `^20.19.0` or `>=22.12.0`
-- Microsoft Entra tenant with Intune data
-- Azure app registration configured as a single-page application
+- Which users, groups, and devices are affected by this policy?
+- Why did Conditional Access block or evaluate a sign-in?
+- Which apps and assignments depend on this group?
+- What changed recently around this object?
+- Is a broad assignment, missing permission, or stale policy hiding risk?
+
+## Try It
+
+Run the Lumon sample tenant without connecting to Microsoft Graph:
 
 ```bash
 npm install
-cp .env.example .env
 npm run dev
+open "http://localhost:5173/?sampleTenant=1"
 ```
 
-Open `http://localhost:5173`.
+For Entra setup, app registration, permissions, and troubleshooting, see [Tenant Graph Setup](docs/setup.md).
 
-## Configuration
+## Sample Views
 
-Set these values in `.env`:
+User, group, and device relationships:
 
-```bash
-VITE_AAD_CLIENT_ID=<app-registration-client-id>
-VITE_AAD_TENANT_ID=<tenant-id>
-VITE_REDIRECT_URI=http://localhost:5173
-```
+![Mark Scout user-device and group relationships](docs/screenshots/user-device-relationships.png)
 
-`VITE_REDIRECT_URI` must exactly match a SPA redirect URI on the Entra app registration. Do not add or use `/auth/popup-callback.html`.
+Conditional Access blocked sign-in:
 
-## Azure App Registration
-
-Fast path:
-
-```powershell
-./New-TenantGraphAppRegistration.ps1 `
-  -TenantId <tenant-id> `
-  -SpaRedirectUri http://localhost:5173 `
-  -GrantAdminConsent `
-  -InstallMissingModules
-```
-
-Manual setup:
-
-- Platform: Single-page application
-- Redirect URI: `http://localhost:5173`
-- Supported account type: single tenant
-- Client secret: not required
-- API permissions: delegated Microsoft Graph permissions
-
-Required delegated scopes:
-
-```text
-User.Read
-User.Read.All
-Group.Read.All
-GroupMember.Read.All
-RoleManagement.Read.Directory
-AuditLog.Read.All
-Policy.Read.ConditionalAccess
-DeviceManagementManagedDevices.Read.All
-DeviceManagementApps.Read.All
-DeviceManagementConfiguration.Read.All
-DeviceManagementServiceConfig.Read.All
-DeviceManagementRBAC.Read.All
-```
-
-Grant admin consent so Tenant Graph can read tenant-wide Intune, directory, and sign-in data. `AuditLog.Read.All` powers sign-in status; `Policy.Read.ConditionalAccess` is requested only when CA policy names and controls are enabled in the Sign-ins panel. The signed-in user still needs an Entra role that can read sign-in logs, such as Reports Reader or Security Reader.
-
-## Usage
-
-```bash
-npm run dev
-```
-
-Then:
-
-1. Sign in with Microsoft Entra ID.
-2. Search for an Intune or Entra object.
-3. Select a node to pin details.
-4. Click `Expand` to load related objects.
-5. Use focus, filters, depth, and friendly-name controls to reduce noise.
-
-Expected result: a responsive dark workspace with a Three.js graph, semantic clusters, relationship styling, object icons, profile/app images when available, and permission warnings when Graph access is incomplete.
+![Conditional Access block projected on the graph](docs/screenshots/conditional-access-block.png)
 
 ## Features
 
-- Map Intune impact across people, devices, groups, apps, policies, filters, scope tags, and roles.
-- Expand relationships progressively so large tenants stay usable.
-- Cap large object lists by default and load more on demand.
-- Highlight selected-object constellations with readable relationship context.
-- Investigate recent sign-ins and whether Conditional Access applied, blocked, or stayed report-only.
-- Show app icons and user profile photos when Microsoft Graph provides them.
-- Fall back cleanly when permissions, photos, or optional Intune data are unavailable.
-- Keep Microsoft Graph response details behind typed adapters.
+- Obsidian-style topology map for Intune and Entra objects.
+- Microsoft Entra sign-in with MSAL and delegated Microsoft Graph scopes.
+- Progressive graph expansion so large tenants stay usable.
+- Object icons, user profile photos, app images, and type-aware colors.
+- Readable Mode that explains relationships in plain language.
+- Conditional Access sign-in view focused on blocked, applied, and evaluated policies.
+- Admin impact panel for blast radius, hygiene signals, and copyable evidence.
+- Capped default overviews with load-more controls for large environments.
+- Sample tenant and guided tutorial for demos without tenant access.
 
-## Data Model
+## What It Models
 
-Graph adapters normalize Microsoft Graph responses before UI rendering:
+- Users, devices, groups, directory roles, and scope tags
+- Intune apps, app assignments, and detected apps
+- Compliance policies, configuration profiles, settings catalog policies, and enrollment profiles
+- Assignment filters and broad targets such as all users or all devices
+- Sign-in events and Conditional Access policy outcomes
+
+## Architecture
+
+Tenant Graph keeps Microsoft Graph plumbing out of the UI:
+
+```text
+src/auth/              MSAL setup and token helpers
+src/graph/             Microsoft Graph client, adapters, expansion, media hydration
+src/models/            Tenant graph types
+src/components/graph/  Three.js canvas, graph objects, overlays
+src/components/layout/ Workspace shell, toolbar, sidebar
+src/components/details/Readable details, evidence, path panels
+src/utils/             Graph transforms and readable summaries
+```
+
+Graph adapters normalize Microsoft Graph responses before rendering:
 
 ```ts
 type TenantNode = {
@@ -132,47 +103,16 @@ type TenantGraph = {
 };
 ```
 
-## Project Layout
-
-```text
-src/auth/              MSAL setup and token helpers
-src/graph/             Microsoft Graph client, adapters, expansion, media hydration
-src/models/            Tenant graph types
-src/components/graph/  Three.js canvas, graph objects, overlays
-src/components/layout/ Workspace shell, toolbar, sidebar
-src/components/details/Readable details, evidence, path panels
-src/utils/             Graph transforms and readable summaries
-```
-
-## Development
+## Contributing
 
 ```bash
 npm run lint
 npm run test
 npm run build
-npm run preview
 ```
 
-`npm run build` runs TypeScript first, then creates the Vite production build.
-
-## Troubleshooting
-
-- Redirect mismatch: add the exact `VITE_REDIRECT_URI` value as a SPA redirect URI.
-- Sign-in popup blocked: allow popups for `localhost:5173`.
-- Empty graph: confirm Intune data exists and admin consent was granted.
-- Permission banner: grant the listed Microsoft Graph permission, then sign out and sign in again.
-- Directory roles show IDs: confirm `RoleManagement.Read.Directory` is granted.
-- Sign-in logs fail: grant `AuditLog.Read.All` and use an account with Reports Reader or Security Reader.
-- CA policy names are missing: grant `Policy.Read.ConditionalAccess`, enable policy names in the Sign-ins panel, and use an account that can read Conditional Access.
-- User photo `404`: expected when no profile photo exists; Tenant Graph falls back to the user icon.
-
-## Security Notes
-
-- No client IDs, tenant IDs, secrets, or tokens should be committed.
-- This is a browser-only SPA; it does not require a client secret.
-- MSAL stores auth state in `sessionStorage`.
-- Microsoft Graph access is delegated to the signed-in user and granted scopes.
+Use the [bug report](.github/ISSUE_TEMPLATE/bug_report.yml), [feature request](.github/ISSUE_TEMPLATE/feature_request.yml), and [pull request template](.github/pull_request_template.md) when opening changes.
 
 ## License
 
-No license file is currently included.
+MIT. See [LICENSE](LICENSE).

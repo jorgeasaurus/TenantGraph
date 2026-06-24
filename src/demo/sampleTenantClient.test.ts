@@ -5,7 +5,7 @@ import { loadTenantOverview, searchTenantObjects } from '../graph/tenantGraphSou
 import { tenantNodeTypes } from '../models/tenantGraph';
 import { sampleGuideSteps } from '../components/demo/sampleGuideSteps';
 import { sampleAppIconSources } from './sampleAppIcons';
-import { sampleGroups, sampleManagedDevices, sampleMobileApps } from './sampleTenantData';
+import { sampleGroups, sampleManagedDevices, sampleMobileApps, sampleUserPhotoDataUrl } from './sampleTenantData';
 import { sampleTenantClient } from './sampleTenantClient';
 
 describe('sample tenant client', () => {
@@ -19,10 +19,15 @@ describe('sample tenant client', () => {
     );
 
     expect(result.warnings).toEqual([]);
-    expect(result.graph.nodes.length).toBeGreaterThanOrEqual(80);
+    expect(result.graph.nodes.length).toBeGreaterThanOrEqual(120);
     expect(result.graph.nodes.filter((node) => node.type === 'user')).toHaveLength(primaryUserIds.size);
     expect(result.graph.nodes.filter((node) => node.type === 'device')).toHaveLength(sampleManagedDevices.length);
+    expect(result.graph.nodes.filter((node) => node.type === 'group')).toHaveLength(sampleGroups.length);
     expect(result.graph.nodes.filter((node) => node.type === 'app')).toHaveLength(sampleMobileApps.length);
+    expect(result.graph.nodes.map((node) => node.label)).toEqual(
+      expect.arrayContaining(['Severed Floor', 'Macrodata Refinement', 'Optics and Design']),
+    );
+    expect(result.graph.edges.map((edge) => edge.type)).not.toEqual(expect.arrayContaining(['member', 'memberOf']));
     expect([...types]).toEqual(
       expect.arrayContaining([
         'app',
@@ -31,6 +36,7 @@ describe('sample tenant client', () => {
         'device',
         'deviceConfigurationProfile',
         'enrollmentProfile',
+        'group',
         'scopeTag',
         'settingsCatalogPolicy',
         'user',
@@ -39,18 +45,18 @@ describe('sample tenant client', () => {
   });
 
   it('supports sample search across directory and Intune object families', async () => {
-    const result = await searchTenantObjects(sampleTenantClient, 'Intune', [...tenantNodeTypes]);
+    const result = await searchTenantObjects(sampleTenantClient, 'Kier', [...tenantNodeTypes]);
     const labels = result.graph.nodes.map((node) => node.label);
-    const groupResult = await searchTenantObjects(sampleTenantClient, 'users', [...tenantNodeTypes]);
+    const groupResult = await searchTenantObjects(sampleTenantClient, 'Severed', [...tenantNodeTypes]);
     const groupLabels = groupResult.graph.nodes.filter((node) => node.type === 'group').map((node) => node.label);
 
-    expect(labels).toEqual(expect.arrayContaining(['Intune Company Portal', 'Intune Administrators', 'Intune Administrator']));
-    expect(groupLabels.length).toBeGreaterThanOrEqual(6);
-    expect(groupLabels).toEqual(expect.arrayContaining(['Finance application users', 'Procurement app users', 'Android pilot users']));
-    expect(sampleGroups.length).toBeGreaterThanOrEqual(15);
+    expect(labels).toEqual(expect.arrayContaining(['Kier Keeper', 'Kier Compliance Committee', 'Kier Tenant Administrator']));
+    expect(groupLabels.length).toBeGreaterThanOrEqual(1);
+    expect(groupLabels).toEqual(expect.arrayContaining(['Severed Floor']));
+    expect(sampleGroups.length).toBeGreaterThanOrEqual(20);
   });
 
-  it('uses real sample apps with distinct large icons', async () => {
+  it('uses Lumon sample apps with distinct large icons', async () => {
     const result = await loadTenantOverview(sampleTenantClient);
     const apps = result.graph.nodes.filter((node) => node.type === 'app');
     const labels = apps.map((node) => node.label);
@@ -58,22 +64,24 @@ describe('sample tenant client', () => {
 
     expect(labels).toEqual(
       expect.arrayContaining([
-        'Intune Company Portal',
-        'Microsoft Edge',
-        'Microsoft Defender',
-        'Windows App Mobile',
-        'SAP Concur',
-        'Microsoft Outlook',
-        'Microsoft Teams',
-        'Microsoft OneDrive',
-        'Zoom Workplace',
-        'Adobe Acrobat Reader',
-        'ServiceNow Agent',
-        'Salesforce',
-        'Slack',
-        'Microsoft Power BI',
-        'Microsoft Planner',
-        'Microsoft Loop',
+        'Kier Keeper',
+        'Macrodata Refiner',
+        'Waffle Party Planner',
+        'Compunction Statement Studio',
+        'Perpetuity Wing Guide',
+        'Defiant Jazz Detector',
+        'Egg Bar Scheduler',
+        'Break Room Recorder',
+        'Wellness Memory Viewer',
+        'Goat Ledger',
+        'Overtime Contingency Console',
+        'Lumon Handbook',
+        'Eagan Bingo',
+        'Cold Harbor Tracker',
+        'Optics Design Catalog',
+        'Severed Mail',
+        'Melon Bar Inventory',
+        'Security Desk Console',
       ]),
     );
     expect(labels.join(' ')).not.toMatch(/\[IHD]|Device Security|Connectivity Settings|policy/i);
@@ -81,16 +89,29 @@ describe('sample tenant client', () => {
     expect(new Set(iconDataUrls).size).toBe(apps.length);
     expect(Object.values(sampleAppIconSources).map((source) => source.sourceUrl)).toEqual(
       expect.arrayContaining([
-        'https://apps.apple.com/us/app/intune-company-portal/id719171358',
-        'https://apps.apple.com/us/app/windows-app-mobile/id714464092',
-        'https://apps.apple.com/us/app/sap-concur/id335023774',
+        'https://lumon.example/apps/kier-keeper',
+        'https://lumon.example/apps/overtime-contingency-console',
+        'https://lumon.example/apps/macrodata-refiner',
       ]),
     );
   });
 
+  it('uses provided profile photos for key Lumon sample users', async () => {
+    const result = await loadTenantOverview(sampleTenantClient);
+    const mark = result.graph.nodes.find((node) => node.id === 'user:user-mark-scout');
+
+    expect(sampleUserPhotoDataUrl('user-mark-scout')).toBe('/sample-users/mark-scout.png');
+    expect(sampleUserPhotoDataUrl('user-helly-riggs')).toBe('/sample-users/helly-riggs.png');
+    expect(sampleUserPhotoDataUrl('user-irving-bailiff')).toBe('/sample-users/irving-bailiff.png');
+    expect(sampleUserPhotoDataUrl('user-dylan-george')).toBe('/sample-users/dylan-george.png');
+    expect(sampleUserPhotoDataUrl('user-seth-milchick')).toBe('/sample-users/seth-milchick.png');
+    expect(sampleUserPhotoDataUrl('user-harmony-cobel')).toMatch(/^data:image\/svg\+xml,/);
+    expect(mark?.iconDataUrl).toBe('/sample-users/mark-scout.png');
+  });
+
   it('expands a sample user into groups, roles, and devices', async () => {
     const overview = await loadTenantOverview(sampleTenantClient);
-    const user = overview.graph.nodes.find((node) => node.id === 'user:user-adele');
+    const user = overview.graph.nodes.find((node) => node.id === 'user:user-harmony-cobel');
 
     if (!user || user.type !== 'user') {
       throw new Error('Sample signed-in user was not loaded.');
@@ -100,14 +121,14 @@ describe('sample tenant client', () => {
     const relationshipTypes = result.graph.edges.map((edge) => edge.type);
 
     expect(labels).toEqual(
-      expect.arrayContaining(['Intune Administrators', 'Intune Administrator', 'W365-ADELE-01']),
+      expect.arrayContaining(['Eagan Executive Circle', 'Kier Tenant Administrator', 'EXEC-COBEL-W365']),
     );
     expect(relationshipTypes).toEqual(expect.arrayContaining(['memberOf', 'primaryUser']));
   });
 
   it('serves Conditional Access sample sign-ins with policy details', async () => {
     const overview = await loadTenantOverview(sampleTenantClient);
-    const user = overview.graph.nodes.find((node) => node.id === 'user:user-adele');
+    const user = overview.graph.nodes.find((node) => node.id === 'user:user-mark-scout');
 
     if (!user || user.type !== 'user') {
       throw new Error('Sample signed-in user was not loaded.');
@@ -124,6 +145,7 @@ describe('sample tenant client', () => {
     });
 
     expect(result.events.map((event) => event.ca.state)).toEqual(expect.arrayContaining(['applied', 'failed']));
+    expect(result.events.map((event) => event.appDisplayName)).toEqual(expect.arrayContaining(['Macrodata Refiner']));
     expect(result.events.some((event) => event.ca.policies.length > 0)).toBe(true);
   });
 });

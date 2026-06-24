@@ -1,4 +1,4 @@
-import { Clipboard, Save, ShieldCheck, Trash2, TriangleAlert } from 'lucide-react';
+import { Clipboard, ShieldCheck, TriangleAlert } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import type { AdminImpactAnalysis, AdminFinding } from '../../utils/adminInsights';
 
@@ -8,26 +8,12 @@ type AdminImpactPanelProps = {
   selectedLabel?: string;
 };
 
-type SavedInvestigation = {
-  id: string;
-  savedAt: string;
-  subject: string;
-  summary: string;
-};
-
-const savedInvestigationsKey = 'tenantGraph.savedInvestigations';
-const savedInvestigationDateFormatter = new Intl.DateTimeFormat(undefined, {
-  dateStyle: 'medium',
-  timeStyle: 'short',
-});
-
 export function AdminImpactPanel({
   analysis,
   investigationSummary,
   selectedLabel,
 }: AdminImpactPanelProps) {
   const [copied, setCopied] = useState(false);
-  const [savedInvestigations, setSavedInvestigations] = useState<SavedInvestigation[]>(readSavedInvestigations);
   const copyResetTimer = useRef<number | undefined>(undefined);
   const title = selectedLabel ? 'Impact analyzer' : 'Tenant hygiene';
 
@@ -51,27 +37,6 @@ export function AdminImpactPanel({
     } catch {
       setCopied(false);
     }
-  }
-
-  function saveInvestigation() {
-    const nextSaved = [
-      {
-        id: crypto.randomUUID(),
-        savedAt: new Date().toISOString(),
-        subject: selectedLabel ?? 'Tenant hygiene',
-        summary: investigationSummary,
-      },
-      ...savedInvestigations,
-    ].slice(0, 6);
-
-    setSavedInvestigations(nextSaved);
-    writeSavedInvestigations(nextSaved);
-  }
-
-  function removeInvestigation(id: string) {
-    const nextSaved = savedInvestigations.filter((investigation) => investigation.id !== id);
-    setSavedInvestigations(nextSaved);
-    writeSavedInvestigations(nextSaved);
   }
 
   return (
@@ -98,32 +63,7 @@ export function AdminImpactPanel({
           <Clipboard size={15} />
           {copied ? 'Copied' : 'Copy evidence'}
         </button>
-        <button className="secondary-action compact-action" type="button" onClick={saveInvestigation}>
-          <Save size={15} />
-          Save view
-        </button>
       </div>
-
-      {savedInvestigations.length > 0 && (
-        <div className="saved-investigations">
-          <h3>Saved investigations</h3>
-          {savedInvestigations.map((investigation) => (
-            <div key={investigation.id} className="saved-investigation">
-              <span>
-                <strong>{investigation.subject}</strong>
-                <small>{formatSavedAt(investigation.savedAt)}</small>
-              </span>
-              <button
-                aria-label={`Remove saved investigation for ${investigation.subject}`}
-                type="button"
-                onClick={() => removeInvestigation(investigation.id)}
-              >
-                <Trash2 size={14} />
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
     </section>
   );
 }
@@ -164,49 +104,4 @@ function InsightList({
       )}
     </div>
   );
-}
-
-function readSavedInvestigations(): SavedInvestigation[] {
-  try {
-    const stored = window.localStorage.getItem(savedInvestigationsKey);
-    if (!stored) {
-      return [];
-    }
-
-    const parsed: unknown = JSON.parse(stored);
-    return Array.isArray(parsed) ? parsed.filter(isSavedInvestigation).slice(0, 6) : [];
-  } catch {
-    return [];
-  }
-}
-
-function writeSavedInvestigations(investigations: SavedInvestigation[]): void {
-  try {
-    window.localStorage.setItem(savedInvestigationsKey, JSON.stringify(investigations));
-  } catch {
-    // Saving investigation shortcuts should never block graph exploration.
-  }
-}
-
-function isSavedInvestigation(value: unknown): value is SavedInvestigation {
-  if (!value || typeof value !== 'object') {
-    return false;
-  }
-
-  const candidate = value as Record<string, unknown>;
-  return (
-    typeof candidate.id === 'string' &&
-    typeof candidate.savedAt === 'string' &&
-    typeof candidate.subject === 'string' &&
-    typeof candidate.summary === 'string'
-  );
-}
-
-function formatSavedAt(value: string): string {
-  const timestamp = Date.parse(value);
-  if (Number.isNaN(timestamp)) {
-    return value;
-  }
-
-  return savedInvestigationDateFormatter.format(timestamp);
 }

@@ -214,62 +214,11 @@
 }
 
 .admin-action-row {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
+  display: flex;
 }
 
 .compact-action {
   margin: 10px 0 0;
   min-height: 38px;
-}
-
-.saved-investigations {
-  display: grid;
-  gap: 7px;
-  margin-top: 12px;
-}
-
-.saved-investigations h3 {
-  margin: 0;
-  color: #eaf6ff;
-  font-size: var(--type-body);
-}
-
-.saved-investigation {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 36px;
-  align-items: center;
-  gap: 8px;
-  border: 1px solid rgba(37, 81, 106, 0.62);
-  border-radius: var(--control-radius);
-  background: rgba(4, 10, 22, 0.58);
-  padding: 7px 7px 7px 9px;
-}
-
-.saved-investigation span,
-.saved-investigation strong,
-.saved-investigation small {
-  display: block;
-  min-width: 0;
-}
-
-.saved-investigation strong {
-  overflow: hidden;
-  color: #f8fbff;
-  font-size: var(--type-body);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.saved-investigation small {
-  margin-top: 2px;
-  color: var(--muted);
-  font-size: var(--type-caption);
-}
-
-.saved-investigation button {
-  width: 34px;
-  min-height: 34px;
-  padding: 0;
+  width: 100%;
 }

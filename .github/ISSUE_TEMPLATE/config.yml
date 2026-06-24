@@ -1,0 +1,6 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Tenant Graph sample tenant
+    url: https://tenant-graph.vercel.app/?sampleTenant=1
+    about: Try the sample tenant before opening a UI or workflow request.
+
