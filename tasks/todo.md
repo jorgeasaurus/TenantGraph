@@ -1,5 +1,22 @@
 # Tenant Graph Plan
 
+- [x] Social card metadata
+  - [x] Add supplied social card asset to the web app
+  - [x] Wire Open Graph and Twitter metadata
+  - [x] Show the social card in README
+  - [x] Check GitHub social preview options
+  - [x] Verify build output and public image URL
+  - Review: added the supplied card as `public/social-card.jpg`, referenced it from website Open Graph/Twitter metadata, and made it the lead README image.
+  - Review: updated the GitHub repo homepage to `https://tenantgraph.com`; GitHub's API exposes social preview read fields but no supported write field for uploading the custom repo social preview image.
+  - Review: verified image dimensions, built metadata, lint, build, and `git diff --check`.
+- [x] Custom domain documentation
+  - [x] Add `tenantgraph.com` as the live site in README
+  - [x] Replace user-facing Vercel production alias links with `tenantgraph.com`
+  - [x] Add custom domain to repo metadata
+  - [x] Verify links and markdown hygiene
+  - Review: README now advertises `tenantgraph.com` near the top and uses `https://tenantgraph.com/?sampleTenant=1` for the hosted sample.
+  - Review: GitHub issue contact links and package metadata now use the custom domain; stale canonical production alias links were replaced in task notes.
+  - Review: verified with `rg` for the old production alias, `curl -I 'https://tenantgraph.com/?sampleTenant=1'`, `npm install --package-lock-only`, and `git diff --check`.
 - [x] Vercel Analytics
   - [x] Install the Vercel Web Analytics package
   - [x] Render analytics once at the React app root
@@ -15,7 +32,7 @@
   - [x] Deploy production to Vercel
   - Review: branch `codex/admin-impact-workflows` was committed at `95cf616`, pushed, merged into `main`, and pushed to GitHub.
   - Review: verified with lint, typecheck, full tests, production build, React Doctor 100/100, and post-merge build. Build still emits the known large chunk warning.
-  - Review: production deployment completed with Vercel CLI 54.15.1 and aliased `https://tenant-graph.vercel.app`.
+  - Review: production deployment completed with Vercel CLI 54.15.1 and aliased `https://tenantgraph.com`.
 - [x] README setup split
   - [x] Move setup, Azure app registration, troubleshooting, and security notes into a separate markdown file
   - [x] Refocus README on visual showcase, sample tenant, and core features
@@ -542,7 +559,7 @@
   - [x] Link/create Vercel project and configure public Vite env values
   - [x] Deploy production build and verify the URL
 
-- Tenant Graph is pushed to private GitHub repo `https://github.com/jorgeasaurus/TenantGraph` and deployed to Vercel project `jorgeasaurus-projects/tenant-graph`. Production URL: `https://tenant-graph.vercel.app`. Vercel production env vars are configured for `VITE_AAD_CLIENT_ID`, `VITE_AAD_TENANT_ID`, and `VITE_REDIRECT_URI=https://tenant-graph.vercel.app`; Entra ID must include that exact URL as a SPA redirect URI for sign-in to work. Checks pass: GitHub push, Vercel production build/deploy, `curl -I` HTTP 200, `vercel inspect` Ready, Playwright production smoke showing sign-in screen without missing-config state, and local `npm run build`. Build still emits the existing large Three.js/MSAL chunk warning; browser console still has the expected duplicate Three.js warning from Vanta plus app Three.js.
+- Tenant Graph is pushed to private GitHub repo `https://github.com/jorgeasaurus/TenantGraph` and deployed to Vercel project `jorgeasaurus-projects/tenant-graph`. Production URL: `https://tenantgraph.com`. Vercel production env vars are configured for `VITE_AAD_CLIENT_ID`, `VITE_AAD_TENANT_ID`, and `VITE_REDIRECT_URI=https://tenantgraph.com`; Entra ID must include that exact URL as a SPA redirect URI for sign-in to work. Checks pass: GitHub push, Vercel production build/deploy, `curl -I` HTTP 200, `vercel inspect` Ready, Playwright production smoke showing sign-in screen without missing-config state, and local `npm run build`. Build still emits the existing large Three.js/MSAL chunk warning; browser console still has the expected duplicate Three.js warning from Vanta plus app Three.js.
 
 - [x] Smooth object-section camera focus
   - [x] Preserve focused graph zone after cluster/object-section selection
@@ -628,7 +645,7 @@
   - [x] Inspect deployment and smoke test production URL
   - [x] Document deployment result
 
-- Tenant Graph production deployment is live at `https://tenant-graph.vercel.app`. Deployment `dpl_CZuHCGAFyQakajziDLHtTeGyiTps` is Ready and aliased to the production domain. Checks pass: `npm run lint`, `npm run test` (56 tests), `npm run build`, `npm audit --audit-level=high`, `git diff --check`, `vercel deploy --prod --yes`, `vercel inspect tenant-graph-nwrd9kyj0-jorgeasaurus-projects.vercel.app`, `curl -I https://tenant-graph.vercel.app` HTTP 200, and Playwright production smoke with zero console errors. Build still emits the existing large Three.js/MSAL chunk warning; browser still shows the known duplicate Three.js warning from the animated sign-in background plus app Three.js.
+- Tenant Graph production deployment is live at `https://tenantgraph.com`. Deployment `dpl_CZuHCGAFyQakajziDLHtTeGyiTps` is Ready and aliased to the production domain. Checks pass: `npm run lint`, `npm run test` (56 tests), `npm run build`, `npm audit --audit-level=high`, `git diff --check`, `vercel deploy --prod --yes`, `vercel inspect tenant-graph-nwrd9kyj0-jorgeasaurus-projects.vercel.app`, `curl -I https://tenantgraph.com` HTTP 200, and Playwright production smoke with zero console errors. Build still emits the existing large Three.js/MSAL chunk warning; browser still shows the known duplicate Three.js warning from the animated sign-in background plus app Three.js.
 
 - [x] Remove selected-node cone spotlight
   - [x] Delete the tapered spotlight mesh from the selected-node anchor
@@ -645,7 +662,7 @@
   - [x] Inspect deployment and smoke test production URL
   - [x] Document deployment result
 
-- Cone-spotlight removal is live at `https://tenant-graph.vercel.app`. Deployment `dpl_4JFhDmkUzMzbYtnH47Fy5ByseJej` is Ready and aliased to the production domain. Checks pass: `npm run lint`, `npm run test` (57 tests), `npm run build`, `git diff --check`, `npm audit --audit-level=high`, `npx --yes vercel@latest deploy --prod --yes`, `npx --yes vercel@latest inspect tenant-graph-56eelsruc-jorgeasaurus-projects.vercel.app`, `curl -I https://tenant-graph.vercel.app` HTTP 200, and Playwright production smoke with zero console errors. Build still emits the existing large Three.js/MSAL chunk warning; browser still shows the known duplicate Three.js warning from the animated sign-in background plus app Three.js.
+- Cone-spotlight removal is live at `https://tenantgraph.com`. Deployment `dpl_4JFhDmkUzMzbYtnH47Fy5ByseJej` is Ready and aliased to the production domain. Checks pass: `npm run lint`, `npm run test` (57 tests), `npm run build`, `git diff --check`, `npm audit --audit-level=high`, `npx --yes vercel@latest deploy --prod --yes`, `npx --yes vercel@latest inspect tenant-graph-56eelsruc-jorgeasaurus-projects.vercel.app`, `curl -I https://tenantgraph.com` HTTP 200, and Playwright production smoke with zero console errors. Build still emits the existing large Three.js/MSAL chunk warning; browser still shows the known duplicate Three.js warning from the animated sign-in background plus app Three.js.
 
 - [x] Add sample tenant experience
   - [x] Add a sign-in-screen Sample tenant entry point that does not fake MSAL auth
@@ -664,7 +681,7 @@
   - [x] Inspect deployment and smoke test production URL
   - [x] Document deployment result
 
-- Sample tenant experience is live at `https://tenant-graph.vercel.app/?sampleTenant=1`. Deployment `dpl_CuRczAK1ARn3vwxYrM6bB5HCAroK` is Ready and aliased to `https://tenant-graph.vercel.app`. Checks pass: `npx tsc -b --pretty false`, `npm run lint`, `npm run test` (62 tests), `npm run build`, `npm audit --audit-level=high`, `git diff --check`, `npx --yes vercel@latest deploy --prod --yes`, `npx --yes vercel@latest inspect tenant-graph-pz9ag7rkc-jorgeasaurus-projects.vercel.app`, `curl -I https://tenant-graph.vercel.app`, `curl -I 'https://tenant-graph.vercel.app/?sampleTenant=1'`, and Playwright production smoke with zero console errors. Build still emits the existing large Three.js/MSAL chunk warning; browser still shows the known duplicate Three.js warning from Vanta plus app Three.js.
+- Sample tenant experience is live at `https://tenantgraph.com/?sampleTenant=1`. Deployment `dpl_CuRczAK1ARn3vwxYrM6bB5HCAroK` is Ready and aliased to `https://tenantgraph.com`. Checks pass: `npx tsc -b --pretty false`, `npm run lint`, `npm run test` (62 tests), `npm run build`, `npm audit --audit-level=high`, `git diff --check`, `npx --yes vercel@latest deploy --prod --yes`, `npx --yes vercel@latest inspect tenant-graph-pz9ag7rkc-jorgeasaurus-projects.vercel.app`, `curl -I https://tenantgraph.com`, `curl -I 'https://tenantgraph.com/?sampleTenant=1'`, and Playwright production smoke with zero console errors. Build still emits the existing large Three.js/MSAL chunk warning; browser still shows the known duplicate Three.js warning from Vanta plus app Three.js.
 
 - [x] Auto-scroll tutorial to object type filters
   - [x] Add guide step scroll metadata for the Object types step
@@ -700,7 +717,7 @@
   - [x] Inspect deployment and smoke test production URL
   - [x] Document deployment result
 
-- Real sample app icons are live at `https://tenant-graph.vercel.app/?sampleTenant=1`. Deployment `dpl_BvsJqUQtoib9Xsaf7wzn5oTvuKrj` is Ready and aliased to `https://tenant-graph.vercel.app`. Checks pass: `npx tsc -b --pretty false`, `npm run lint`, `npm run test` (64 tests), `npm run build`, `npm audit --audit-level=high`, `git diff --check`, `npx --yes vercel@latest deploy --prod --yes`, `npx --yes vercel@latest inspect tenant-graph-e3bykr0ae-jorgeasaurus-projects.vercel.app`, `curl -I https://tenant-graph.vercel.app`, `curl -I 'https://tenant-graph.vercel.app/?sampleTenant=1'`, and Playwright production smoke confirming Intune Company Portal, Windows App Mobile, and SAP Concur are visible while the policy-shaped app label is not. Build still emits the existing large Three.js/MSAL chunk warning, now with the bundled sample app icon payloads; browser still shows the known duplicate Three.js warning from Vanta plus app Three.js.
+- Real sample app icons are live at `https://tenantgraph.com/?sampleTenant=1`. Deployment `dpl_BvsJqUQtoib9Xsaf7wzn5oTvuKrj` is Ready and aliased to `https://tenantgraph.com`. Checks pass: `npx tsc -b --pretty false`, `npm run lint`, `npm run test` (64 tests), `npm run build`, `npm audit --audit-level=high`, `git diff --check`, `npx --yes vercel@latest deploy --prod --yes`, `npx --yes vercel@latest inspect tenant-graph-e3bykr0ae-jorgeasaurus-projects.vercel.app`, `curl -I https://tenantgraph.com`, `curl -I 'https://tenantgraph.com/?sampleTenant=1'`, and Playwright production smoke confirming Intune Company Portal, Windows App Mobile, and SAP Concur are visible while the policy-shaped app label is not. Build still emits the existing large Three.js/MSAL chunk warning, now with the bundled sample app icon payloads; browser still shows the known duplicate Three.js warning from Vanta plus app Three.js.
 
 - [ ] Refresh canonical feature tracker after latest product changes
   - [x] Inspect the current code and existing tracker workbook
@@ -718,7 +735,7 @@
   - [x] Inspect deployment and smoke test production URL
   - [x] Document deployment result
 
-- Refreshed tracker pass is live at `https://tenant-graph.vercel.app`. Deployment `dpl_8dNGHgteQYz2wZKAPyZJiMgWVMFw` is Ready and aliased to production. Checks pass: `npx tsc -b --pretty false`, `npm run lint`, `npm run test` (64 tests), `npm run build`, `npm audit --audit-level=high`, `git diff --check`, `npx --yes vercel@latest deploy --prod --yes`, `npx --yes vercel@latest inspect tenant-graph-fg4a4urgi-jorgeasaurus-projects.vercel.app`, `curl -I https://tenant-graph.vercel.app`, `curl -I 'https://tenant-graph.vercel.app/?sampleTenant=1'`, and Playwright production sample smoke with zero console errors. Build still emits the existing large bundle warning; Vercel remote build output still reports CLI 54.14.0 inside the platform build image.
+- Refreshed tracker pass is live at `https://tenantgraph.com`. Deployment `dpl_8dNGHgteQYz2wZKAPyZJiMgWVMFw` is Ready and aliased to production. Checks pass: `npx tsc -b --pretty false`, `npm run lint`, `npm run test` (64 tests), `npm run build`, `npm audit --audit-level=high`, `git diff --check`, `npx --yes vercel@latest deploy --prod --yes`, `npx --yes vercel@latest inspect tenant-graph-fg4a4urgi-jorgeasaurus-projects.vercel.app`, `curl -I https://tenantgraph.com`, `curl -I 'https://tenantgraph.com/?sampleTenant=1'`, and Playwright production sample smoke with zero console errors. Build still emits the existing large bundle warning; Vercel remote build output still reports CLI 54.14.0 inside the platform build image.
 
 - [x] Scroll every tutorial target
   - [x] Give every sample guide step with a target an explicit scroll position
@@ -735,7 +752,7 @@
   - [x] Inspect deployment and smoke test production URL
   - [x] Document deployment result
 
-- Tutorial target scrolling is live at `https://tenant-graph.vercel.app/?sampleTenant=1`. Deployment `dpl_J8hZuaFwAdZZMt8mcRUnFJUNUpfM` is Ready and aliased to production. Checks pass: `npx tsc -b --pretty false`, `npm run lint`, `npm run test` (64 tests), `npm run build`, `npm audit --audit-level=high`, `git diff --check`, `npx --yes vercel@latest deploy --prod --yes`, `npx --yes vercel@latest inspect tenant-graph-fojdk4k97-jorgeasaurus-projects.vercel.app`, `curl -I https://tenant-graph.vercel.app`, `curl -I 'https://tenant-graph.vercel.app/?sampleTenant=1'`, and Playwright production guide walkthrough confirming all eight tutorial targets visible with zero console errors. Build still emits the existing large bundle warning; Vercel remote build output still reports CLI 54.14.0 inside the platform build image.
+- Tutorial target scrolling is live at `https://tenantgraph.com/?sampleTenant=1`. Deployment `dpl_J8hZuaFwAdZZMt8mcRUnFJUNUpfM` is Ready and aliased to production. Checks pass: `npx tsc -b --pretty false`, `npm run lint`, `npm run test` (64 tests), `npm run build`, `npm audit --audit-level=high`, `git diff --check`, `npx --yes vercel@latest deploy --prod --yes`, `npx --yes vercel@latest inspect tenant-graph-fojdk4k97-jorgeasaurus-projects.vercel.app`, `curl -I https://tenantgraph.com`, `curl -I 'https://tenantgraph.com/?sampleTenant=1'`, and Playwright production guide walkthrough confirming all eight tutorial targets visible with zero console errors. Build still emits the existing large bundle warning; Vercel remote build output still reports CLI 54.14.0 inside the platform build image.
 
 - [x] Landing page access resources
   - [x] Add access requirements control to sign-in and missing-config landing panels
@@ -752,7 +769,7 @@
   - [x] Inspect deployment and smoke test production URL
   - [x] Document deployment result
 
-- Landing access resources are live at `https://tenant-graph.vercel.app`. Deployment `dpl_EBqnC6EU3Xbnujcy7EHUyHftfxBi` is Ready and aliased to production. Checks pass: `npx tsc -b --pretty false`, `npm run lint`, `npm run test` (65 tests), `npm run build`, `npm audit --audit-level=high`, `git diff --check`, `npx --yes vercel@latest deploy --prod --yes`, `npx --yes vercel@latest inspect tenant-graph-49u5suk7j-jorgeasaurus-projects.vercel.app`, `curl -I https://tenant-graph.vercel.app`, `curl -I 'https://tenant-graph.vercel.app/?sampleTenant=1'`, and Playwright production landing smoke confirming the access requirements panel and GitHub href with zero console errors. Build still emits the existing large bundle warning; Vercel remote build output still reports CLI 54.14.0 inside the platform build image.
+- Landing access resources are live at `https://tenantgraph.com`. Deployment `dpl_EBqnC6EU3Xbnujcy7EHUyHftfxBi` is Ready and aliased to production. Checks pass: `npx tsc -b --pretty false`, `npm run lint`, `npm run test` (65 tests), `npm run build`, `npm audit --audit-level=high`, `git diff --check`, `npx --yes vercel@latest deploy --prod --yes`, `npx --yes vercel@latest inspect tenant-graph-49u5suk7j-jorgeasaurus-projects.vercel.app`, `curl -I https://tenantgraph.com`, `curl -I 'https://tenantgraph.com/?sampleTenant=1'`, and Playwright production landing smoke confirming the access requirements panel and GitHub href with zero console errors. Build still emits the existing large bundle warning; Vercel remote build output still reports CLI 54.14.0 inside the platform build image.
 
 - [x] Push current Tenant Graph state to GitHub
   - [x] Confirm `origin` remote and authenticated GitHub CLI

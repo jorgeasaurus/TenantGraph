@@ -35,3 +35,7 @@
 - If a user explicitly asks for a fictional themed tenant, replace stale real-app sample constraints with coherent themed app data instead of preserving the old catalog.
 - Do not ship save/bookmark controls unless the saved item can be reopened; delete misleading persistence UI until the load workflow exists.
 - Default overview sources should include useful object context such as groups, but avoid expensive fanout like members until the user expands a node.
+- README "Try It" sections should point to the hosted demo first; local setup belongs behind a setup-doc link to reduce first-run friction.
+- README contribution links should target GitHub creation flows, not raw template files; issue forms use `/issues/new?template=...`.
+- Once a custom domain is live, README and repo metadata should advertise that domain instead of Vercel-generated production aliases.
+- GitHub repository social preview images are not writable through the public repo update API; include the asset in the repo and upload it through Settings when an authenticated browser session is available.

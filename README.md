@@ -8,9 +8,11 @@ Visualize Intune and Entra relationships as an interactive Three.js graph.
 ![Microsoft Graph](https://img.shields.io/badge/Microsoft%20Graph-Intune%20%2B%20Entra-00a4ef)
 ![License](https://img.shields.io/github/license/jorgeasaurus/TenantGraph)
 
-![Tenant Graph sample overview](docs/screenshots/sample-overview.png)
+![Tenant Graph social card](public/social-card.jpg)
 
 Tenant Graph helps tenant admins, endpoint engineers, and security reviewers understand Microsoft Intune impact. Sign in with Microsoft Entra ID, search for a user, device, app, group, role, or policy, then explore related assignments and dependencies in an Obsidian-style graph.
+
+Live app: [tenantgraph.com](https://tenantgraph.com)
 
 ## Why It Exists
 
@@ -24,15 +26,11 @@ Intune and Entra relationships are hard to reason about in tables. Tenant Graph 
 
 ## Try It
 
-Run the Lumon sample tenant without connecting to Microsoft Graph:
+Open the hosted Lumon sample tenant:
 
-```bash
-npm install
-npm run dev
-open "http://localhost:5173/?sampleTenant=1"
-```
+[Launch Tenant Graph sample](https://tenantgraph.com/?sampleTenant=1)
 
-For Entra setup, app registration, permissions, and troubleshooting, see [Tenant Graph Setup](docs/setup.md).
+No Microsoft Graph sign-in is required for the sample. For local setup, Entra app registration, permissions, and troubleshooting, see [Tenant Graph Setup](docs/setup.md).
 
 ## Sample Views
 
@@ -111,7 +109,7 @@ npm run test
 npm run build
 ```
 
-Use the [bug report](.github/ISSUE_TEMPLATE/bug_report.yml), [feature request](.github/ISSUE_TEMPLATE/feature_request.yml), and [pull request template](.github/pull_request_template.md) when opening changes.
+Open a [bug report](https://github.com/jorgeasaurus/TenantGraph/issues/new?template=bug_report.yml) or [feature request](https://github.com/jorgeasaurus/TenantGraph/issues/new?template=feature_request.yml) to load the matching GitHub issue form. For code changes, open a [pull request](https://github.com/jorgeasaurus/TenantGraph/compare); GitHub applies the pull request template after you choose the branch to compare.
 
 ## License
 
