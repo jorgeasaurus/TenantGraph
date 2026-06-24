@@ -20,6 +20,10 @@
   z-index: 5;
 }
 
+.mobile-workspace-nav {
+  display: none;
+}
+
 .toolbar-brand {
   min-width: 0;
   display: flex;

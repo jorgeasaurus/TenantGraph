@@ -12,12 +12,19 @@
   .app-shell {
     height: auto;
     min-height: 100vh;
+    grid-template-rows: auto auto 1fr;
     overflow: visible;
+  }
+
+  [data-guide] {
+    scroll-margin-top: 58px;
   }
 
   .toolbar {
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: start;
+    gap: 9px;
+    padding: 8px;
   }
 
   .toolbar-brand {
@@ -32,31 +39,71 @@
 
   .graph-control-group {
     grid-column: 1 / -1;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: minmax(66px, 1fr) minmax(66px, 1fr) repeat(4, 34px);
+    gap: 7px;
     overflow-x: visible;
     padding-bottom: 0;
   }
 
   .toolbar-search {
-    flex: 1 1 100%;
+    grid-column: 1 / -1;
+    width: 100%;
   }
 
   .toolbar-control {
-    flex: 1 1 142px;
+    min-width: 0;
+    gap: 0;
     justify-content: space-between;
+    font-size: 0;
   }
 
   .toolbar-control.compact {
-    flex-basis: 108px;
+    min-width: 0;
   }
 
   .toolbar-control select,
   .toolbar-control.compact select {
-    width: min(100%, 136px);
+    width: 100%;
+    padding: 0 6px;
+    font-size: var(--type-body);
   }
 
   .graph-control-group button {
-    flex: 1 1 84px;
+    width: 100%;
+    min-width: 0;
+    padding: 0;
+    gap: 0;
+    font-size: 0;
+    white-space: nowrap;
+  }
+
+  .account-menu-popover {
+    width: min(260px, calc(100vw - 24px));
+  }
+
+  .mobile-workspace-nav {
+    position: sticky;
+    top: 0;
+    z-index: 14;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+    border-bottom: 1px solid rgba(0, 212, 255, 0.18);
+    background: rgba(2, 6, 16, 0.94);
+    padding: 7px 8px;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.035),
+      0 12px 26px rgba(0, 0, 0, 0.24);
+    backdrop-filter: blur(14px);
+  }
+
+  .mobile-workspace-nav button {
+    min-width: 0;
+    min-height: 38px;
+    padding: 0 6px;
+    color: #dcecff;
+    font-size: var(--type-body);
   }
 
   .workspace {
@@ -67,6 +114,21 @@
     order: 2;
     border-right: 0;
     border-top: 1px solid var(--line);
+    padding: 8px;
+  }
+
+  .sidebar-section {
+    padding: 9px;
+    margin-bottom: 8px;
+  }
+
+  .display-limit {
+    grid-template-columns: 1fr;
+    gap: 9px;
+  }
+
+  .display-limit button {
+    width: 100%;
   }
 
   .graph-stage {
@@ -76,18 +138,19 @@
   }
 
   .graph-viewport {
-    min-height: 360px;
+    min-height: 380px;
   }
 
   .graph-canvas {
-    height: min(62vh, 540px);
-    min-height: 360px;
+    height: clamp(380px, 60svh, 540px);
+    min-height: 380px;
   }
 
   .relationship-inspector {
     border-left: 0;
     border-top: 1px solid rgba(0, 212, 255, 0.24);
-    max-height: none;
+    max-height: min(58svh, 430px);
+    overflow-y: auto;
   }
 
   .graph-left-stack {
@@ -103,7 +166,59 @@
   }
 
   .graph-limit-state {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
     justify-content: space-between;
+    align-items: center;
     margin: 0;
+  }
+
+  .signin-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .signin-summary-grid,
+  .impact-preview {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .inspector-actions,
+  .admin-action-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 430px) {
+  .toolbar-brand {
+    gap: 8px;
+  }
+
+  .toolbar-brand span {
+    font-size: var(--type-caption);
+  }
+
+  .graph-control-group {
+    gap: 7px;
+  }
+
+  .graph-limit-state {
+    grid-template-columns: 1fr;
+  }
+
+  .graph-limit-state button {
+    width: 100%;
+  }
+
+  .graph-left-stack {
+    margin: 8px;
+  }
+
+  .graph-legend {
+    gap: 5px 8px;
+    padding: 7px;
+  }
+
+  .graph-legend span {
+    font-size: 10px;
   }
 }

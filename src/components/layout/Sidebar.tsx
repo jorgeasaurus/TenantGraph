@@ -6,6 +6,7 @@ import {
   type TenantNodeType,
   type TenantRelationshipType,
 } from '../../models/tenantGraph';
+import type { AdminImpactAnalysis } from '../../utils/adminInsights';
 import { nodeColors, type ImpactMetric, type NodeExpansionState } from '../../utils/graphUtils';
 import {
   readableObjectType,
@@ -16,11 +17,13 @@ import {
 } from '../../utils/readableGraph';
 import { sidebarTypeSections } from '../../utils/graphZones';
 import { nodeTypeLabels } from '../../utils/typePresentation';
+import { AdminImpactPanel } from '../details/AdminImpactPanel';
 import { ClusterSummary } from '../details/ClusterSummary';
 import { DetailsPanel } from '../details/DetailsPanel';
 import { PathFinder } from '../details/PathFinder';
 
 type SidebarProps = {
+  adminImpact: AdminImpactAnalysis;
   busyNodeId?: string;
   clusterSummaries: ReadableClusterSummary[];
   edgeCount: number;
@@ -30,6 +33,7 @@ type SidebarProps = {
   graphNodeCount: number;
   graphTotalNodeCount: number;
   impactMetrics: ImpactMetric[];
+  investigationSummary: string;
   path?: ReadablePathResult;
   pathCandidates: ReadablePathCandidate[];
   permissionError?: string;
@@ -54,6 +58,7 @@ type SidebarProps = {
 };
 
 export function Sidebar({
+  adminImpact,
   busyNodeId,
   clusterSummaries,
   edgeCount,
@@ -63,6 +68,7 @@ export function Sidebar({
   graphNodeCount,
   graphTotalNodeCount,
   impactMetrics,
+  investigationSummary,
   path,
   pathCandidates,
   permissionError,
@@ -116,6 +122,11 @@ export function Sidebar({
       )}
 
       <ClusterSummary summaries={clusterSummaries} />
+      <AdminImpactPanel
+        analysis={adminImpact}
+        investigationSummary={investigationSummary}
+        selectedLabel={selectedNode?.label}
+      />
       {showDataConfidence && (
         <section className="sidebar-section data-confidence" aria-label="Data confidence">
           <div className="section-title">

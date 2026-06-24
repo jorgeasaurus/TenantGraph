@@ -5,14 +5,24 @@ import { loadTenantOverview, searchTenantObjects } from '../graph/tenantGraphSou
 import { tenantNodeTypes } from '../models/tenantGraph';
 import { sampleGuideSteps } from '../components/demo/sampleGuideSteps';
 import { sampleAppIconSources } from './sampleAppIcons';
+import { sampleGroups, sampleManagedDevices, sampleMobileApps } from './sampleTenantData';
 import { sampleTenantClient } from './sampleTenantClient';
 
 describe('sample tenant client', () => {
   it('loads a representative overview without Microsoft Graph', async () => {
     const result = await loadTenantOverview(sampleTenantClient);
     const types = new Set(result.graph.nodes.map((node) => node.type));
+    const primaryUserIds = new Set(
+      sampleManagedDevices
+        .map((device) => device.userId)
+        .filter((userId): userId is string => typeof userId === 'string' && userId !== '00000000-0000-0000-0000-000000000000'),
+    );
 
     expect(result.warnings).toEqual([]);
+    expect(result.graph.nodes.length).toBeGreaterThanOrEqual(80);
+    expect(result.graph.nodes.filter((node) => node.type === 'user')).toHaveLength(primaryUserIds.size);
+    expect(result.graph.nodes.filter((node) => node.type === 'device')).toHaveLength(sampleManagedDevices.length);
+    expect(result.graph.nodes.filter((node) => node.type === 'app')).toHaveLength(sampleMobileApps.length);
     expect([...types]).toEqual(
       expect.arrayContaining([
         'app',
@@ -31,8 +41,13 @@ describe('sample tenant client', () => {
   it('supports sample search across directory and Intune object families', async () => {
     const result = await searchTenantObjects(sampleTenantClient, 'Intune', [...tenantNodeTypes]);
     const labels = result.graph.nodes.map((node) => node.label);
+    const groupResult = await searchTenantObjects(sampleTenantClient, 'users', [...tenantNodeTypes]);
+    const groupLabels = groupResult.graph.nodes.filter((node) => node.type === 'group').map((node) => node.label);
 
     expect(labels).toEqual(expect.arrayContaining(['Intune Company Portal', 'Intune Administrators', 'Intune Administrator']));
+    expect(groupLabels.length).toBeGreaterThanOrEqual(6);
+    expect(groupLabels).toEqual(expect.arrayContaining(['Finance application users', 'Procurement app users', 'Android pilot users']));
+    expect(sampleGroups.length).toBeGreaterThanOrEqual(15);
   });
 
   it('uses real sample apps with distinct large icons', async () => {
@@ -49,10 +64,20 @@ describe('sample tenant client', () => {
         'Windows App Mobile',
         'SAP Concur',
         'Microsoft Outlook',
+        'Microsoft Teams',
+        'Microsoft OneDrive',
+        'Zoom Workplace',
+        'Adobe Acrobat Reader',
+        'ServiceNow Agent',
+        'Salesforce',
+        'Slack',
+        'Microsoft Power BI',
+        'Microsoft Planner',
+        'Microsoft Loop',
       ]),
     );
     expect(labels.join(' ')).not.toMatch(/\[IHD]|Device Security|Connectivity Settings|policy/i);
-    expect(iconDataUrls.every((iconDataUrl) => iconDataUrl?.startsWith('data:image/png;base64,'))).toBe(true);
+    expect(iconDataUrls.every((iconDataUrl) => iconDataUrl?.startsWith('data:image/'))).toBe(true);
     expect(new Set(iconDataUrls).size).toBe(apps.length);
     expect(Object.values(sampleAppIconSources).map((source) => source.sourceUrl)).toEqual(
       expect.arrayContaining([

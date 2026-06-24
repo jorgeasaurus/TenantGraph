@@ -65,7 +65,11 @@ export function Toolbar({
 
         <label className="toolbar-control compact">
           Focus
-          <select value={focusDepth} onChange={(event) => onFocusDepthChange(Number(event.target.value))}>
+          <select
+            aria-label="Focus depth"
+            value={focusDepth}
+            onChange={(event) => onFocusDepthChange(Number(event.target.value))}
+          >
             <option value={0}>Off</option>
             <option value={1}>Direct</option>
             <option value={2}>Two-Hop</option>
@@ -74,7 +78,11 @@ export function Toolbar({
 
         <label className="toolbar-control compact">
           Depth
-          <select value={depth} onChange={(event) => onDepthChange(Number(event.target.value))}>
+          <select
+            aria-label="Relationship depth"
+            value={depth}
+            onChange={(event) => onDepthChange(Number(event.target.value))}
+          >
             <option value={1}>1</option>
             <option value={2}>2</option>
             <option value={3}>3</option>

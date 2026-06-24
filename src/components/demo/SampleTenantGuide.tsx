@@ -39,22 +39,35 @@ export function SampleTenantGuide({ open, onClose }: SampleTenantGuideProps) {
       }
 
       const rect = target.getBoundingClientRect();
+      const inset = 6;
+      const left = Math.max(inset, rect.left - inset);
+      const top = Math.max(inset, rect.top - inset);
+      const right = Math.min(window.innerWidth - inset, rect.right + inset);
+      const bottom = Math.min(window.innerHeight - inset, rect.bottom + inset);
+
       setTargetRect({
-        height: rect.height,
-        left: rect.left,
-        top: rect.top,
-        width: rect.width,
+        height: Math.max(0, bottom - top),
+        left,
+        top,
+        width: Math.max(0, right - left),
       });
     };
 
+    let animationFrameId: number | undefined;
+    let settleTimerId: number | undefined;
     const scrollBlock = 'scrollBlock' in step ? step.scrollBlock : undefined;
     if (scrollBlock) {
       const target = document.querySelector<HTMLElement>(step.target);
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const scrollBehavior: ScrollBehavior = reduceMotion || window.innerWidth <= 980 ? 'auto' : 'smooth';
       target?.scrollIntoView({
-        behavior: 'smooth',
+        behavior: scrollBehavior,
         block: scrollBlock,
         inline: 'nearest',
       });
+
+      animationFrameId = window.requestAnimationFrame(updateTarget);
+      settleTimerId = window.setTimeout(updateTarget, scrollBehavior === 'smooth' ? 650 : 80);
     }
 
     updateTarget();
@@ -62,6 +75,12 @@ export function SampleTenantGuide({ open, onClose }: SampleTenantGuideProps) {
     window.addEventListener('scroll', updateTarget, true);
 
     return () => {
+      if (animationFrameId !== undefined) {
+        window.cancelAnimationFrame(animationFrameId);
+      }
+      if (settleTimerId !== undefined) {
+        window.clearTimeout(settleTimerId);
+      }
       window.removeEventListener('resize', updateTarget);
       window.removeEventListener('scroll', updateTarget, true);
     };
@@ -79,10 +98,10 @@ export function SampleTenantGuide({ open, onClose }: SampleTenantGuideProps) {
         <div
           className="sample-guide-target"
           style={{
-            height: targetRect.height + 12,
-            left: targetRect.left - 6,
-            top: targetRect.top - 6,
-            width: targetRect.width + 12,
+            height: targetRect.height,
+            left: targetRect.left,
+            top: targetRect.top,
+            width: targetRect.width,
           }}
         />
       )}

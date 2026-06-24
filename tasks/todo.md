@@ -1,5 +1,41 @@
 # Tenant Graph Plan
 
+- [x] Thermo-nuclear QA loop
+  - [x] Run lint baseline and fix findings
+  - [x] Run React Doctor baseline and fix findings from root causes
+  - [x] Run strict thermo-nuclear maintainability review against current branch changes
+  - [x] Repeat lint, React Doctor, typecheck, tests, and build until clean
+  - [x] Record final verification evidence
+  - Review: React Doctor started at 91/100 with two `js-hoist-intl` warnings; hoisted both `Intl.DateTimeFormat` instances to module scope and reran full React Doctor at 100/100.
+  - Review: thermo-nuclear pass tightened admin-impact selected-object analysis to use a scoped neighborhood graph and cleaned the copy-evidence timer lifecycle.
+  - Review: verified with `npm run lint`, `npx react-doctor@latest --verbose --scope changed`, `npm run doctor -- --verbose`, `npx tsc -b`, `npm run test`, `npm run build`, and `git diff --check`.
+  - Note: build succeeds and still reports the existing Vite large-chunk warning.
+- [x] Mobile optimization pass
+  - [x] Audit current 390px and 430px sample-tenant layout with Playwright
+  - [x] Keep graph first while making search, results, details, and admin insights reachable on mobile
+  - [x] Compress toolbar controls without clipping text or creating horizontal overflow
+  - [x] Tune sidebar cards, sign-in filters, inspector, legend, and graph overlays for touch use
+  - [x] Run lint, typecheck, tests, build, and mobile browser smoke
+  - [x] Update canonical feature-story tracker with mobile verification evidence
+  - Review: mobile toolbar no longer overlaps the graph, workspace jumps scroll below the sticky mobile nav, tutorial highlights stay within 320px width, and desktop keeps the 58px toolbar with mobile nav hidden.
+  - Review: verified with `npm run lint`, `npx tsc -b`, `npm run test`, `npm run build`, and browser smoke at 320px, 390px, 430px, and 1440px.
+- [x] Admin impact workflow pass
+  - [x] Add graph-derived policy/app blast-radius analyzer
+  - [x] Add hygiene and risk findings for broad assignments, empty policies, noncompliant devices, privileged access, and guardrails
+  - [x] Add recent-change style investigation hints from loaded metadata and sign-in projections
+  - [x] Add one-click investigation summary export
+  - [x] Add saved investigation shortcuts in local storage
+  - [x] Deemphasize raw/global graph interpretation with workflow-first copy
+  - [x] Verify tests, lint, typecheck, build, browser smoke, and Vercel preview
+  - Review: preview deployed at https://tenant-graph-lspn83jgl-jorgeasaurus-projects.vercel.app and verified with `vercel curl '/?sampleTenant=1'`.
+- [x] Expand sample tenant realism
+  - [x] Increase sample users, devices, apps, groups, policies, and guardrails
+  - [x] Add coherent memberships, assignments, detected apps, and sign-in examples
+  - [x] Keep sample app names real and icon fallbacks visually distinct
+  - [x] Add regression coverage for larger sample overview counts
+  - [x] Run focused and full verification
+  - Review: sample mode now renders 81 objects / 37 relationships with 17 people, 19 devices, 16 apps, 18 policies, and 11 guardrails.
+  - Review: verified with focused sample tests, full tests, lint, typecheck, build, audit, and Playwright sample-mode smoke.
 - [x] Inspect repo and conventions
 - [x] Scaffold React + TypeScript + Vite app
 - [x] Add MSAL auth using env vars

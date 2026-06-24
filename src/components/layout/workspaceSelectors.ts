@@ -9,6 +9,7 @@ import {
   searchLocalNodes,
   summarizeNodeImpact,
 } from '../../utils/graphUtils';
+import { analyzeAdminImpact, investigationSummaryText } from '../../utils/adminInsights';
 import {
   explainReadablePath,
   readablePathCandidates as buildReadablePathCandidates,
@@ -30,6 +31,7 @@ export function selectWorkspaceDerived(state: WorkspaceState) {
   const selectedNode = state.graph.nodes.find((node) => node.id === state.selectedNodeId);
   const selectedEdge = visibleGraph.edges.find((edge) => edge.id === state.selectedEdgeId);
   const readablePathTargetCandidates = buildReadablePathCandidates(visibleGraph, selectedNode);
+  const adminImpact = analyzeAdminImpact(state.graph, selectedNode);
   const resolvedPathTargetId = readablePathTargetCandidates.some((candidate) => candidate.id === state.pathTargetId)
     ? state.pathTargetId
     : readablePathTargetCandidates[0]?.id;
@@ -44,6 +46,8 @@ export function selectWorkspaceDerived(state: WorkspaceState) {
 
   return {
     graphLimitResult,
+    adminImpact,
+    investigationSummary: investigationSummaryText(state.graph, selectedNode, adminImpact),
     readableClusterSummaries: summarizeReadableClusters(visibleGraph),
     readablePath: explainReadablePath(visibleGraph, selectedNode?.id, resolvedPathTargetId),
     readablePathTargetCandidates,

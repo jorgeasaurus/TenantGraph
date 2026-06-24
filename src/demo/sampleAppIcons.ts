@@ -4,10 +4,20 @@ export type SampleAppIconKey =
   | 'defender'
   | 'windowsAppMobile'
   | 'sapConcur'
-  | 'outlook';
+  | 'outlook'
+  | 'teams'
+  | 'onedrive'
+  | 'zoom'
+  | 'adobeAcrobat'
+  | 'serviceNow'
+  | 'salesforce'
+  | 'slack'
+  | 'powerBi'
+  | 'planner'
+  | 'loop';
 
 type GraphLargeIcon = {
-  type: 'image/png';
+  type: `image/${string}`;
   value: string;
 };
 
@@ -41,6 +51,56 @@ export const sampleAppIconSources = {
     appName: 'Microsoft Outlook',
     sourceUrl: 'https://apps.apple.com/us/app/microsoft-outlook/id951937596',
     artworkUrl: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/50/21/5c/50215ca0-c524-8e0f-c4a4-5631d756afed/AppIcon-outlook.prod-0-0-1x_U007epad-0-1-0-0-0-85-220.png/96x96bb.png',
+  },
+  teams: {
+    appName: 'Microsoft Teams',
+    sourceUrl: 'https://www.microsoft.com/en-us/microsoft-teams/group-chat-software',
+    artworkUrl: 'generated://sample/teams',
+  },
+  onedrive: {
+    appName: 'Microsoft OneDrive',
+    sourceUrl: 'https://www.microsoft.com/en-us/microsoft-365/onedrive/online-cloud-storage',
+    artworkUrl: 'generated://sample/onedrive',
+  },
+  zoom: {
+    appName: 'Zoom Workplace',
+    sourceUrl: 'https://www.zoom.com/en/products/collaboration-tools/',
+    artworkUrl: 'generated://sample/zoom',
+  },
+  adobeAcrobat: {
+    appName: 'Adobe Acrobat Reader',
+    sourceUrl: 'https://www.adobe.com/acrobat/pdf-reader.html',
+    artworkUrl: 'generated://sample/adobe-acrobat-reader',
+  },
+  serviceNow: {
+    appName: 'ServiceNow Agent',
+    sourceUrl: 'https://www.servicenow.com/products/mobile.html',
+    artworkUrl: 'generated://sample/servicenow-agent',
+  },
+  salesforce: {
+    appName: 'Salesforce',
+    sourceUrl: 'https://www.salesforce.com/products/sales-cloud/',
+    artworkUrl: 'generated://sample/salesforce',
+  },
+  slack: {
+    appName: 'Slack',
+    sourceUrl: 'https://slack.com/',
+    artworkUrl: 'generated://sample/slack',
+  },
+  powerBi: {
+    appName: 'Microsoft Power BI',
+    sourceUrl: 'https://powerbi.microsoft.com/',
+    artworkUrl: 'generated://sample/power-bi',
+  },
+  planner: {
+    appName: 'Microsoft Planner',
+    sourceUrl: 'https://www.microsoft.com/en-us/microsoft-365/planner/microsoft-planner',
+    artworkUrl: 'generated://sample/planner',
+  },
+  loop: {
+    appName: 'Microsoft Loop',
+    sourceUrl: 'https://www.microsoft.com/en-us/microsoft-loop',
+    artworkUrl: 'generated://sample/loop',
   },
 } as const satisfies Record<SampleAppIconKey, { appName: string; artworkUrl: string; sourceUrl: string }>;
 
@@ -620,8 +680,23 @@ export const sampleAppIcons = {
     '8Je+LLvFZXsAbbETv82nNzOK/Tbbs+19awGqg7QFqAWoDoE6h1sKagGqQ6DO4ZaCWoDqEKhzuKWgFqA6BOocbimoBagOgTqH',
     'WwpqAapDoM7h/wd4kagYzpwgQgAAAABJRU5ErkJggg==',
   ]),
+  teams: svgIcon('T', '#4f46e5', '#8b5cf6'),
+  onedrive: svgIcon('1D', '#0078d4', '#38bdf8'),
+  zoom: svgIcon('Z', '#2563eb', '#60a5fa'),
+  adobeAcrobat: svgIcon('PDF', '#b91c1c', '#ef4444'),
+  serviceNow: svgIcon('SN', '#10b981', '#14b8a6'),
+  salesforce: svgIcon('SF', '#0ea5e9', '#0369a1'),
+  slack: svgIcon('S', '#611f69', '#ec4899'),
+  powerBi: svgIcon('BI', '#eab308', '#f97316'),
+  planner: svgIcon('PL', '#0891b2', '#22c55e'),
+  loop: svgIcon('LO', '#7c3aed', '#06b6d4'),
 } as const satisfies Record<SampleAppIconKey, GraphLargeIcon>;
 
 function icon(chunks: string[]): GraphLargeIcon {
   return { type: 'image/png', value: chunks.join('') };
+}
+
+function svgIcon(label: string, primaryColor: string, secondaryColor: string): GraphLargeIcon {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><defs><linearGradient id="g" x1="14" x2="82" y1="10" y2="88"><stop stop-color="${primaryColor}"/><stop offset="1" stop-color="${secondaryColor}"/></linearGradient></defs><rect width="96" height="96" rx="22" fill="#0b1220"/><rect x="9" y="9" width="78" height="78" rx="18" fill="url(#g)"/><circle cx="67" cy="27" r="14" fill="rgba(255,255,255,.18)"/><text x="48" y="58" text-anchor="middle" font-size="${label.length > 1 ? 28 : 40}" font-family="Segoe UI,Arial,sans-serif" font-weight="800" fill="white">${label}</text></svg>`;
+  return { type: 'image/svg+xml', value: btoa(svg) };
 }
