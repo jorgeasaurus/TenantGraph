@@ -31,3 +31,7 @@
 - Tutorial overlays that target content inside scrollable panels must scroll the target into view before measuring and drawing the highlight.
 - Tutorial guide steps should scroll every referenced target into view, not only the first section that was reported as hidden.
 - Sample tenant app catalogs must contain real apps only; policy/configuration names belong in policy collections even when they are imported from the same hydration kit.
+- When a sample tenant is expanded or rethemed, verify the loaded UI graph count and visible labels in sample mode; array size alone does not prove users can see the richer tenant.
+- If a user explicitly asks for a fictional themed tenant, replace stale real-app sample constraints with coherent themed app data instead of preserving the old catalog.
+- Do not ship save/bookmark controls unless the saved item can be reopened; delete misleading persistence UI until the load workflow exists.
+- Default overview sources should include useful object context such as groups, but avoid expensive fanout like members until the user expands a node.

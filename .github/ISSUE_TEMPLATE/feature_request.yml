@@ -1,0 +1,51 @@
+name: Feature request
+description: Suggest a workflow, visualization, or Graph data improvement.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Outcome
+      description: What should Tenant Graph help the user understand or do?
+      placeholder: Help non-admins understand why a device is blocked by Conditional Access.
+    validations:
+      required: true
+  - type: textarea
+    id: user
+    attributes:
+      label: User and workflow
+      description: Who needs this and where would it fit in the app?
+      placeholder: Endpoint admin reviewing app assignments from the graph canvas.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Graph visualization
+        - Search and filters
+        - Readable mode
+        - Conditional Access sign-ins
+        - Microsoft Graph adapter
+        - Sample tenant / tutorial
+        - Documentation
+    validations:
+      required: true
+  - type: textarea
+    id: data
+    attributes:
+      label: Data or permissions needed
+      description: List Microsoft Graph endpoints, scopes, or tenant objects if known.
+      placeholder: /auditLogs/signIns, Policy.Read.ConditionalAccess, deviceCompliancePolicies...
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: What would prove the feature works?
+      placeholder: |
+        - User can filter CA events by blocked policies
+        - Sample tenant includes a blocked example
+        - README screenshot updated
+

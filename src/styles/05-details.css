@@ -105,3 +105,120 @@
   font-size: 12px;
   line-height: 1.4;
 }
+
+.admin-impact-panel {
+  border-color: rgba(var(--accent-rgb), 0.3);
+}
+
+.admin-impact-panel p {
+  margin: 0 0 10px;
+  color: #dcecff;
+  font-size: var(--type-body);
+  line-height: 1.45;
+}
+
+.blast-radius-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+  margin-bottom: 12px;
+}
+
+.blast-radius-grid div {
+  min-width: 0;
+  border: 1px solid rgba(63, 209, 255, 0.18);
+  border-radius: var(--control-radius);
+  background: rgba(4, 10, 22, 0.58);
+  padding: 7px;
+}
+
+.blast-radius-grid strong,
+.blast-radius-grid span {
+  display: block;
+}
+
+.blast-radius-grid strong {
+  color: #f8fbff;
+  font-size: 17px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.blast-radius-grid span {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: var(--type-caption);
+}
+
+.admin-insight-list {
+  display: grid;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.admin-insight-list h3 {
+  margin: 0;
+  color: #eaf6ff;
+  font-size: var(--type-body);
+}
+
+.admin-finding {
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  gap: 7px;
+  border: 1px solid rgba(37, 81, 106, 0.62);
+  border-radius: var(--control-radius);
+  background: rgba(4, 10, 22, 0.58);
+  padding: 8px;
+}
+
+.admin-finding svg {
+  margin-top: 1px;
+  color: var(--accent);
+}
+
+.admin-finding.critical {
+  border-color: rgba(255, 51, 102, 0.42);
+}
+
+.admin-finding.critical svg {
+  color: var(--error);
+}
+
+.admin-finding.warning {
+  border-color: rgba(251, 191, 36, 0.38);
+}
+
+.admin-finding.warning svg {
+  color: var(--warn);
+}
+
+.admin-finding strong,
+.admin-finding small {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.admin-finding strong {
+  color: #f8fbff;
+  font-size: var(--type-body);
+  line-height: 1.25;
+}
+
+.admin-finding small {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: var(--type-caption);
+  line-height: 1.35;
+}
+
+.admin-action-row {
+  display: flex;
+}
+
+.compact-action {
+  margin: 10px 0 0;
+  min-height: 38px;
+  width: 100%;
+}

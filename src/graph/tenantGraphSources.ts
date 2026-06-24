@@ -45,6 +45,15 @@ const overviewSources = [
       ),
   },
   {
+    label: 'groups',
+    run: async (client: GraphClient) =>
+      groupsToGraph(
+        await client.getPaged<GraphObject>(
+          '/groups?$top=25&$select=id,displayName,mailNickname,securityEnabled,groupTypes',
+        ),
+      ),
+  },
+  {
     label: 'mobile apps',
     run: async (client: GraphClient) =>
       mobileAppsToGraph(

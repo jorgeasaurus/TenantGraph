@@ -52,7 +52,7 @@ function userPhotoSpec(): MediaSpec {
       const photo = await client.getDataUrl(
         `/users/${encodeURIComponent(nodeApiId(node))}/photos/${userPhotoSize}/$value`,
       );
-      return isImageDataUrl(photo) ? photo : undefined;
+      return isImageSource(photo) ? photo : undefined;
     },
   };
 }
@@ -94,6 +94,6 @@ async function hydrateNodeMedia(
   };
 }
 
-function isImageDataUrl(value: string): boolean {
-  return value.startsWith('data:image/');
+function isImageSource(value: string): boolean {
+  return value.startsWith('data:image/') || /^\/[\w./-]+\.(?:avif|gif|jpe?g|png|svg|webp)$/i.test(value);
 }

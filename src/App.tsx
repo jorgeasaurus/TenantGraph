@@ -21,7 +21,7 @@ export default function App() {
   if (sampleMode) {
     return (
       <AppShell
-        accountName="Sample tenant / Contoso"
+        accountName="Sample tenant / Lumon"
         client={sampleTenantClient}
         isSampleTenant
         onSignOut={closeSampleTenant}

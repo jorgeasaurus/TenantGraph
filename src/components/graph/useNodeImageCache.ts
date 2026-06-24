@@ -64,5 +64,9 @@ function nodeImageDataUrl(node: TenantNode): string | undefined {
   }
 
   const value = node.iconDataUrl;
-  return typeof value === 'string' && value.startsWith('data:image/') ? value : undefined;
+  return typeof value === 'string' && isImageSource(value) ? value : undefined;
+}
+
+function isImageSource(value: string): boolean {
+  return value.startsWith('data:image/') || /^\/[\w./-]+\.(?:avif|gif|jpe?g|png|svg|webp)$/i.test(value);
 }

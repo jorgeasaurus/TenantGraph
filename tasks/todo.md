@@ -1,5 +1,91 @@
 # Tenant Graph Plan
 
+- [ ] Main merge and production deploy
+  - [x] Run pre-merge verification
+  - [x] Commit branch changes
+  - [x] Merge current branch into `main`
+  - [ ] Push `main` to GitHub
+  - [ ] Deploy production to Vercel
+- [x] README setup split
+  - [x] Move setup, Azure app registration, troubleshooting, and security notes into a separate markdown file
+  - [x] Refocus README on visual showcase, sample tenant, and core features
+  - [x] Verify links and markdown hygiene
+  - Review: moved local install, environment variables, app registration, delegated scopes, development commands, troubleshooting, and security notes to `docs/setup.md`.
+  - Review: README is now a 118-line showcase with screenshots, sample tenant quick start, feature summary, modeled object families, architecture, contribution links, and setup link.
+  - Review: verified referenced local files exist, `README.md` and `docs/setup.md` line counts, `npm run lint`, and `git diff --check`.
+- [x] Default group overview
+  - [x] Add capped group source to initial overview
+  - [x] Keep group membership loading progressive through expansion
+  - [x] Update regression coverage
+  - [x] Run focused and full verification
+  - Review: default overview now includes a capped `/groups?$top=25` source so Lumon groups such as Severed Floor, Macrodata Refinement, and Optics and Design appear without requiring expansion.
+  - Review: regression coverage confirms initial group nodes load without member/memberOf edges; memberships still load through progressive node expansion.
+  - Review: verified with focused sample tenant tests, typecheck, lint, full tests, build, React Doctor 100/100, and `git diff --check`.
+- [x] Repository docs and screenshots
+  - [x] Add license, issue templates, and PR template
+  - [x] Capture fresh sample tenant screenshots for README
+  - [x] Update README with screenshots and license status
+  - [x] Run documentation and build verification
+  - Review: added MIT license, package license metadata, GitHub bug/feature issue forms, PR template, and three README screenshots from the Lumon sample tenant.
+  - Review: verified README image/link paths, parsed issue-template YAML, captured Playwright screenshots for overview/user-device/CA block views, confirmed no `Save view` control in the screenshot flow, and ran `npm run lint`, `npx tsc -b --pretty false`, `npm run test` (70 tests), `npm run build`, `npm run doctor -- --verbose` (100/100), and `git diff --check`. Build still emits the existing large Three.js/MSAL chunk warning.
+- [x] Remove non-loadable saved views
+  - [x] Trace Save view state, storage, and UI
+  - [x] Remove Save view and Saved investigations UI until loading exists
+  - [x] Update tests and lessons
+  - [x] Run focused and full verification
+  - Review: deleted the localStorage-only saved investigation workflow from the impact panel; only Copy evidence remains.
+  - Review: verified with `rg` for removed saved-view strings in `src`, `npm run lint`, `npx tsc -b --pretty false`, `npm run test` (70 tests), `npm run build`, `git diff --check`, and Playwright sample smoke on `http://127.0.0.1:5173/?sampleTenant=1` with zero console errors. Build still emits the existing large Three.js/MSAL chunk warning; dev browser still shows the known duplicate Three.js warning.
+- [x] Lumon sample profile photos
+  - [x] Move supplied character images into served sample assets
+  - [x] Map Mark, Helly, Irving, Dylan, and Milchick to the supplied photos
+  - [x] Keep generated initials avatars as fallback for other users
+  - [x] Run focused and full verification
+  - Review: supplied PNGs now live in `public/sample-users/` and hydrate Mark Scout, Helly Riggs, Irving Bailiff, Dylan George, and Seth Milchick in sample mode.
+  - Review: verified with `npx vitest run src/demo/sampleTenantClient.test.ts`, `npx tsc -b --pretty false`, `npm run lint`, `npm run doctor -- --verbose` (100/100), `npm run test` (70 tests), `npm run build`, `git diff --check`, static asset `curl -I` checks for all five PNGs, and Playwright smoke on `http://127.0.0.1:5173/?sampleTenant=1` with zero console errors. Build still emits the existing large Three.js/MSAL chunk warning; dev browser still shows the known duplicate Three.js warning.
+- [x] Lumon sample tenant retheme
+  - [x] Replace generic Contoso-style sample objects with Lumon-themed users, groups, devices, apps, policies, assignments, and sign-ins
+  - [x] Make the default sample overview visibly larger and coherent without requiring search first
+  - [x] Update sample guide copy and account label
+  - [x] Update regression coverage for Lumon search, app icons, expansion, and Conditional Access samples
+  - [x] Run focused tests, full verification, and sample browser smoke
+  - Review: sample mode now loads a Lumon tenant with 123 visible objects / 63 relationships, 24 people, 38 devices, 18 Kier-themed apps, 20 groups, 5 roles, 27 policy/profile objects, 8 filters, 8 scope tags, detected apps, app icons, profile photos, assignments, and Conditional Access sign-ins.
+  - Review: verified with `npx vitest run src/demo/sampleTenantClient.test.ts`, `npx tsc -b --pretty false`, `npm run lint`, `npm run doctor -- --verbose` (100/100), `npm run test` (69 tests), `npm run build`, `git diff --check`, and Playwright smoke on `http://127.0.0.1:5173/?sampleTenant=1` with zero console errors. Build still emits the existing large Three.js/MSAL chunk warning; dev browser still shows the known duplicate Three.js warning.
+- [x] Thermo-nuclear QA loop
+  - [x] Run lint baseline and fix findings
+  - [x] Run React Doctor baseline and fix findings from root causes
+  - [x] Run strict thermo-nuclear maintainability review against current branch changes
+  - [x] Repeat lint, React Doctor, typecheck, tests, and build until clean
+  - [x] Record final verification evidence
+  - Review: React Doctor started at 91/100 with two `js-hoist-intl` warnings; hoisted both `Intl.DateTimeFormat` instances to module scope and reran full React Doctor at 100/100.
+  - Review: thermo-nuclear pass tightened admin-impact selected-object analysis to use a scoped neighborhood graph and cleaned the copy-evidence timer lifecycle.
+  - Review: verified with `npm run lint`, `npx react-doctor@latest --verbose --scope changed`, `npm run doctor -- --verbose`, `npx tsc -b`, `npm run test`, `npm run build`, and `git diff --check`.
+  - Note: build succeeds and still reports the existing Vite large-chunk warning.
+- [x] Mobile optimization pass
+  - [x] Audit current 390px and 430px sample-tenant layout with Playwright
+  - [x] Keep graph first while making search, results, details, and admin insights reachable on mobile
+  - [x] Compress toolbar controls without clipping text or creating horizontal overflow
+  - [x] Tune sidebar cards, sign-in filters, inspector, legend, and graph overlays for touch use
+  - [x] Run lint, typecheck, tests, build, and mobile browser smoke
+  - [x] Update canonical feature-story tracker with mobile verification evidence
+  - Review: mobile toolbar no longer overlaps the graph, workspace jumps scroll below the sticky mobile nav, tutorial highlights stay within 320px width, and desktop keeps the 58px toolbar with mobile nav hidden.
+  - Review: verified with `npm run lint`, `npx tsc -b`, `npm run test`, `npm run build`, and browser smoke at 320px, 390px, 430px, and 1440px.
+- [x] Admin impact workflow pass
+  - [x] Add graph-derived policy/app blast-radius analyzer
+  - [x] Add hygiene and risk findings for broad assignments, empty policies, noncompliant devices, privileged access, and guardrails
+  - [x] Add recent-change style investigation hints from loaded metadata and sign-in projections
+  - [x] Add one-click investigation summary export
+  - [x] Add saved investigation shortcuts in local storage
+  - [x] Deemphasize raw/global graph interpretation with workflow-first copy
+  - [x] Verify tests, lint, typecheck, build, browser smoke, and Vercel preview
+  - Review: preview deployed at https://tenant-graph-lspn83jgl-jorgeasaurus-projects.vercel.app and verified with `vercel curl '/?sampleTenant=1'`.
+- [x] Expand sample tenant realism
+  - [x] Increase sample users, devices, apps, groups, policies, and guardrails
+  - [x] Add coherent memberships, assignments, detected apps, and sign-in examples
+  - [x] Keep sample app names real and icon fallbacks visually distinct
+  - [x] Add regression coverage for larger sample overview counts
+  - [x] Run focused and full verification
+  - Review: sample mode now renders 81 objects / 37 relationships with 17 people, 19 devices, 16 apps, 18 policies, and 11 guardrails.
+  - Review: verified with focused sample tests, full tests, lint, typecheck, build, audit, and Playwright sample-mode smoke.
 - [x] Inspect repo and conventions
 - [x] Scaffold React + TypeScript + Vite app
 - [x] Add MSAL auth using env vars

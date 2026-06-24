@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
+import { Filter, Network, Search, ShieldCheck } from 'lucide-react';
 import type { GraphClient } from '../../graph/client';
 import { SampleTenantGuide } from '../demo/SampleTenantGuide';
 import { GraphOverlays } from '../graph/GraphOverlays';
@@ -62,8 +63,30 @@ export function AppShell({ accountName, client, isSampleTenant = false, onSignOu
         onSearchTermChange={actions.setSearchTerm}
         onSignOut={onSignOut}
       />
+      <nav className="mobile-workspace-nav" aria-label="Workspace sections">
+        <button type="button" onClick={() => scrollToWorkspaceTarget('[data-guide="graph-canvas"]')}>
+          <Network size={15} />
+          Graph
+        </button>
+        <button type="button" onClick={() => scrollToWorkspaceTarget('[data-guide="results"]')}>
+          <Search size={15} />
+          Results
+        </button>
+        <button type="button" onClick={() => scrollToWorkspaceTarget('[data-guide="object-types"]')}>
+          <Filter size={15} />
+          Types
+        </button>
+        <button
+          type="button"
+          onClick={() => scrollToWorkspaceTarget('[data-guide="signins"]', '[data-guide="details"]')}
+        >
+          <ShieldCheck size={15} />
+          Access
+        </button>
+      </nav>
       <div className="workspace">
         <Sidebar
+          adminImpact={derived.adminImpact}
           busyNodeId={state.busyNodeId}
           clusterSummaries={derived.readableClusterSummaries}
           edgeCount={derived.visibleGraph.edges.length}
@@ -73,6 +96,7 @@ export function AppShell({ accountName, client, isSampleTenant = false, onSignOu
           graphObjectLimit={state.graphObjectLimit}
           graphTotalNodeCount={derived.graphLimitResult.totalNodeCount}
           impactMetrics={derived.selectedImpact}
+          investigationSummary={derived.investigationSummary}
           path={derived.readablePath}
           pathCandidates={derived.readablePathTargetCandidates}
           permissionError={state.permissionError}
@@ -140,4 +164,21 @@ export function AppShell({ accountName, client, isSampleTenant = false, onSignOu
       {isSampleTenant && <SampleTenantGuide open={guideOpen} onClose={() => setSampleGuideDismissed(true)} />}
     </div>
   );
+}
+
+function scrollToWorkspaceTarget(selector: string, fallbackSelector?: string): void {
+  const target =
+    document.querySelector<HTMLElement>(selector) ??
+    (fallbackSelector ? document.querySelector<HTMLElement>(fallbackSelector) : null);
+
+  if (!target) {
+    return;
+  }
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  target.scrollIntoView({
+    behavior: reduceMotion ? 'auto' : 'smooth',
+    block: 'start',
+    inline: 'nearest',
+  });
 }

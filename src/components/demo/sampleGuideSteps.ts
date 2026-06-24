@@ -19,7 +19,7 @@ export const sampleGuideSteps = [
     scrollBlock: 'center',
     target: '[data-guide="toolbar-search"]',
     title: 'Search sample tenant objects',
-    body: 'Try Company Portal, SAP Concur, Miguel, Windows, Finance, or Block legacy auth. Search results use the same flow as Microsoft Graph.',
+    body: 'Try Macrodata, Kier, Severed Floor, Overtime, Wellness, or Mark. Search results use the same flow as Microsoft Graph.',
   },
   {
     id: 'filters',
