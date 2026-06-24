@@ -1,5 +1,11 @@
 # Tenant Graph Plan
 
+- [x] Landing GitHub link
+  - [x] Add a direct GitHub repository link to signed-out landing states
+  - [x] Keep the existing access requirements GitHub link for detailed setup context
+  - [x] Verify lint and focused tests
+  - Review: added a full-width GitHub repository action to the missing-config and sign-in landing panels while preserving the detailed access requirements link.
+  - Review: verified with focused auth tests, lint, typecheck, full tests, build, and Playwright landing smoke.
 - [x] Social card metadata
   - [x] Add supplied social card asset to the web app
   - [x] Wire Open Graph and Twitter metadata

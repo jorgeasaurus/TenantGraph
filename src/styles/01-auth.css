@@ -81,7 +81,8 @@
 }
 
 .primary-action,
-.secondary-action {
+.secondary-action,
+.github-action {
   width: 100%;
 }
 
@@ -103,8 +104,48 @@
   font-size: 13px;
 }
 
-.secondary-action {
+.landing-action-stack {
+  display: grid;
+  gap: 10px;
   margin: 14px 0 8px;
+}
+
+.landing-action-stack .primary-action,
+.landing-action-stack .secondary-action {
+  margin: 0;
+}
+
+.github-action {
+  min-height: 40px;
+  border: 1px solid rgba(63, 209, 255, 0.18);
+  border-radius: var(--control-radius);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  background: rgba(3, 8, 18, 0.56);
+  box-shadow: var(--shadow-border);
+  color: rgba(232, 243, 255, 0.9);
+  font-weight: 700;
+  text-decoration: none;
+  transition:
+    background-color 150ms var(--ease-out),
+    border-color 150ms var(--ease-out),
+    box-shadow 150ms var(--ease-out),
+    color 150ms var(--ease-out),
+    scale 150ms var(--ease-out);
+}
+
+.github-action:hover {
+  border-color: rgba(var(--accent-rgb), 0.5);
+  background: rgba(6, 16, 34, 0.88);
+  box-shadow:
+    var(--shadow-border-hover),
+    0 0 0 4px rgba(var(--accent-rgb), 0.1);
+}
+
+.github-action:active {
+  scale: 0.96;
 }
 
 .ghost-action {

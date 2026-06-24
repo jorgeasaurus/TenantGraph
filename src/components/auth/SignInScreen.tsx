@@ -1,5 +1,5 @@
 import { useMsal } from '@azure/msal-react';
-import { ExternalLink, Info, Network, PlayCircle, ShieldCheck } from 'lucide-react';
+import { ExternalLink, Github, Info, Network, PlayCircle, ShieldCheck } from 'lucide-react';
 import { useState } from 'react';
 import { loginRequest } from '../../auth/msal';
 import { signInErrorMessage } from '../../auth/signInErrors';
@@ -31,10 +31,13 @@ export function MissingConfigScreen({
             <code key={key}>{key}</code>
           ))}
         </div>
-        <button className="secondary-action" type="button" onClick={onOpenSampleTenant}>
-          <PlayCircle size={18} />
-          Sample tenant
-        </button>
+        <div className="landing-action-stack">
+          <button className="secondary-action" type="button" onClick={onOpenSampleTenant}>
+            <PlayCircle size={18} />
+            Sample tenant
+          </button>
+          <GitHubRepositoryLink />
+        </div>
         <AccessResources />
       </section>
     </main>
@@ -65,14 +68,17 @@ export function SignInScreen({ onOpenSampleTenant }: AuthScreenProps) {
         <p className="eyebrow">Microsoft Intune relationship map</p>
         <h1>Tenant Graph</h1>
         <p>Sign in with Microsoft Entra ID to inspect Intune objects and their assignments.</p>
-        <button className="primary-action" type="button" onClick={() => void signIn()}>
-          <ShieldCheck size={18} />
-          Sign in
-        </button>
-        <button className="secondary-action" type="button" onClick={onOpenSampleTenant}>
-          <PlayCircle size={18} />
-          Sample tenant
-        </button>
+        <div className="landing-action-stack">
+          <button className="primary-action" type="button" onClick={() => void signIn()}>
+            <ShieldCheck size={18} />
+            Sign in
+          </button>
+          <button className="secondary-action" type="button" onClick={onOpenSampleTenant}>
+            <PlayCircle size={18} />
+            Sample tenant
+          </button>
+          <GitHubRepositoryLink />
+        </div>
         <AccessResources />
         {authError && (
           <p className="auth-error" role="alert">
@@ -81,6 +87,15 @@ export function SignInScreen({ onOpenSampleTenant }: AuthScreenProps) {
         )}
       </section>
     </main>
+  );
+}
+
+function GitHubRepositoryLink() {
+  return (
+    <a className="github-action" href={tenantGraphGitHubUrl} target="_blank" rel="noreferrer">
+      <Github size={18} />
+      GitHub repository
+    </a>
   );
 }
 
