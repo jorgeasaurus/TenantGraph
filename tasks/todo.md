@@ -1,5 +1,12 @@
 # Tenant Graph Plan
 
+- [x] Vercel Analytics
+  - [x] Install the Vercel Web Analytics package
+  - [x] Render analytics once at the React app root
+  - [x] Keep OAuth callback URLs from being recorded with transient query/hash data
+  - [x] Run lint, typecheck, tests, build, and package verification
+  - Review: added `@vercel/analytics`, mounted the React analytics component through `AppRoot`, and scrubbed MSAL callback params/fragments before analytics events are sent.
+  - Review: verified with focused analytics tests, lint, typecheck, full tests, production build, React Doctor 100/100, Playwright runtime injection smoke, and `git diff --check`.
 - [x] Main merge and production deploy
   - [x] Run pre-merge verification
   - [x] Commit branch changes

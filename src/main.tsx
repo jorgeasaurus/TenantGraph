@@ -3,6 +3,7 @@ import { MsalProvider } from '@azure/msal-react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
+import { AppRoot } from './AppRoot';
 import { configuredRedirectOrigin, createMsalConfig, hasMsalConfig } from './auth/msal';
 import './styles.css';
 
@@ -11,7 +12,9 @@ const root = createRoot(document.getElementById('root') as HTMLElement);
 if (!hasMsalConfig) {
   root.render(
     <StrictMode>
-      <App />
+      <AppRoot>
+        <App />
+      </AppRoot>
     </StrictMode>,
   );
 } else {
@@ -38,9 +41,11 @@ if (!hasMsalConfig) {
 
     root.render(
       <StrictMode>
-        <MsalProvider instance={msalInstance}>
-          <App />
-        </MsalProvider>
+        <AppRoot>
+          <MsalProvider instance={msalInstance}>
+            <App />
+          </MsalProvider>
+        </AppRoot>
       </StrictMode>,
     );
   }
