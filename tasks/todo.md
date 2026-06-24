@@ -1,11 +1,14 @@
 # Tenant Graph Plan
 
-- [ ] Main merge and production deploy
+- [x] Main merge and production deploy
   - [x] Run pre-merge verification
   - [x] Commit branch changes
   - [x] Merge current branch into `main`
-  - [ ] Push `main` to GitHub
-  - [ ] Deploy production to Vercel
+  - [x] Push `main` to GitHub
+  - [x] Deploy production to Vercel
+  - Review: branch `codex/admin-impact-workflows` was committed at `95cf616`, pushed, merged into `main`, and pushed to GitHub.
+  - Review: verified with lint, typecheck, full tests, production build, React Doctor 100/100, and post-merge build. Build still emits the known large chunk warning.
+  - Review: production deployment completed with Vercel CLI 54.15.1 and aliased `https://tenant-graph.vercel.app`.
 - [x] README setup split
   - [x] Move setup, Azure app registration, troubleshooting, and security notes into a separate markdown file
   - [x] Refocus README on visual showcase, sample tenant, and core features
