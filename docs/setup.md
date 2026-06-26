@@ -75,6 +75,8 @@ DeviceManagementRBAC.Read.All
 
 Grant admin consent so Tenant Graph can read tenant-wide Intune, directory, and sign-in data. `AuditLog.Read.All` powers sign-in status; `Policy.Read.ConditionalAccess` is requested only when CA policy names and controls are enabled in the Sign-ins panel. The signed-in user still needs an Entra role that can read sign-in logs, such as Reports Reader or Security Reader.
 
+For a new tenant, sign in with an account that can grant admin consent, or open the generated admin consent URL from `New-TenantGraphAppRegistration.ps1`. The URL uses `https://graph.microsoft.com/.default` so it grants the Microsoft Graph delegated permissions configured on the app registration.
+
 ## Development
 
 ```bash
@@ -92,6 +94,7 @@ npm run preview
 - Sign-in popup blocked: allow popups for `localhost:5173`.
 - Empty graph: confirm Intune data exists and admin consent was granted.
 - Permission banner: grant the listed Microsoft Graph permission, then sign out and sign in again.
+- New tenant only consents to `User.Read`: confirm the app registration has the required API permissions, then use the admin consent URL.
 - Directory roles show IDs: confirm `RoleManagement.Read.Directory` is granted.
 - Sign-in logs fail: grant `AuditLog.Read.All` and use an account with Reports Reader or Security Reader.
 - CA policy names are missing: grant `Policy.Read.ConditionalAccess`, enable policy names in the Sign-ins panel, and use an account that can read Conditional Access.

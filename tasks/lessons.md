@@ -40,3 +40,4 @@
 - Once a custom domain is live, README and repo metadata should advertise that domain instead of Vercel-generated production aliases.
 - GitHub repository social preview images are not writable through the public repo update API; include the asset in the repo and upload it through Settings when an authenticated browser session is available.
 - If MSAL uses the `organizations` authority, app registration setup must use `AzureADMultipleOrgs`; do not leave scripts or docs on single-tenant defaults.
+- For multi-tenant admin apps, first-run sign-in must request the real delegated scope set; `User.Read`-only login hides required admin consent until later failures.

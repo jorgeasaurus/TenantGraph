@@ -22,7 +22,7 @@ describe('landing access resources', () => {
     expect(accessRequirementItems).toEqual(
       expect.arrayContaining([
         expect.stringContaining('Microsoft Entra app registration'),
-        expect.stringContaining('Microsoft Graph consent'),
+        expect.stringContaining('Microsoft Graph admin consent'),
         expect.stringContaining('Reports Reader or Security Reader'),
         expect.stringContaining('Policy.Read.ConditionalAccess'),
       ]),

@@ -1,7 +1,7 @@
 import { useMsal } from '@azure/msal-react';
 import { ExternalLink, Github, Info, Network, PlayCircle, ShieldCheck } from 'lucide-react';
 import { useState } from 'react';
-import { loginRequest } from '../../auth/msal';
+import { adminConsentUrl, loginRequest } from '../../auth/msal';
 import { signInErrorMessage } from '../../auth/signInErrors';
 import { accessRequirementItems, tenantGraphGitHubUrl } from './accessResources';
 import { VantaNetBackground } from './VantaNetBackground';
@@ -120,6 +120,12 @@ function AccessResources() {
             <ExternalLink size={15} />
             GitHub repository
           </a>
+          {adminConsentUrl && (
+            <a href={adminConsentUrl} target="_blank" rel="noreferrer">
+              <ShieldCheck size={15} />
+              Grant admin consent
+            </a>
+          )}
         </div>
       )}
     </div>

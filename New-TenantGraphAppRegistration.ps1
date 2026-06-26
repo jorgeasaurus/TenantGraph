@@ -318,7 +318,10 @@ if ($GrantAdminConsent -and $clientServicePrincipal) {
 }
 
 $adminConsentUrlTenant = if ($TenantId) { $TenantId } elseif ($context.TenantId) { $context.TenantId } else { 'organizations' }
-$adminConsentUrl = "https://login.microsoftonline.com/$adminConsentUrlTenant/adminconsent?client_id=$($application.appId)"
+$adminConsentRedirectUri = @($SpaRedirectUri | Sort-Object -Unique | Select-Object -First 1)
+$adminConsentScope = [System.Uri]::EscapeDataString('https://graph.microsoft.com/.default')
+$adminConsentRedirect = [System.Uri]::EscapeDataString($adminConsentRedirectUri)
+$adminConsentUrl = "https://login.microsoftonline.com/$adminConsentUrlTenant/v2.0/adminconsent?client_id=$($application.appId)&scope=$adminConsentScope&redirect_uri=$adminConsentRedirect"
 
 [pscustomobject]@{
     DisplayName              = $application.displayName

@@ -20,10 +20,6 @@ export const configuredRedirectOrigin = configuredRedirectUri
   : '';
 export const msalAuthority = 'https://login.microsoftonline.com/organizations';
 
-export const loginRequest = {
-  scopes: ['User.Read'],
-};
-
 export const graphReadScopes = [
   'User.Read',
   'User.Read.All',
@@ -44,6 +40,43 @@ export const signInLogScopes = [
 export const conditionalAccessDetailScopes = [
   'Policy.Read.ConditionalAccess',
 ];
+
+export const tenantGraphConsentScopes = uniqueScopes([
+  ...graphReadScopes,
+  ...signInLogScopes,
+  ...conditionalAccessDetailScopes,
+]);
+
+export const loginRequest = {
+  scopes: tenantGraphConsentScopes,
+};
+
+export function uniqueScopes(scopes: readonly string[]): string[] {
+  return [...new Set(scopes)];
+}
+
+type AdminConsentEnv = Record<string, string | boolean | undefined>;
+
+export function createAdminConsentUrl(source: AdminConsentEnv): string {
+  const clientId = stringEnvValue(source.VITE_AAD_CLIENT_ID);
+  const redirectUri = stringEnvValue(source.VITE_REDIRECT_URI);
+
+  if (!clientId || !redirectUri) {
+    return '';
+  }
+
+  const url = new URL(`${msalAuthority}/v2.0/adminconsent`);
+  url.searchParams.set('client_id', clientId);
+  url.searchParams.set('redirect_uri', redirectUri);
+  url.searchParams.set('scope', 'https://graph.microsoft.com/.default');
+  return url.toString();
+}
+
+export const adminConsentUrl = createAdminConsentUrl(env);
+
+function stringEnvValue(value: string | boolean | undefined): string {
+  return typeof value === 'string' ? value : '';
+}
 
 export function createMsalConfig(): Configuration {
   return {

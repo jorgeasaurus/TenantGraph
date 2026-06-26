@@ -805,3 +805,20 @@
   - [x] Document production result
 
 - Organizations authority release is published to GitHub `main` and Vercel production at `https://tenantgraph.com`. Checks pass: `npm run lint`, `npx tsc -b --pretty false`, `npm run test` (73 tests), `npm run build`, `git diff --check`, `git push origin main`, `npx --yes vercel@latest deploy --prod --yes`, `npx --yes vercel@latest inspect`, `curl -I https://tenantgraph.com`, and production bundle verification for `https://login.microsoftonline.com/organizations`. Build still emits the existing large bundle warning.
+
+- [x] Fix new-tenant consent prompt
+  - [x] Trace current MSAL sign-in and token acquisition flow
+  - [x] Request Tenant Graph delegated scopes during initial sign-in
+  - [x] Add admin-consent URL support for tenant admins
+  - [x] Update setup docs and regression tests
+  - [x] Run lint, typecheck, tests, and build
+  - [x] Document verification result
+
+- New-tenant consent now requests the full Tenant Graph delegated scope set during initial MSAL sign-in instead of only `User.Read`. The landing access panel can expose a tenant admin consent URL, and the setup script now outputs a v2 `adminconsent` URL using `https://graph.microsoft.com/.default`. Checks pass: `npx vitest run src/auth/msal.test.ts src/components/auth/SignInScreen.test.ts` (8 tests), `npm run lint`, `npx tsc -b --pretty false`, `npm run test` (76 tests), `npm run build`, and `git diff --check`. Build still emits the existing large bundle warning.
+
+- [ ] Publish new-tenant consent fix
+  - [ ] Commit scoped changes to `main`
+  - [ ] Push `main` to GitHub
+  - [ ] Deploy Vercel production
+  - [ ] Verify production custom domain and bundle
+  - [ ] Document production result
