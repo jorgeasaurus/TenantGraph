@@ -18,6 +18,7 @@ const configuredRedirectUri = env.VITE_REDIRECT_URI || '';
 export const configuredRedirectOrigin = configuredRedirectUri
   ? new URL(configuredRedirectUri).origin
   : '';
+export const msalAuthority = 'https://login.microsoftonline.com/organizations';
 
 export const loginRequest = {
   scopes: ['User.Read'],
@@ -48,7 +49,7 @@ export function createMsalConfig(): Configuration {
   return {
     auth: {
       clientId: env.VITE_AAD_CLIENT_ID,
-      authority: `https://login.microsoftonline.com/${env.VITE_AAD_TENANT_ID}`,
+      authority: msalAuthority,
       redirectUri: configuredRedirectUri,
       postLogoutRedirectUri: configuredRedirectUri,
     },

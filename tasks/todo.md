@@ -786,3 +786,20 @@
   - [x] Verify remote branch contains the commit
 
 - Current Tenant Graph state is pushed to private GitHub repo `https://github.com/jorgeasaurus/TenantGraph`. Commit `46bc71459b450e6525c27cfe7250847dca2c3c5f` (`Ship sample tenant and graph UX updates`) is present on `origin/main` and GitHub reports `main` as the default branch. The pushed commit includes the sample tenant experience, guide scrolling, landing access resources, renderer split, graph visual updates, tests, task notes, and the canonical feature tracker workbook.
+
+- [x] Use organizations MSAL authority
+  - [x] Inspect current MSAL authority and app registration setup
+  - [x] Set the runtime authority to `https://login.microsoftonline.com/organizations`
+  - [x] Align setup docs and app registration script with the organizations authority
+  - [x] Run focused auth tests, lint, typecheck, and build
+  - [x] Document verification result
+
+- MSAL now uses `https://login.microsoftonline.com/organizations` through `msalAuthority`, and the setup script creates an `AzureADMultipleOrgs` app registration to match that runtime behavior. Checks pass: `npx vitest run src/auth/msal.test.ts`, `npm run lint`, `npx tsc -b --pretty false`, `npm run test` (73 tests), `npm run build`, targeted authority scan, and `git diff --check`. Build still emits the existing large bundle warning.
+
+- [ ] Push organizations authority to production
+  - [x] Re-run release verification
+  - [ ] Commit the scoped changes to `main`
+  - [ ] Push `main` to GitHub
+  - [ ] Deploy Vercel production
+  - [ ] Inspect production deployment and custom domain
+  - [ ] Document production result

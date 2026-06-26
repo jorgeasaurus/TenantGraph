@@ -34,7 +34,7 @@ VITE_AAD_TENANT_ID=<tenant-id>
 VITE_REDIRECT_URI=http://localhost:5173
 ```
 
-`VITE_REDIRECT_URI` must exactly match a SPA redirect URI on the Entra app registration. Do not add or use `/auth/popup-callback.html`.
+Tenant Graph signs users in through `https://login.microsoftonline.com/organizations`. `VITE_REDIRECT_URI` must exactly match a SPA redirect URI on the Entra app registration. Do not add or use `/auth/popup-callback.html`.
 
 ## Azure App Registration
 
@@ -52,7 +52,7 @@ Manual setup:
 
 - Platform: Single-page application
 - Redirect URI: `http://localhost:5173`
-- Supported account type: single tenant
+- Supported account type: accounts in any organizational directory
 - Client secret: not required
 - API permissions: delegated Microsoft Graph permissions
 

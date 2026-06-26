@@ -39,3 +39,4 @@
 - README contribution links should target GitHub creation flows, not raw template files; issue forms use `/issues/new?template=...`.
 - Once a custom domain is live, README and repo metadata should advertise that domain instead of Vercel-generated production aliases.
 - GitHub repository social preview images are not writable through the public repo update API; include the asset in the repo and upload it through Settings when an authenticated browser session is available.
+- If MSAL uses the `organizations` authority, app registration setup must use `AzureADMultipleOrgs`; do not leave scripts or docs on single-tenant defaults.

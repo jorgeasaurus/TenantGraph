@@ -278,7 +278,7 @@ $requiredResourceAccess = @(
 
 $appBody = @{
     displayName            = $DisplayName
-    signInAudience         = 'AzureADMyOrg'
+    signInAudience         = 'AzureADMultipleOrgs'
     requiredResourceAccess = @($requiredResourceAccess)
     api                    = @{
         requestedAccessTokenVersion = 2
