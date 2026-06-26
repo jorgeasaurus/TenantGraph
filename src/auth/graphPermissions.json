@@ -1,0 +1,20 @@
+{
+  "graphReadScopes": [
+    "User.Read",
+    "User.Read.All",
+    "Group.Read.All",
+    "GroupMember.Read.All",
+    "RoleManagement.Read.Directory",
+    "DeviceManagementManagedDevices.Read.All",
+    "DeviceManagementApps.Read.All",
+    "DeviceManagementConfiguration.Read.All",
+    "DeviceManagementServiceConfig.Read.All",
+    "DeviceManagementRBAC.Read.All"
+  ],
+  "signInLogScopes": [
+    "AuditLog.Read.All"
+  ],
+  "conditionalAccessDetailScopes": [
+    "Policy.Read.ConditionalAccess"
+  ]
+}

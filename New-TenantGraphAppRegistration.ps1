@@ -25,21 +25,18 @@ Set-StrictMode -Version 2.0
 
 $GraphApiRoot = 'https://graph.microsoft.com/v1.0'
 $MicrosoftGraphAppId = '00000003-0000-0000-c000-000000000000'
+$GraphPermissionConfigPath = Join-Path $PSScriptRoot 'src/auth/graphPermissions.json'
 
+if (-not (Test-Path -LiteralPath $GraphPermissionConfigPath)) {
+    throw "Could not find Graph permission configuration at '$GraphPermissionConfigPath'."
+}
+
+$graphPermissionConfig = Get-Content -LiteralPath $GraphPermissionConfigPath -Raw | ConvertFrom-Json
 $graphScopes = @(
-    'User.Read',
-    'User.Read.All',
-    'Group.Read.All',
-    'GroupMember.Read.All',
-    'RoleManagement.Read.Directory',
-    'AuditLog.Read.All',
-    'Policy.Read.ConditionalAccess',
-    'DeviceManagementManagedDevices.Read.All',
-    'DeviceManagementApps.Read.All',
-    'DeviceManagementConfiguration.Read.All',
-    'DeviceManagementServiceConfig.Read.All',
-    'DeviceManagementRBAC.Read.All'
-)
+    @($graphPermissionConfig.graphReadScopes)
+    @($graphPermissionConfig.signInLogScopes)
+    @($graphPermissionConfig.conditionalAccessDetailScopes)
+) | Where-Object { $_ } | Sort-Object -Unique
 
 function Assert-Module {
     [CmdletBinding()]

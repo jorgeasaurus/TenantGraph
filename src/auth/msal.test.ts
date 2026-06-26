@@ -8,8 +8,7 @@ import {
   missingRequiredEnvVars,
   msalAuthority,
   signInLogScopes,
-  tenantGraphConsentScopes,
-  uniqueScopes,
+  tenantGraphAppScopes,
 } from './msal';
 
 describe('missingRequiredEnvVars', () => {
@@ -31,16 +30,17 @@ describe('createMsalConfig', () => {
 });
 
 describe('loginRequest', () => {
-  it('requests the full Tenant Graph consent set during sign-in', () => {
+  it('requests the full Tenant Graph app scope set during sign-in', () => {
     const requiredScopes = [
       ...graphReadScopes,
       ...signInLogScopes,
       ...conditionalAccessDetailScopes,
     ];
+    const uniqueRequiredScopes = new Set(requiredScopes);
 
-    expect(loginRequest.scopes).toEqual(tenantGraphConsentScopes);
+    expect(loginRequest.scopes).toEqual(tenantGraphAppScopes);
     expect(loginRequest.scopes).toEqual(expect.arrayContaining(requiredScopes));
-    expect(loginRequest.scopes).toHaveLength(uniqueScopes(requiredScopes).length);
+    expect(loginRequest.scopes).toHaveLength(uniqueRequiredScopes.size);
   });
 });
 
@@ -48,8 +48,8 @@ describe('createAdminConsentUrl', () => {
   it('builds a v2 admin-consent URL for the configured app', () => {
     const url = new URL(
       createAdminConsentUrl({
-        VITE_AAD_CLIENT_ID: 'client-id',
-        VITE_REDIRECT_URI: 'https://tenantgraph.com',
+        clientId: 'client-id',
+        redirectUri: 'https://tenantgraph.com',
       }),
     );
 
@@ -60,6 +60,6 @@ describe('createAdminConsentUrl', () => {
   });
 
   it('does not emit an admin-consent URL until client and redirect are configured', () => {
-    expect(createAdminConsentUrl({ VITE_AAD_CLIENT_ID: 'client-id' })).toBe('');
+    expect(createAdminConsentUrl({ clientId: 'client-id' })).toBe('');
   });
 });

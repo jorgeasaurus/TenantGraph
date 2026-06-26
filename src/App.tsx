@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import { useGraphToken } from './auth/useGraphToken';
 import { MissingConfigScreen, SignInScreen } from './components/auth/SignInScreen';
 import { AppShell } from './components/layout/AppShell';
-import { hasMsalConfig, missingEnvVars } from './auth/msal';
+import { adminConsentUrl, hasMsalConfig, missingEnvVars } from './auth/msal';
 import { createGraphClient } from './graph/client';
 import { sampleTenantClient } from './demo/sampleTenantClient';
 
@@ -30,7 +30,13 @@ export default function App() {
   }
 
   if (!hasMsalConfig) {
-    return <MissingConfigScreen missing={missingEnvVars} onOpenSampleTenant={openSampleTenant} />;
+    return (
+      <MissingConfigScreen
+        adminConsentUrl={adminConsentUrl}
+        missing={missingEnvVars}
+        onOpenSampleTenant={openSampleTenant}
+      />
+    );
   }
 
   return (
@@ -39,7 +45,7 @@ export default function App() {
         <LiveAppShell />
       </AuthenticatedTemplate>
       <UnauthenticatedTemplate>
-        <SignInScreen onOpenSampleTenant={openSampleTenant} />
+        <SignInScreen adminConsentUrl={adminConsentUrl} onOpenSampleTenant={openSampleTenant} />
       </UnauthenticatedTemplate>
     </>
   );
