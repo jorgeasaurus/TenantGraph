@@ -56,24 +56,9 @@ Manual setup:
 - Client secret: not required
 - API permissions: delegated Microsoft Graph permissions
 
-Required delegated scopes:
+Required delegated scopes are defined in `src/auth/graphPermissions.json`. The app registration script reads that same file so sign-in, setup, and documentation stay aligned.
 
-```text
-User.Read
-User.Read.All
-Group.Read.All
-GroupMember.Read.All
-RoleManagement.Read.Directory
-AuditLog.Read.All
-Policy.Read.ConditionalAccess
-DeviceManagementManagedDevices.Read.All
-DeviceManagementApps.Read.All
-DeviceManagementConfiguration.Read.All
-DeviceManagementServiceConfig.Read.All
-DeviceManagementRBAC.Read.All
-```
-
-Grant admin consent so Tenant Graph can read tenant-wide Intune, directory, and sign-in data. `AuditLog.Read.All` powers sign-in status; `Policy.Read.ConditionalAccess` is requested only when CA policy names and controls are enabled in the Sign-ins panel. The signed-in user still needs an Entra role that can read sign-in logs, such as Reports Reader or Security Reader.
+Grant admin consent so Tenant Graph can read tenant-wide Intune, directory, Conditional Access, and sign-in data. The signed-in user still needs an Entra role that can read sign-in logs, such as Reports Reader or Security Reader.
 
 For a new tenant, sign in with an account that can grant admin consent, or open the generated admin consent URL from `New-TenantGraphAppRegistration.ps1`. The URL uses `https://graph.microsoft.com/.default` so it grants the Microsoft Graph delegated permissions configured on the app registration.
 

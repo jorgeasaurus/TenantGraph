@@ -41,3 +41,4 @@
 - GitHub repository social preview images are not writable through the public repo update API; include the asset in the repo and upload it through Settings when an authenticated browser session is available.
 - If MSAL uses the `organizations` authority, app registration setup must use `AzureADMultipleOrgs`; do not leave scripts or docs on single-tenant defaults.
 - For multi-tenant admin apps, first-run sign-in must request the real delegated scope set; `User.Read`-only login hides required admin consent until later failures.
+- Graph permission scopes must have one machine-readable source of truth consumed by app code and setup automation; do not copy scope lists across TypeScript, scripts, and docs.

@@ -824,3 +824,17 @@
   - [x] Document production result
 
 - New-tenant consent fix is live at `https://tenantgraph.com`. Application fix commit `751541e` is on GitHub `main`, and Vercel production deployment `dpl_89SSVzRcBGcGP3mS2TFB8wcsH7nE` is Ready. Production verification confirms the shipped bundle contains the organizations authority, v2 admin-consent path, Graph `.default`, and all required delegated Graph scopes.
+
+- [ ] Address thermo-nuclear consent review
+  - [x] Create a review-fix branch from `main`
+  - [x] Replace copied Graph scope lists with one shared permission contract
+  - [x] Make full app consent naming explicit
+  - [x] Tighten admin-consent URL input types
+  - [x] Pass admin-consent URL into auth UI as a prop
+  - [x] Run lint, typecheck, tests, and build
+  - [x] Commit and push the branch
+  - [x] Document branch result
+
+- Thermo-nuclear consent review fixes are implemented on `codex/consent-permission-contract`. Checks pass: focused auth tests, `npx tsc -b --pretty false`, PowerShell JSON permission contract read, `npm run lint`, `npm run test` (76 tests), `npm run build`, and `git diff --check`. Build still emits the existing large bundle warning.
+
+- Branch `codex/consent-permission-contract` is pushed to GitHub with commit `359ce0f` (`Clean up consent permission contract`). Pull request URL: `https://github.com/jorgeasaurus/TenantGraph/pull/new/codex/consent-permission-contract`.

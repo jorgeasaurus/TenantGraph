@@ -1,19 +1,22 @@
 import { useMsal } from '@azure/msal-react';
 import { ExternalLink, Github, Info, Network, PlayCircle, ShieldCheck } from 'lucide-react';
 import { useState } from 'react';
-import { adminConsentUrl, loginRequest } from '../../auth/msal';
+import { loginRequest } from '../../auth/msal';
 import { signInErrorMessage } from '../../auth/signInErrors';
 import { accessRequirementItems, tenantGraphGitHubUrl } from './accessResources';
 import { VantaNetBackground } from './VantaNetBackground';
 
 type AuthScreenProps = {
+  adminConsentUrl: string;
   onOpenSampleTenant: () => void;
 };
 
 export function MissingConfigScreen({
+  adminConsentUrl,
   missing,
   onOpenSampleTenant,
 }: {
+  adminConsentUrl: string;
   missing: readonly string[];
   onOpenSampleTenant: () => void;
 }) {
@@ -38,13 +41,13 @@ export function MissingConfigScreen({
           </button>
           <GitHubRepositoryLink />
         </div>
-        <AccessResources />
+        <AccessResources adminConsentUrl={adminConsentUrl} />
       </section>
     </main>
   );
 }
 
-export function SignInScreen({ onOpenSampleTenant }: AuthScreenProps) {
+export function SignInScreen({ adminConsentUrl, onOpenSampleTenant }: AuthScreenProps) {
   const { instance } = useMsal();
   const [authError, setAuthError] = useState('');
 
@@ -79,7 +82,7 @@ export function SignInScreen({ onOpenSampleTenant }: AuthScreenProps) {
           </button>
           <GitHubRepositoryLink />
         </div>
-        <AccessResources />
+        <AccessResources adminConsentUrl={adminConsentUrl} />
         {authError && (
           <p className="auth-error" role="alert">
             {authError}
@@ -99,7 +102,7 @@ function GitHubRepositoryLink() {
   );
 }
 
-function AccessResources() {
+function AccessResources({ adminConsentUrl }: { adminConsentUrl: string }) {
   const [open, setOpen] = useState(false);
 
   return (

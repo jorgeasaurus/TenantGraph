@@ -1,4 +1,5 @@
 import type { Configuration } from '@azure/msal-browser';
+import graphPermissions from './graphPermissions.json';
 
 const env = import.meta.env;
 
@@ -20,46 +21,31 @@ export const configuredRedirectOrigin = configuredRedirectUri
   : '';
 export const msalAuthority = 'https://login.microsoftonline.com/organizations';
 
-export const graphReadScopes = [
-  'User.Read',
-  'User.Read.All',
-  'Group.Read.All',
-  'GroupMember.Read.All',
-  'RoleManagement.Read.Directory',
-  'DeviceManagementManagedDevices.Read.All',
-  'DeviceManagementApps.Read.All',
-  'DeviceManagementConfiguration.Read.All',
-  'DeviceManagementServiceConfig.Read.All',
-  'DeviceManagementRBAC.Read.All',
-];
+export const graphReadScopes = [...graphPermissions.graphReadScopes];
 
-export const signInLogScopes = [
-  'AuditLog.Read.All',
-];
+export const signInLogScopes = [...graphPermissions.signInLogScopes];
 
-export const conditionalAccessDetailScopes = [
-  'Policy.Read.ConditionalAccess',
-];
+export const conditionalAccessDetailScopes = [...graphPermissions.conditionalAccessDetailScopes];
 
-export const tenantGraphConsentScopes = uniqueScopes([
+export const tenantGraphAppScopes = uniqueScopes([
   ...graphReadScopes,
   ...signInLogScopes,
   ...conditionalAccessDetailScopes,
 ]);
 
 export const loginRequest = {
-  scopes: tenantGraphConsentScopes,
+  scopes: tenantGraphAppScopes,
 };
 
-export function uniqueScopes(scopes: readonly string[]): string[] {
+function uniqueScopes(scopes: readonly string[]): string[] {
   return [...new Set(scopes)];
 }
 
-type AdminConsentEnv = Record<string, string | boolean | undefined>;
-
-export function createAdminConsentUrl(source: AdminConsentEnv): string {
-  const clientId = stringEnvValue(source.VITE_AAD_CLIENT_ID);
-  const redirectUri = stringEnvValue(source.VITE_REDIRECT_URI);
+export function createAdminConsentUrl(source: {
+  clientId?: string;
+  redirectUri?: string;
+}): string {
+  const { clientId, redirectUri } = source;
 
   if (!clientId || !redirectUri) {
     return '';
@@ -72,11 +58,10 @@ export function createAdminConsentUrl(source: AdminConsentEnv): string {
   return url.toString();
 }
 
-export const adminConsentUrl = createAdminConsentUrl(env);
-
-function stringEnvValue(value: string | boolean | undefined): string {
-  return typeof value === 'string' ? value : '';
-}
+export const adminConsentUrl = createAdminConsentUrl({
+  clientId: env.VITE_AAD_CLIENT_ID,
+  redirectUri: configuredRedirectUri,
+});
 
 export function createMsalConfig(): Configuration {
   return {
