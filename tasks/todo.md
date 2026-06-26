@@ -796,10 +796,12 @@
 
 - MSAL now uses `https://login.microsoftonline.com/organizations` through `msalAuthority`, and the setup script creates an `AzureADMultipleOrgs` app registration to match that runtime behavior. Checks pass: `npx vitest run src/auth/msal.test.ts`, `npm run lint`, `npx tsc -b --pretty false`, `npm run test` (73 tests), `npm run build`, targeted authority scan, and `git diff --check`. Build still emits the existing large bundle warning.
 
-- [ ] Push organizations authority to production
+- [x] Push organizations authority to production
   - [x] Re-run release verification
-  - [ ] Commit the scoped changes to `main`
-  - [ ] Push `main` to GitHub
-  - [ ] Deploy Vercel production
-  - [ ] Inspect production deployment and custom domain
-  - [ ] Document production result
+  - [x] Commit the scoped changes to `main`
+  - [x] Push `main` to GitHub
+  - [x] Deploy Vercel production
+  - [x] Inspect production deployment and custom domain
+  - [x] Document production result
+
+- Organizations authority release is published to GitHub `main` and Vercel production at `https://tenantgraph.com`. Checks pass: `npm run lint`, `npx tsc -b --pretty false`, `npm run test` (73 tests), `npm run build`, `git diff --check`, `git push origin main`, `npx --yes vercel@latest deploy --prod --yes`, `npx --yes vercel@latest inspect`, `curl -I https://tenantgraph.com`, and production bundle verification for `https://login.microsoftonline.com/organizations`. Build still emits the existing large bundle warning.
