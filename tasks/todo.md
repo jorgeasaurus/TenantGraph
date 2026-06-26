@@ -832,7 +832,9 @@
   - [x] Tighten admin-consent URL input types
   - [x] Pass admin-consent URL into auth UI as a prop
   - [x] Run lint, typecheck, tests, and build
-  - [ ] Commit and push the branch
-  - [ ] Document branch result
+  - [x] Commit and push the branch
+  - [x] Document branch result
 
 - Thermo-nuclear consent review fixes are implemented on `codex/consent-permission-contract`. Checks pass: focused auth tests, `npx tsc -b --pretty false`, PowerShell JSON permission contract read, `npm run lint`, `npm run test` (76 tests), `npm run build`, and `git diff --check`. Build still emits the existing large bundle warning.
+
+- Branch `codex/consent-permission-contract` is pushed to GitHub with commit `359ce0f` (`Clean up consent permission contract`). Pull request URL: `https://github.com/jorgeasaurus/TenantGraph/pull/new/codex/consent-permission-contract`.
