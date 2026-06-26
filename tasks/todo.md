@@ -816,9 +816,11 @@
 
 - New-tenant consent now requests the full Tenant Graph delegated scope set during initial MSAL sign-in instead of only `User.Read`. The landing access panel can expose a tenant admin consent URL, and the setup script now outputs a v2 `adminconsent` URL using `https://graph.microsoft.com/.default`. Checks pass: `npx vitest run src/auth/msal.test.ts src/components/auth/SignInScreen.test.ts` (8 tests), `npm run lint`, `npx tsc -b --pretty false`, `npm run test` (76 tests), `npm run build`, and `git diff --check`. Build still emits the existing large bundle warning.
 
-- [ ] Publish new-tenant consent fix
-  - [ ] Commit scoped changes to `main`
-  - [ ] Push `main` to GitHub
-  - [ ] Deploy Vercel production
-  - [ ] Verify production custom domain and bundle
-  - [ ] Document production result
+- [x] Publish new-tenant consent fix
+  - [x] Commit scoped changes to `main`
+  - [x] Push `main` to GitHub
+  - [x] Deploy Vercel production
+  - [x] Verify production custom domain and bundle
+  - [x] Document production result
+
+- New-tenant consent fix is live at `https://tenantgraph.com`. Application fix commit `751541e` is on GitHub `main`, and Vercel production deployment `dpl_89SSVzRcBGcGP3mS2TFB8wcsH7nE` is Ready. Production verification confirms the shipped bundle contains the organizations authority, v2 admin-consent path, Graph `.default`, and all required delegated Graph scopes.
