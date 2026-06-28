@@ -5,7 +5,7 @@ import { accessRequirementItems, tenantGraphGitHubUrl } from './accessResources'
 describe('signInErrorMessage', () => {
   it('shows a retry-safe message when the popup is canceled', () => {
     expect(signInErrorMessage(new Error('user_cancelled: user closed the popup'))).toBe(
-      'Sign-in was canceled. Use Sign in when you are ready.',
+      'Sign-in was canceled. Use Sign in with Microsoft when you are ready.',
     );
   });
 

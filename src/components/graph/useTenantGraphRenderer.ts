@@ -16,7 +16,13 @@ import type { GraphHoverTarget } from './graphHoverCopy';
 import { updateGraphLabels } from './graphLabelVisibility';
 import type { GraphZone } from './graphLayout';
 import { buildTenantGraphScene, pointsForZone } from './tenantGraphSceneBuilder';
-import { animateFlowObjects, animateIlluminationObjects, animatePulseObjects, disposeObject } from './threeGraphObjects';
+import {
+  animateFlowObjects,
+  animateIlluminationObjects,
+  animateParticleFields,
+  animatePulseObjects,
+  disposeObject,
+} from './threeGraphObjects';
 
 type CurrentRef<T> = {
   current: T;
@@ -92,6 +98,7 @@ export function useTenantGraphRenderer({
   const labelSpritesRef = useRef<THREE.Sprite[]>([]);
   const labelVisibilityKeyRef = useRef('');
   const nodePickablesRef = useRef<THREE.Object3D[]>([]);
+  const particleObjectsRef = useRef<THREE.Object3D[]>([]);
   const positionsRef = useLazyRef(() => new Map<string, THREE.Vector3>());
   const pulseObjectsRef = useRef<THREE.Object3D[]>([]);
   const zonePickablesRef = useRef<THREE.Object3D[]>([]);
@@ -290,11 +297,14 @@ export function useTenantGraphRenderer({
     renderer.domElement.addEventListener('pointerleave', onPointerLeave);
     renderer.domElement.addEventListener('click', onClick);
 
-    const clock = new THREE.Clock();
+    const timer = new THREE.Timer();
+    timer.connect(document);
     let frame = 0;
-    const animate = () => {
-      const elapsed = clock.getElapsedTime();
+    const animate = (timestamp?: number) => {
+      timer.update(timestamp);
+      const elapsed = timer.getElapsed();
       animateFlowObjects(flowObjectsRef.current, elapsed);
+      animateParticleFields(particleObjectsRef.current, elapsed);
       animatePulseObjects(pulseObjectsRef.current, elapsed);
       updateGraphIllumination(illuminationRef, illuminationObjectsRef.current, performance.now());
       updateCameraFlight(cameraFlightRef, camera, controls, performance.now());
@@ -315,10 +325,11 @@ export function useTenantGraphRenderer({
       renderer.render(scene, camera);
       frame = window.requestAnimationFrame(animate);
     };
-    animate();
+    frame = window.requestAnimationFrame(animate);
 
     return () => {
       window.cancelAnimationFrame(frame);
+      timer.dispose();
       if (hoverFrame) {
         window.cancelAnimationFrame(hoverFrame);
       }
@@ -358,6 +369,7 @@ export function useTenantGraphRenderer({
     labelSpritesRef.current = renderedGraph.labelSprites;
     labelVisibilityKeyRef.current = '';
     nodePickablesRef.current = renderedGraph.nodePickables;
+    particleObjectsRef.current = renderedGraph.particleObjects;
     illuminationObjectsRef.current = renderedGraph.illuminationObjects;
     illuminationRef.current = undefined;
     positionsRef.current = renderedGraph.positions;
@@ -393,6 +405,7 @@ export function useTenantGraphRenderer({
       focusPointRef.current = undefined;
       labelSpritesRef.current = [];
       nodePickablesRef.current = [];
+      particleObjectsRef.current = [];
       illuminationObjectsRef.current = [];
       illuminationRef.current = undefined;
       positionsRef.current = new Map();

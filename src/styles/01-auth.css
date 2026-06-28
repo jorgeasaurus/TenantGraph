@@ -98,6 +98,15 @@
   background: #75ddff;
 }
 
+.microsoft-logo {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  display: block;
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.16);
+}
+
 .auth-error {
   margin: 12px 0 0;
   color: var(--error);
@@ -113,6 +122,17 @@
 .landing-action-stack .primary-action,
 .landing-action-stack .secondary-action {
   margin: 0;
+}
+
+.landing-action-stack .primary-action {
+  border-color: rgba(63, 209, 255, 0.18);
+  background: rgba(3, 8, 18, 0.56);
+  color: rgba(232, 243, 255, 0.9);
+}
+
+.landing-action-stack .primary-action:hover:not(:disabled) {
+  border-color: rgba(var(--accent-rgb), 0.5);
+  background: rgba(6, 16, 34, 0.88);
 }
 
 .github-action {

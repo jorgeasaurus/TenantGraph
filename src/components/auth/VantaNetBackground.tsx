@@ -1,30 +1,9 @@
 import { useEffect, useRef } from 'react';
+import * as THREE from 'three';
+import vantaNetModule from 'vanta/dist/vanta.net.min';
 
-type VantaEffect = {
-  destroy: () => void;
-};
-
-type VantaNetOptions = {
-  backgroundColor: number;
-  color: number;
-  el: HTMLElement;
-  gyroControls: boolean;
-  minHeight: number;
-  minWidth: number;
-  mouseControls: boolean;
-  scale: number;
-  scaleMobile: number;
-  spacing: number;
-  touchControls: boolean;
-};
-
-declare global {
-  interface Window {
-    VANTA?: {
-      NET?: (options: VantaNetOptions) => VantaEffect;
-    };
-  }
-}
+const vantaThree = { ...THREE, VertexColors: true };
+const createVantaNet = typeof vantaNetModule === 'function' ? vantaNetModule : vantaNetModule.default;
 
 export function VantaNetBackground() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -32,8 +11,9 @@ export function VantaNetBackground() {
   useEffect(() => {
     const element = containerRef.current;
     const effect = element
-      ? window.VANTA?.NET?.({
+      ? createVantaNet({
           el: element,
+          THREE: vantaThree,
           mouseControls: true,
           touchControls: true,
           gyroControls: false,

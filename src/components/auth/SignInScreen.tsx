@@ -73,8 +73,8 @@ export function SignInScreen({ adminConsentUrl, onOpenSampleTenant }: AuthScreen
         <p>Sign in with Microsoft Entra ID to inspect Intune objects and their assignments.</p>
         <div className="landing-action-stack">
           <button className="primary-action" type="button" onClick={() => void signIn()}>
-            <ShieldCheck size={18} />
-            Sign in
+            <MicrosoftLogo />
+            Sign in with Microsoft
           </button>
           <button className="secondary-action" type="button" onClick={onOpenSampleTenant}>
             <PlayCircle size={18} />
@@ -99,6 +99,17 @@ function GitHubRepositoryLink() {
       <Github size={18} />
       GitHub repository
     </a>
+  );
+}
+
+function MicrosoftLogo() {
+  return (
+    <svg className="microsoft-logo" viewBox="0 0 23 23" aria-hidden="true" focusable="false">
+      <path fill="currentColor" d="M1 1h10v10H1z" />
+      <path fill="currentColor" d="M12 1h10v10H12z" />
+      <path fill="currentColor" d="M1 12h10v10H1z" />
+      <path fill="currentColor" d="M12 12h10v10H12z" />
+    </svg>
   );
 }
 

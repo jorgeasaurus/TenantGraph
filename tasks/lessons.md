@@ -42,3 +42,7 @@
 - If MSAL uses the `organizations` authority, app registration setup must use `AzureADMultipleOrgs`; do not leave scripts or docs on single-tenant defaults.
 - For multi-tenant admin apps, first-run sign-in must request the real delegated scope set; `User.Read`-only login hides required admin consent until later failures.
 - Graph permission scopes must have one machine-readable source of truth consumed by app code and setup automation; do not copy scope lists across TypeScript, scripts, and docs.
+- For subtle visual effects, verify perceptibility at the default camera distance; "implemented" is not enough if the user cannot see it.
+- For graph particles specifically, verify against the deployed/default graph view because background render order and translucent node glows can make technically-present points disappear.
+- Graph particles should stay atmospheric: once visible, tune count, size, opacity, and texture core together so they do not compete with nodes, labels, or relationship lines.
+- In stacked landing-page actions, avoid one-off filled CTA styling when the user asks for visual consistency; scope overrides to that stack rather than changing shared button classes.

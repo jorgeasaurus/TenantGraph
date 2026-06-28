@@ -21,6 +21,7 @@ import {
   makeEdgeArrow,
   makeEdgeLabel,
   makeFocusRings,
+  makeGraphParticleField,
   makeLabel,
   makeNodeIllumination,
   makeNodeLayers,
@@ -29,6 +30,7 @@ import {
   makeSemanticZone,
   renderLayers,
   setPulse,
+  visualBrillianceOpacity,
 } from './threeGraphObjects';
 
 export type TenantGraphSceneBuild = {
@@ -42,6 +44,7 @@ export type TenantGraphSceneBuild = {
   illuminationObjects: THREE.Object3D[];
   labelSprites: THREE.Sprite[];
   nodePickables: THREE.Object3D[];
+  particleObjects: THREE.Object3D[];
   positions: Map<string, THREE.Vector3>;
   pulseObjects: THREE.Object3D[];
   zonePickables: THREE.Object3D[];
@@ -70,6 +73,7 @@ export function buildTenantGraphScene({
   const illuminationObjects: THREE.Object3D[] = [];
   const labelSprites: THREE.Sprite[] = [];
   const nodePickables: THREE.Object3D[] = [];
+  const particleObjects: THREE.Object3D[] = [];
   const pulseObjects: THREE.Object3D[] = [];
   const zonePickables: THREE.Object3D[] = [];
   const { positions, zones } = layoutGraph(graph, centralNodeId);
@@ -79,6 +83,9 @@ export function buildTenantGraphScene({
   const focusedZoneNodeIds = new Set(focusedZone?.nodeIds ?? []);
   const hasZoneFocus = Boolean(focusedZone && focusedZoneNodeIds.size > 0);
   const nodeById = new Map(graph.nodes.map((node) => [node.id, node]));
+  const particles = makeGraphParticleField(positions, graph.nodes.length);
+  particleObjects.push(particles.object);
+  group.add(particles.object);
 
   for (const zone of zones) {
     const zoneObject = makeSemanticZone(zone);
@@ -131,6 +138,7 @@ export function buildTenantGraphScene({
     illuminationObjects,
     labelSprites,
     nodePickables,
+    particleObjects,
     positions,
     pulseObjects,
     zonePickables,
@@ -257,7 +265,7 @@ function makeEdgeMaterial(
       dashSize,
       depthWrite: false,
       gapSize,
-      opacity,
+      opacity: visualBrillianceOpacity(opacity),
       transparent: true,
     });
   }
@@ -266,7 +274,7 @@ function makeEdgeMaterial(
     blending: THREE.AdditiveBlending,
     color,
     depthWrite: false,
-    opacity,
+    opacity: visualBrillianceOpacity(opacity),
     transparent: true,
   });
 }
@@ -444,7 +452,7 @@ function addSelectedNodeCues(
   color: string,
   isCentral: boolean,
 ): void {
-  const haloOpacity = isCentral ? 0.34 : 0.28;
+  const haloOpacity = visualBrillianceOpacity(isCentral ? 0.34 : 0.28);
   const halo = new THREE.Mesh(
     new THREE.SphereGeometry(iconSize * 0.8, 18, 10),
     new THREE.MeshBasicMaterial({

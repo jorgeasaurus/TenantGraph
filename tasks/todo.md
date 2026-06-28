@@ -838,3 +838,130 @@
 - Thermo-nuclear consent review fixes are implemented on `codex/consent-permission-contract`. Checks pass: focused auth tests, `npx tsc -b --pretty false`, PowerShell JSON permission contract read, `npm run lint`, `npm run test` (76 tests), `npm run build`, and `git diff --check`. Build still emits the existing large bundle warning.
 
 - Branch `codex/consent-permission-contract` is pushed to GitHub with commit `359ce0f` (`Clean up consent permission contract`). Pull request URL: `https://github.com/jorgeasaurus/TenantGraph/pull/new/codex/consent-permission-contract`.
+
+- [x] Tune graph spacing and brilliance
+  - [x] Increase intra-category cluster spacing in the graph layout
+  - [x] Reduce additive visual brilliance by 50%
+  - [x] Add focused layout/visual tests
+  - [x] Run lint, typecheck, tests, and build
+  - [x] Document verification result
+  - Review: expanded same-category bucket spacing and dense cluster radius while reducing additive graph glow, halo, flow, and boundary opacity by 50%.
+  - Review: verified with focused graph tests, `npx tsc -b --pretty false`, `npm run lint`, `npm run test`, `npm run build`, `git diff --check`, and a local sample route HTTP 200 check. Build still emits the existing large bundle warning.
+
+- [x] Add graph particles
+  - [x] Add a subtle graph-scoped particle layer
+  - [x] Animate particles from the existing render loop
+  - [x] Add focused particle tests
+  - [x] Run lint, typecheck, tests, and build
+  - [x] Document verification result
+  - Review: added a capped, deterministic `THREE.Points` particle layer around the graph and animate it with low-cost group drift from the existing render loop.
+  - Review: verified with focused particle/layout tests, `npx tsc -b --pretty false`, `npm run lint`, `npm run test`, `npm run build`, `git diff --check`, `curl -I` sample route, and Playwright sample smoke with zero console errors. Build still emits the existing large bundle warning; dev still shows the existing duplicate Three.js warning.
+
+- [x] Upgrade Three.js to r185
+  - [x] Read r185 release and migration notes for app-relevant changes
+  - [x] Upgrade `three` and `@types/three` to `0.185.0`
+  - [x] Replace deprecated animation timer usage if needed
+  - [x] Run focused and full verification
+  - [x] Document visual improvement ideas from the changelog
+  - Review: upgraded npm Three.js packages to r185 and replaced `THREE.Clock` with `THREE.Timer` connected to the Page Visibility API for stable graph animation timing.
+  - Review: r185 visual follow-ups worth considering are WebGPU/TSL postprocessing experiments, subtle BloomNode-driven selection bloom, SSR/SSGI-style depth cues for selected relationship paths, and replacing the Vanta CDN globals with a module-based background that shares the npm Three package.
+  - Review: verified with focused graph tests, `npx tsc -b --pretty false`, `npm run lint`, `npm run test`, `npm run build`, `npm ls three @types/three`, `curl -I` sample route, and Playwright sample smoke with zero console errors. Build still emits the existing large bundle warning; dev still shows the existing duplicate Three.js warning from the Vanta CDN script.
+
+- [x] Move Vanta background to npm Three r185
+  - [x] Install Vanta as an npm dependency
+  - [x] Import Vanta and pass npm Three r185 explicitly
+  - [x] Remove CDN Three/Vanta scripts from `index.html`
+  - [x] Run focused and full verification
+  - [x] Document duplicate-Three warning result
+  - Review: Vanta now loads from npm, receives the bundled Three r185 module explicitly, and uses a small `VertexColors` compatibility shim required by Vanta's legacy material setup.
+  - Review: removed the CDN Three r134 and Vanta scripts from `index.html`; `rg` confirms no remaining CDN/global Three/Vanta references in app source.
+  - Review: verified with `npx tsc -b --pretty false`, `npm run lint`, `npm run test`, `npm run build`, `npm ls three vanta @types/three`, and Playwright landing/sample smokes. Duplicate Three warning is gone; headless Chromium still emits WebGL driver `ReadPixels` performance warnings.
+
+- [x] Deploy r185 work to Vercel preview
+  - [x] Confirm linked Vercel project
+  - [x] Deploy current local working tree to preview
+  - [x] Inspect deployment completion
+  - [x] Verify preview route
+  - [x] Document preview URL
+  - Review: deployed the current local working tree to Vercel preview with `npx vercel@latest deploy --yes`.
+  - Review: preview is `Ready` at `https://tenant-graph-h6isghphj-jorgeasaurus-projects.vercel.app`; `vercel curl` returned HTTP 200 for `/` and `/?sampleTenant=1`.
+
+- [x] Make graph particles visible
+  - [x] Tune particle size, opacity, and count for reset/fresh-load visibility
+  - [x] Update focused particle tests
+  - [x] Run typecheck, lint, tests, build, and browser smoke
+  - [x] Document verification result
+  - Review: made particles fixed screen-size points, increased count and base opacity, disabled tone mapping/fog for the particle material, and kept the effect in one `THREE.Points` draw call.
+  - Review: verified with focused particle tests, `npx tsc -b --pretty false`, `npm run lint`, `npm run test`, `npm run build`, and Playwright sample screenshot. Headless Chromium still emits WebGL driver `ReadPixels` performance warnings during screenshot capture.
+
+- [x] Deploy visible particle fix to Vercel preview
+  - [x] Deploy current local working tree to preview
+  - [x] Verify preview route
+  - [x] Document preview URL
+  - Review: deployed the visible particle fix to `https://tenant-graph-4zzapaka5-jorgeasaurus-projects.vercel.app`.
+  - Review: Vercel inspect reports `Ready`; `vercel curl '/?sampleTenant=1'` returned HTTP 200.
+
+- [x] Make particles unmistakable in default graph view
+  - [x] Move particle render order above graph glow/floor layers
+  - [x] Add soft circular particle texture and stronger visible material settings
+  - [x] Update focused tests
+  - [x] Run verification and screenshot smoke
+  - [x] Deploy preview
+  - Review: tuned the particle field into fixed-size cyan glints with a stronger soft texture, higher count, higher post-scale opacity, and disabled particle frustum culling so the reset camera keeps the layer visible.
+  - Review: verified with focused graph tests, `npx tsc -b --pretty false`, `npm run lint`, `npm run test`, `npm run build`, `git diff --check`, and a local Playwright screenshot at `/?sampleTenant=1`. Build still emits the existing large bundle warning.
+  - Review: deployed preview `https://tenant-graph-q9ihrd8qn-jorgeasaurus-projects.vercel.app`; Vercel inspect reports `Ready`, and `npx vercel@latest curl 'https://tenant-graph-q9ihrd8qn-jorgeasaurus-projects.vercel.app/?sampleTenant=1' -I` returned HTTP 200.
+
+- [ ] Fix production bundle warning
+  - [x] Identify why Vite emits a single oversized chunk
+  - [x] Add focused code splitting without hiding the warning threshold
+  - [x] Run lint, tests, build, and chunk verification
+  - [x] Document final result
+  - Review: added Vite 8/Rolldown `output.codeSplitting.groups` for React, MSAL auth, Three/Vanta graph rendering, UI utilities, and remaining vendor modules.
+  - Review: `npm run build` no longer emits the large chunk warning; the largest emitted JS chunk is about 374 kB and `find dist/assets -name '*.js' -size +500k` returns no files.
+  - Review: verified with `npm run build`, `npm run lint`, `npm run test`, and `git diff --check`.
+
+- [x] Make graph particles more subtle
+  - [x] Reduce particle visual weight without hiding the layer
+  - [x] Update focused particle tests
+  - [x] Run focused and production verification
+  - [x] Document final result
+  - Review: reduced particle count, sprite size, opacity, cyan intensity, and texture core strength while keeping the layer above graph glows and below labels.
+  - Review: verified with focused graph tests, `npx tsc -b --pretty false`, Playwright sample screenshot, `npm run lint`, `npm run test`, and `npm run build`.
+
+- [x] Deploy subtle particles preview
+  - [x] Deploy current working tree to Vercel preview
+  - [x] Inspect deployment readiness
+  - [x] Verify sample tenant route with `vercel curl`
+  - [x] Document preview URL
+  - Review: deployed the current working tree to Vercel preview at `https://tenant-graph-58yo30fmt-jorgeasaurus-projects.vercel.app`.
+  - Review: Vercel inspect reports deployment `dpl_BK8Fjuum8UZQytYjReSwM9tc856h` is `Ready`; `npx vercel@latest curl 'https://tenant-graph-58yo30fmt-jorgeasaurus-projects.vercel.app/?sampleTenant=1' -I` returned HTTP 200.
+
+- [x] Update Microsoft sign-in button
+  - [x] Change signed-out primary action copy
+  - [x] Add Microsoft logo mark to the button
+  - [x] Align canceled sign-in error copy
+  - [x] Run focused and build verification
+  - Review: changed the landing primary action to `Sign in with Microsoft`, added a four-color Microsoft mark, and aligned the canceled-popup message with the new action label.
+  - Review: verified with focused auth tests, `npx tsc -b --pretty false`, `npm run lint`, and `npm run build`.
+
+- [x] Make Microsoft sign-in mark white
+  - [x] Switch logo paths to monochrome current color
+  - [x] Set logo color to white in auth styles
+  - [x] Run focused verification
+  - Review: Microsoft sign-in mark now inherits `currentColor`, and the auth style sets it to white.
+  - Review: verified with focused auth tests, `npx tsc -b --pretty false`, and `npm run lint`.
+
+- [x] Match Microsoft sign-in button to landing actions
+  - [x] Scope the sign-in button style to the landing action stack
+  - [x] Keep shared primary buttons unchanged
+  - [x] Run focused verification
+  - Review: sign-in now uses the same dark outlined treatment as the other landing actions, while `.primary-action` remains unchanged outside `.landing-action-stack`.
+  - Review: verified with focused auth tests, `npx tsc -b --pretty false`, `npm run lint`, and `npm run build`.
+
+- [ ] Ship visual and bundle updates to production
+  - [x] Verify the current working tree
+  - [ ] Commit changes on `main`
+  - [ ] Push `main` to GitHub
+  - [ ] Deploy Vercel production
+  - [ ] Verify `tenantgraph.com` and sample tenant route
+  - [ ] Document final release result

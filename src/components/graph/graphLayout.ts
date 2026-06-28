@@ -16,6 +16,20 @@ export type GraphLayout = {
   zones: GraphZone[];
 };
 
+const layoutSpacing = {
+  boundaryPadding: 34,
+  bucketBaseRadius: 24,
+  bucketDensityRadius: 4.8,
+  maxZoneRadius: 170,
+  nodeRingBaseRadius: 10,
+  nodeRingStep: 9.6,
+  nodeVerticalStep: 3,
+  zoneNodePadding: 30,
+  zoneOrbitMax: 190,
+  zoneOrbitMin: 62,
+  zoneOrbitScale: 24,
+} as const;
+
 export function layoutGraph(graph: TenantGraph, centralNodeId?: string): GraphLayout {
   const positions = new Map<string, THREE.Vector3>();
   const zones = new Map<string, { definition: GraphZoneDefinition; nodes: TenantNode[] }>();
@@ -38,7 +52,10 @@ export function layoutGraph(graph: TenantGraph, centralNodeId?: string): GraphLa
   const orderedZones = Array.from(zones.values()).toSorted(
     (first, second) => first.definition.order - second.definition.order,
   );
-  const zoneOrbit = Math.max(54, Math.min(170, 21 * Math.sqrt(Math.max(graph.nodes.length, 2))));
+  const zoneOrbit = Math.max(
+    layoutSpacing.zoneOrbitMin,
+    Math.min(layoutSpacing.zoneOrbitMax, layoutSpacing.zoneOrbitScale * Math.sqrt(Math.max(graph.nodes.length, 2))),
+  );
   const renderedZones: GraphZone[] = [];
 
   orderedZones.forEach((zone, zoneIndex) => {
@@ -51,7 +68,9 @@ export function layoutGraph(graph: TenantGraph, centralNodeId?: string): GraphLa
     bucketTypes.forEach((type, typeIndex) => {
       const nodes = typeBuckets.get(type) ?? [];
       const bucketAngle = (typeIndex / Math.max(bucketTypes.length, 1)) * Math.PI * 2;
-      const bucketRadius = bucketTypes.length > 1 ? 18 + Math.sqrt(zone.nodes.length) * 3.5 : 0;
+      const bucketRadius = bucketTypes.length > 1
+        ? layoutSpacing.bucketBaseRadius + Math.sqrt(zone.nodes.length) * layoutSpacing.bucketDensityRadius
+        : 0;
       const bucketCenter = zoneCenter
         .clone()
         .add(new THREE.Vector3(Math.cos(bucketAngle) * bucketRadius, 0, Math.sin(bucketAngle) * bucketRadius));
@@ -59,15 +78,15 @@ export function layoutGraph(graph: TenantGraph, centralNodeId?: string): GraphLa
       nodes.forEach((node, index) => {
         const angle = index * 2.399963 + (stableHash(type) % 100) * 0.01;
         const ring = Math.ceil(Math.sqrt(index + 1));
-        const radius = 8 + ring * 7.2;
-        const y = ((stableHash(node.id) % 9) - 4) * 2.4;
+        const radius = layoutSpacing.nodeRingBaseRadius + ring * layoutSpacing.nodeRingStep;
+        const y = ((stableHash(node.id) % 9) - 4) * layoutSpacing.nodeVerticalStep;
         const position = new THREE.Vector3(
           bucketCenter.x + Math.cos(angle) * radius,
           y,
           bucketCenter.z + Math.sin(angle) * radius,
         );
         positions.set(node.id, position);
-        zoneRadius = Math.max(zoneRadius, zoneCenter.distanceTo(position) + 24);
+        zoneRadius = Math.max(zoneRadius, zoneCenter.distanceTo(position) + layoutSpacing.zoneNodePadding);
       });
     });
 
@@ -81,11 +100,11 @@ export function layoutGraph(graph: TenantGraph, centralNodeId?: string): GraphLa
 
     renderedZones.push({
       ...zone.definition,
-      boundary: makeZoneBoundary(zoneCenter, zonePositions, Math.min(150, zoneRadius)),
+      boundary: makeZoneBoundary(zoneCenter, zonePositions, Math.min(layoutSpacing.maxZoneRadius, zoneRadius)),
       center: zoneCenter,
       nodeIds: zone.nodes.map((node) => node.id),
       nodeCount: zone.nodes.length,
-      radius: Math.min(150, zoneRadius),
+      radius: Math.min(layoutSpacing.maxZoneRadius, zoneRadius),
     });
   });
 
@@ -142,7 +161,7 @@ function makeZoneBoundary(
     if (direction.lengthSq() === 0) {
       direction.set(1, 0);
     }
-    direction.normalize().multiplyScalar(28);
+    direction.normalize().multiplyScalar(layoutSpacing.boundaryPadding);
     return new THREE.Vector3(point.x + direction.x, -14, point.y + direction.y);
   });
 
