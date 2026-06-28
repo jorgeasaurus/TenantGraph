@@ -958,10 +958,12 @@
   - Review: sign-in now uses the same dark outlined treatment as the other landing actions, while `.primary-action` remains unchanged outside `.landing-action-stack`.
   - Review: verified with focused auth tests, `npx tsc -b --pretty false`, `npm run lint`, and `npm run build`.
 
-- [ ] Ship visual and bundle updates to production
+- [x] Ship visual and bundle updates to production
   - [x] Verify the current working tree
-  - [ ] Commit changes on `main`
-  - [ ] Push `main` to GitHub
-  - [ ] Deploy Vercel production
-  - [ ] Verify `tenantgraph.com` and sample tenant route
-  - [ ] Document final release result
+  - [x] Commit changes on `main`
+  - [x] Push `main` to GitHub
+  - [x] Deploy Vercel production
+  - [x] Verify `tenantgraph.com` and sample tenant route
+  - [x] Document final release result
+  - Review: committed the visual, particle, sign-in, Vanta r185, and bundle-splitting changes to `main` and pushed GitHub.
+  - Review: deployed production with `npx vercel@latest deploy --prod --yes`; `tenantgraph.com` and `tenantgraph.com/?sampleTenant=1` returned HTTP 200.
