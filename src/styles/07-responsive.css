@@ -175,10 +175,6 @@
     min-height: 380px;
   }
 
-  .graph-canvas canvas {
-    filter: brightness(1.38) saturate(1.2) contrast(1.06);
-  }
-
   .relationship-inspector {
     border-left: 0;
     border-top: 1px solid var(--line);

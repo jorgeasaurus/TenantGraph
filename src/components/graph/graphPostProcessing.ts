@@ -58,7 +58,7 @@ export function makeGraphPostProcessing(
     depthWrite: false,
     transparent: true,
   });
-  overlayMaterial.uniforms.bloomTexture.value = bloomComposer.renderTarget2.texture;
+  overlayMaterial.uniforms.bloomTexture.value = bloomComposer.readBuffer.texture;
   const overlayMesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), overlayMaterial);
   overlayScene.add(overlayMesh);
 
@@ -67,6 +67,7 @@ export function makeGraphPostProcessing(
     try {
       camera.layers.set(graphBloomLayer);
       bloomComposer.render();
+      overlayMaterial.uniforms.bloomTexture.value = bloomComposer.readBuffer.texture;
     } finally {
       camera.layers.mask = previousCameraLayerMask;
     }
