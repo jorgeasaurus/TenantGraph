@@ -4,15 +4,6 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { graphBloomLayer } from './threeGraphObjects';
 
-type MaterialOwner = THREE.Object3D & {
-  material: THREE.Material | THREE.Material[];
-};
-
-type MaterialRestore = {
-  material: THREE.Material | THREE.Material[];
-  object: MaterialOwner;
-};
-
 export type GraphPostProcessing = {
   dispose: () => void;
   render: () => void;
@@ -39,10 +30,10 @@ const bloomOverlayShader = {
 
     void main() {
       vec4 bloom = texture2D(bloomTexture, vUv);
-      vec3 color = bloom.rgb * bloomStrength;
       float luminance = dot(bloom.rgb, vec3(0.2126, 0.7152, 0.0722));
-      float contributionAlpha = smoothstep(0.003, 0.028, luminance);
-      gl_FragColor = vec4(color, contributionAlpha);
+      float contribution = smoothstep(0.003, 0.028, luminance);
+      vec3 color = bloom.rgb * bloomStrength * contribution;
+      gl_FragColor = vec4(color, contribution);
     }
   `,
 };
@@ -52,21 +43,6 @@ export function makeGraphPostProcessing(
   scene: THREE.Scene,
   camera: THREE.PerspectiveCamera,
 ): GraphPostProcessing {
-  const bloomLayer = new THREE.Layers();
-  bloomLayer.set(graphBloomLayer);
-  const blackMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
-  blackMaterial.depthWrite = false;
-  blackMaterial.toneMapped = false;
-  const transparentMaterial = new THREE.MeshBasicMaterial({
-    color: 0x000000,
-    depthTest: false,
-    depthWrite: false,
-    opacity: 0,
-    toneMapped: false,
-    transparent: true,
-  });
-  const restoreList: MaterialRestore[] = [];
-
   const bloomComposer = new EffectComposer(renderer);
   bloomComposer.renderToScreen = false;
   bloomComposer.addPass(new RenderPass(scene, camera));
@@ -87,11 +63,12 @@ export function makeGraphPostProcessing(
   overlayScene.add(overlayMesh);
 
   const render = () => {
+    const previousCameraLayerMask = camera.layers.mask;
     try {
-      scene.traverse((object) => darkenNonBloomed(object, bloomLayer, blackMaterial, transparentMaterial, restoreList));
+      camera.layers.set(graphBloomLayer);
       bloomComposer.render();
     } finally {
-      restoreMaterials(restoreList);
+      camera.layers.mask = previousCameraLayerMask;
     }
 
     renderer.render(scene, camera);
@@ -105,9 +82,6 @@ export function makeGraphPostProcessing(
 
   return {
     dispose: () => {
-      restoreMaterials(restoreList);
-      blackMaterial.dispose();
-      transparentMaterial.dispose();
       bloomComposer.dispose();
       overlayMesh.geometry.dispose();
       overlayMaterial.dispose();
@@ -119,35 +93,4 @@ export function makeGraphPostProcessing(
       bloomPass.resolution.set(width, height);
     },
   };
-}
-
-function darkenNonBloomed(
-  object: THREE.Object3D,
-  bloomLayer: THREE.Layers,
-  blackMaterial: THREE.Material,
-  transparentMaterial: THREE.Material,
-  restoreList: MaterialRestore[],
-): void {
-  if (!isMaterialOwner(object) || bloomLayer.test(object.layers)) {
-    return;
-  }
-
-  restoreList.push({ material: object.material, object });
-  object.material = hasTransparentMaterial(object.material) ? transparentMaterial : blackMaterial;
-}
-
-function restoreMaterials(restoreList: MaterialRestore[]): void {
-  for (const { material, object } of restoreList) {
-    object.material = material;
-  }
-  restoreList.length = 0;
-}
-
-function isMaterialOwner(object: THREE.Object3D): object is MaterialOwner {
-  return 'material' in object && Boolean((object as { material?: unknown }).material);
-}
-
-function hasTransparentMaterial(material: THREE.Material | THREE.Material[]): boolean {
-  const materials = Array.isArray(material) ? material : [material];
-  return materials.some((entry) => entry.transparent || entry.opacity < 1 || entry instanceof THREE.SpriteMaterial);
 }

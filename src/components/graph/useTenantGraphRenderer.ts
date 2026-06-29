@@ -229,7 +229,7 @@ export function useTenantGraphRenderer({
       animateIlluminationObjects(illuminationObjectsRef.current, 0);
     };
     syncReducedMotion();
-    motionQuery?.addEventListener('change', syncReducedMotion);
+    const removeMotionPreferenceListener = subscribeToMotionPreference(motionQuery, syncReducedMotion);
 
     sceneRef.current = scene;
     cameraRef.current = camera;
@@ -368,7 +368,7 @@ export function useTenantGraphRenderer({
         window.cancelAnimationFrame(hoverFrame);
       }
       observer.disconnect();
-      motionQuery?.removeEventListener('change', syncReducedMotion);
+      removeMotionPreferenceListener();
       renderer.domElement.removeEventListener('pointermove', onPointerMove);
       renderer.domElement.removeEventListener('pointerleave', onPointerLeave);
       renderer.domElement.removeEventListener('click', onClick);
@@ -463,6 +463,38 @@ export function useTenantGraphRenderer({
   ]);
 
   return { containerRef, fitView, resetView };
+}
+
+type MotionPreferenceListener = (event: MediaQueryListEvent) => void;
+type LegacyMediaQueryList = MediaQueryList & {
+  addListener?: (listener: MotionPreferenceListener) => void;
+  removeListener?: (listener: MotionPreferenceListener) => void;
+};
+
+function subscribeToMotionPreference(
+  motionQuery: MediaQueryList | undefined,
+  listener: MotionPreferenceListener,
+): () => void {
+  if (!motionQuery) {
+    return () => undefined;
+  }
+
+  if (typeof motionQuery.addEventListener === 'function') {
+    motionQuery.addEventListener('change', listener);
+    return () => {
+      motionQuery.removeEventListener('change', listener);
+    };
+  }
+
+  const legacyMotionQuery = motionQuery as LegacyMediaQueryList;
+  if (typeof legacyMotionQuery.addListener === 'function') {
+    legacyMotionQuery.addListener(listener);
+    return () => {
+      legacyMotionQuery.removeListener?.(listener);
+    };
+  }
+
+  return () => undefined;
 }
 
 function makeScene(): THREE.Scene {
