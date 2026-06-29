@@ -50,4 +50,5 @@
 - Keep post-processing outputs and mobile visual tuning inside the WebGL pipeline; do not sample stale composer buffers or use full-canvas CSS filters for scene brightness.
 - Let EffectComposer own pass sizing; avoid manually mutating pass resolution unless the value includes the same pixel-ratio semantics.
 - Catch redirect-auth promise failures and dispose post-processing passes explicitly; helper calls and composers do not automatically absorb those lifecycle failures.
+- Restore renderer state in `finally` blocks and use `noopener noreferrer` on every `_blank` link; rare render failures and tab opener leaks are still real defects.
 - When editing XLSX trackers, never write artifact-tool rendered export output back to the workbook path unless `file`/`unzip -t` verifies it is an XLSX; prefer a real spreadsheet writer or a temp-file validation step first.

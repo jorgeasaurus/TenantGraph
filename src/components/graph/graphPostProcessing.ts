@@ -75,10 +75,13 @@ export function makeGraphPostProcessing(
     renderer.render(scene, camera);
 
     const previousAutoClear = renderer.autoClear;
-    renderer.autoClear = false;
-    renderer.clearDepth();
-    renderer.render(overlayScene, overlayCamera);
-    renderer.autoClear = previousAutoClear;
+    try {
+      renderer.autoClear = false;
+      renderer.clearDepth();
+      renderer.render(overlayScene, overlayCamera);
+    } finally {
+      renderer.autoClear = previousAutoClear;
+    }
   };
 
   return {

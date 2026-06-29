@@ -6,6 +6,8 @@ import { signInErrorMessage } from '../../auth/signInErrors';
 import { accessRequirementItems, tenantGraphGitHubUrl } from './accessResources';
 import { VantaNetBackground } from './VantaNetBackground';
 
+export const externalLinkRel = 'noopener noreferrer';
+
 type AuthScreenProps = {
   adminConsentUrl: string;
   onOpenSampleTenant: () => void;
@@ -95,7 +97,7 @@ export function SignInScreen({ adminConsentUrl, onOpenSampleTenant }: AuthScreen
 
 function GitHubRepositoryLink() {
   return (
-    <a className="github-action" href={tenantGraphGitHubUrl} target="_blank" rel="noreferrer">
+    <a className="github-action" href={tenantGraphGitHubUrl} target="_blank" rel={externalLinkRel}>
       <Github size={18} />
       View GitHub Repository
     </a>
@@ -130,12 +132,12 @@ function AccessResources({ adminConsentUrl }: { adminConsentUrl: string }) {
               <li key={item}>{item}</li>
             ))}
           </ul>
-          <a href={tenantGraphGitHubUrl} target="_blank" rel="noreferrer">
+          <a href={tenantGraphGitHubUrl} target="_blank" rel={externalLinkRel}>
             <ExternalLink size={15} />
             View GitHub Repository
           </a>
           {adminConsentUrl && (
-            <a href={adminConsentUrl} target="_blank" rel="noreferrer">
+            <a href={adminConsentUrl} target="_blank" rel={externalLinkRel}>
               <ShieldCheck size={15} />
               Grant Admin Consent
             </a>
