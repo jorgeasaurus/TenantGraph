@@ -44,8 +44,8 @@
   background:
     radial-gradient(
       circle at var(--graph-focus-x, 50%) var(--graph-focus-y, 48%),
-      rgba(63, 209, 255, 0.18) 0%,
-      rgba(63, 209, 255, 0.105) 13%,
+      rgba(var(--accent-rgb), 0.18) 0%,
+      rgba(var(--accent-rgb), 0.105) 13%,
       rgba(20, 241, 149, 0.045) 29%,
       rgba(3, 11, 27, 0) 53%
     );
@@ -95,11 +95,11 @@
 
 .graph-legend {
   z-index: 5;
-  border: 1px solid rgba(0, 212, 255, 0.18);
+  border: 1px solid var(--line);
   border-radius: var(--surface-radius);
-  background: rgba(3, 8, 18, 0.62);
-  opacity: 0.66;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.04);
+  background: rgba(26, 26, 26, 0.68);
+  opacity: 0.72;
+  box-shadow: var(--shadow-border), var(--shadow-raised);
   transition:
     background-color 150ms var(--ease-out),
     border-color 150ms var(--ease-out),
@@ -108,8 +108,8 @@
 
 .graph-legend:hover,
 .graph-legend:focus-within {
-  border-color: rgba(0, 212, 255, 0.38);
-  background: rgba(3, 8, 18, 0.9);
+  border-color: var(--line-hover);
+  background: var(--panel-glass-strong);
   opacity: 1;
 }
 
@@ -124,16 +124,16 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  color: rgba(232, 243, 255, 0.84);
+  color: var(--text);
   font-size: var(--type-caption);
 }
 
 .relationship-inspector {
   min-width: 0;
   overflow-y: auto;
-  border-left: 1px solid rgba(63, 209, 255, 0.14);
-  background: rgba(3, 7, 16, 0.93);
-  padding: 11px;
+  border-left: 1px solid var(--line);
+  background: var(--chrome-surface);
+  padding: 12px;
 }
 
 .inspector-heading {
@@ -162,14 +162,14 @@
 
 .relationship-sentence {
   margin: 8px 0 0;
-  color: #dcecff;
+  color: var(--text);
   font-size: var(--type-subtitle);
   line-height: 1.4;
 }
 
 .inspector-heading button {
-  width: 40px;
-  min-height: 40px;
+  width: 44px;
+  min-height: 44px;
   padding: 0;
 }
 
@@ -182,9 +182,9 @@
 
 .inspector-actions button {
   min-width: 0;
-  min-height: 34px;
+  min-height: 44px;
   padding: 0 6px;
-  color: rgba(232, 243, 255, 0.88);
+  color: var(--text);
   font-size: var(--type-caption);
 }
 
@@ -195,15 +195,15 @@
 
 .inspector-section {
   margin-top: 14px;
-  border-top: 1px solid rgba(37, 81, 106, 0.4);
+  border-top: 1px solid var(--line);
   padding-top: 12px;
 }
 
 .inspector-section h2 {
   margin: 0 0 9px;
-  color: #f8fbff;
+  color: var(--text);
   font-size: var(--type-subtitle);
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.25;
 }
 
@@ -239,7 +239,7 @@
   min-width: 0;
   justify-content: flex-start;
   text-align: left;
-  background: rgba(8, 16, 30, 0.84);
+  background: var(--panel-glass);
 }
 
 .relationship-breadcrumb button > span:nth-child(2),
@@ -291,7 +291,7 @@
   min-width: 0;
   margin: 0;
   overflow-wrap: anywhere;
-  color: #e8f3ff;
+  color: var(--text);
   font-size: var(--type-body);
   line-height: 1.35;
 }
@@ -306,13 +306,11 @@
   z-index: 8;
   max-width: min(340px, calc(100vw - 28px));
   pointer-events: none;
-  border: 1px solid rgba(var(--accent-rgb), 0.5);
+  border: 1px solid var(--line);
   border-radius: var(--surface-radius);
-  background: rgba(3, 7, 16, 0.96);
+  background: var(--panel-glass-popover);
   padding: 10px 11px;
-  box-shadow:
-    var(--shadow-border),
-    0 18px 42px rgba(0, 0, 0, 0.36);
+  box-shadow: var(--shadow-popover);
 }
 
 .graph-tooltip strong,
@@ -323,13 +321,13 @@
 }
 
 .graph-tooltip strong {
-  color: #f8fbff;
+  color: var(--text);
   font-size: var(--type-subtitle);
 }
 
 .graph-tooltip span {
   margin-top: 3px;
-  color: #dcecff;
+  color: var(--text);
   font-size: var(--type-body);
   line-height: 1.4;
 }
@@ -346,10 +344,10 @@
 .empty-state {
   position: absolute;
   z-index: 6;
-  border: 1px solid rgba(0, 212, 255, 0.42);
+  border: 1px solid var(--line);
   border-radius: var(--surface-radius);
-  background: rgba(3, 8, 18, 0.93);
-  box-shadow: var(--shadow-border);
+  background: var(--panel-glass-strong);
+  box-shadow: var(--shadow-popover);
 }
 
 .state-banner {
@@ -377,11 +375,11 @@
   gap: 10px;
   width: 100%;
   max-width: none;
-  color: #dcecff;
+  color: var(--text);
 }
 
 .graph-limit-state button {
-  min-height: 40px;
+  min-height: 44px;
 }
 
 .loading-state,

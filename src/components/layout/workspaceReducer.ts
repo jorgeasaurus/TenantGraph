@@ -81,7 +81,7 @@ export function initialWorkspaceState(): WorkspaceState {
     graph: emptyTenantGraph,
     graphObjectLimit: defaultGraphObjectLimit,
     inspectorOpen: true,
-    loading: 'Loading tenant graph',
+    loading: 'Loading tenant graph…',
     relationshipFilter: defaultRelationshipFilter(),
     remoteResults: [],
     resultLimit: defaultResultLimit,
@@ -201,7 +201,7 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
       return {
         ...initialWorkspaceState(),
         error: undefined,
-        loading: 'Loading tenant graph',
+        loading: 'Loading tenant graph…',
       };
     case 'startSearch':
       return { ...state, error: undefined, searching: true, resultLimit: defaultResultLimit };

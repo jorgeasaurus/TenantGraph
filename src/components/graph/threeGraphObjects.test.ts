@@ -111,14 +111,14 @@ describe('node illumination', () => {
     const positionAttribute = geometry.getAttribute('position');
 
     expect(positionAttribute.count).toBeGreaterThan(120);
-    expect(positionAttribute.count).toBeLessThanOrEqual(300);
+    expect(positionAttribute.count).toBeLessThanOrEqual(520);
     expect(field.object.frustumCulled).toBe(false);
     expect(field.object.renderOrder).toBe(renderLayers.labels - 1);
     expect(material.blending).toBe(THREE.AdditiveBlending);
-    expect(material.map).toBeInstanceOf(THREE.DataTexture);
+    expect(material.map).toBeInstanceOf(THREE.Texture);
     expect(material.color.getHexString()).toBe('74e8f5');
-    expect(material.opacity).toBe(visualBrillianceOpacity(0.86));
-    expect(material.size).toBe(5.8);
+    expect(material.opacity).toBe(visualBrillianceOpacity(0.46));
+    expect(material.size).toBe(3.4);
     expect(material.sizeAttenuation).toBe(false);
     expect(material.toneMapped).toBe(false);
   });

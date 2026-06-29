@@ -44,7 +44,7 @@ export function classifyConditionalAccess(
           'applied',
           [],
           'CA applied',
-          'Conditional Access applied successfully, but policy names were omitted.',
+          'Conditional Access applied, but policy names were omitted.',
         ),
         missingDetails: true,
       };
@@ -124,7 +124,7 @@ export function classifyConditionalAccess(
         policies,
         'CA applied',
         appliedPolicies.length > 0
-          ? `${appliedPolicies.length} Conditional Access policy result applied successfully.`
+          ? `${appliedPolicies.length} Conditional Access policy result applied.`
           : 'Conditional Access status reported success for this sign-in.',
       ),
       appliedPolicies,

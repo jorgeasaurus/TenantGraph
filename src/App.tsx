@@ -4,6 +4,7 @@ import { useGraphToken } from './auth/useGraphToken';
 import { MissingConfigScreen, SignInScreen } from './components/auth/SignInScreen';
 import { AppShell } from './components/layout/AppShell';
 import { adminConsentUrl, hasMsalConfig, missingEnvVars } from './auth/msal';
+import { signOutWithMicrosoft } from './auth/signOut';
 import { createGraphClient } from './graph/client';
 import { sampleTenantClient } from './demo/sampleTenantClient';
 
@@ -74,7 +75,7 @@ function LiveAppShell() {
     <AppShell
       accountName={account?.name ?? account?.username ?? 'Signed in'}
       client={client}
-      onSignOut={() => instance.logoutRedirect()}
+      onSignOut={() => signOutWithMicrosoft(instance)}
     />
   );
 }

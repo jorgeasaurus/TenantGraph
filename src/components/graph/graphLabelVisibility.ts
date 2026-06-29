@@ -23,6 +23,7 @@ export function updateGraphLabels(
 
   const distance = camera.position.distanceTo(controls.target);
   const zoomLevel = distance > 320 ? 'far' : distance > 155 ? 'medium' : 'close';
+  const maxVisibleLabels = zoomLevel === 'far' ? 8 : zoomLevel === 'medium' ? 24 : 52;
   const rect = renderer.domElement.getBoundingClientRect();
   const candidates: Array<{
     data: GraphLabelData;
@@ -68,8 +69,9 @@ export function updateGraphLabels(
     const height = candidate.selected ? 30 : 23;
     const box = { x: x - width / 2, y: y - height / 2, width, height };
     const collides = accepted.some((existing) => boxesOverlap(existing, box));
+    const labelBudgetReached = visibleIds.size >= maxVisibleLabels && !candidate.selected && !candidate.hovered;
 
-    if (!collides || candidate.selected || candidate.hovered) {
+    if ((!collides && !labelBudgetReached) || candidate.selected || candidate.hovered) {
       accepted.push(box);
       visibleIds.add(candidate.data.nodeId);
     } else {

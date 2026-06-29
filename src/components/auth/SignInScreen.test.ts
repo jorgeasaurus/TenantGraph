@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { signInErrorMessage } from '../../auth/signInErrors';
 import { accessRequirementItems, tenantGraphGitHubUrl } from './accessResources';
+import { externalLinkRel } from './SignInScreen';
 
 describe('signInErrorMessage', () => {
   it('shows a retry-safe message when the popup is canceled', () => {
     expect(signInErrorMessage(new Error('user_cancelled: user closed the popup'))).toBe(
-      'Sign-in was canceled. Use Sign in with Microsoft when you are ready.',
+      'Sign-in was canceled. Use Sign In with Microsoft when you are ready.',
     );
   });
 
@@ -27,5 +28,9 @@ describe('landing access resources', () => {
         expect.stringContaining('Policy.Read.ConditionalAccess'),
       ]),
     );
+  });
+
+  it('uses a safe rel value for external links opened in new tabs', () => {
+    expect(externalLinkRel).toBe('noopener noreferrer');
   });
 });

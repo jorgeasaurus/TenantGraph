@@ -1,7 +1,7 @@
 .app-shell {
   height: 100vh;
   display: grid;
-  grid-template-rows: 58px 1fr;
+  grid-template-rows: 62px 1fr;
   overflow: hidden;
   background: var(--bg-void);
 }
@@ -13,10 +13,10 @@
   grid-template-columns: minmax(190px, 280px) minmax(0, 1fr) auto;
   align-items: center;
   gap: 12px;
-  border-bottom: 1px solid rgba(0, 212, 255, 0.28);
-  background: rgba(2, 5, 13, 0.96);
+  border-bottom: 1px solid var(--line);
+  background: var(--chrome-surface);
   padding: 9px 12px;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
   z-index: 5;
 }
 
@@ -62,11 +62,11 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  border: 1px solid rgba(0, 212, 255, 0.34);
+  border: 1px solid var(--line);
   border-radius: var(--control-radius);
-  background: rgba(2, 6, 16, 0.78);
-  padding: 0 10px;
-  box-shadow: var(--shadow-border);
+  background: var(--bg);
+  padding: 0 12px;
+  box-shadow: var(--shadow-border), var(--shadow-raised);
   transition-property: background-color, border-color, box-shadow;
   transition-duration: 150ms;
   transition-timing-function: var(--ease-out);
@@ -75,8 +75,8 @@
 .toolbar-search:focus-within {
   border-color: var(--accent);
   box-shadow:
-    var(--shadow-border-hover),
-    0 0 0 4px rgba(var(--accent-rgb), 0.12);
+    0 0 0 2px #000000,
+    0 0 0 4px var(--accent);
 }
 
 .toolbar-search input {
@@ -109,19 +109,19 @@
 }
 
 .account-menu summary {
-  width: 40px;
-  min-height: 40px;
+  width: 44px;
+  min-height: 44px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0;
-  border: 1px solid rgba(0, 212, 255, 0.28);
+  border: 1px solid var(--line);
   border-radius: 50%;
-  background: rgba(5, 13, 28, 0.95);
+  background: var(--button-surface);
   color: var(--text);
   cursor: pointer;
   list-style: none;
-  box-shadow: var(--shadow-border);
+  box-shadow: var(--shadow-border), var(--shadow-raised);
 }
 
 .account-menu summary::-webkit-details-marker {
@@ -136,12 +136,12 @@
   min-height: 18px;
   display: inline-grid;
   place-items: center;
-  border: 1px solid rgba(63, 209, 255, 0.45);
+  border: 1px solid rgba(var(--accent-rgb), 0.52);
   border-radius: 50%;
-  background: #08111f;
+  background: #000000;
   color: var(--accent);
   font-size: 9px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .account-menu-popover {
@@ -152,26 +152,24 @@
   width: 220px;
   display: grid;
   gap: 7px;
-  border: 1px solid rgba(0, 212, 255, 0.28);
+  border: 1px solid var(--line);
   border-radius: var(--surface-radius);
-  background: rgba(3, 8, 18, 0.98);
-  padding: 10px;
-  box-shadow:
-    var(--shadow-border),
-    0 18px 42px rgba(0, 0, 0, 0.38);
+  background: var(--panel-glass-strong);
+  padding: 12px;
+  box-shadow: var(--shadow-popover);
 }
 
 .account-menu-popover strong {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: #f8fbff;
+  color: var(--text);
   font-size: var(--type-subtitle);
 }
 
 .account-menu-popover button {
   justify-content: flex-start;
-  min-height: 40px;
+  min-height: 44px;
   padding: 0 9px;
   font-size: var(--type-body);
 }

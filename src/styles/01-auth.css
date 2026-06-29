@@ -23,12 +23,10 @@
   z-index: 2;
   width: min(440px, 100%);
   border: 1px solid var(--line);
-  border-radius: 12px;
-  background: rgba(6, 10, 22, 0.96);
-  padding: 28px;
-  box-shadow:
-    var(--shadow-border),
-    0 20px 44px rgba(0, 0, 0, 0.42);
+  border-radius: var(--surface-radius);
+  background: var(--panel-glass-strong);
+  padding: 24px;
+  box-shadow: var(--shadow-popover);
 }
 
 .signin-panel h1 {
@@ -54,13 +52,13 @@
 .brand-mark {
   width: 48px;
   height: 48px;
-  border-radius: 8px;
+  border-radius: var(--control-radius);
 }
 
 .brand-glyph {
   width: 34px;
   height: 34px;
-  border-radius: 7px;
+  border-radius: var(--control-radius);
 }
 
 .brand-glyph::before {
@@ -88,14 +86,14 @@
 
 .primary-action {
   margin-top: 12px;
-  background: var(--accent);
-  color: #02030a;
+  background: var(--text);
+  color: var(--bg);
   border-color: transparent;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .primary-action:hover:not(:disabled) {
-  background: #75ddff;
+  background: #e5e5e5;
 }
 
 .microsoft-logo {
@@ -125,28 +123,30 @@
 }
 
 .landing-action-stack .primary-action {
-  border-color: rgba(63, 209, 255, 0.18);
-  background: rgba(3, 8, 18, 0.56);
-  color: rgba(232, 243, 255, 0.9);
+  border-color: var(--line);
+  background: var(--button-surface);
+  color: var(--text);
 }
 
 .landing-action-stack .primary-action:hover:not(:disabled) {
-  border-color: rgba(var(--accent-rgb), 0.5);
-  background: rgba(6, 16, 34, 0.88);
+  border-color: var(--line-hover);
+  background: var(--button-surface-hover);
 }
 
+.ghost-action,
 .github-action {
-  min-height: 40px;
-  border: 1px solid rgba(63, 209, 255, 0.18);
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid var(--line);
   border-radius: var(--control-radius);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 7px;
-  background: rgba(3, 8, 18, 0.56);
-  box-shadow: var(--shadow-border);
-  color: rgba(232, 243, 255, 0.9);
-  font-weight: 700;
+  background: var(--button-surface);
+  box-shadow: var(--shadow-border), var(--shadow-raised);
+  color: var(--text);
+  font-weight: 500;
   text-decoration: none;
   transition:
     background-color 150ms var(--ease-out),
@@ -154,31 +154,27 @@
     box-shadow 150ms var(--ease-out),
     color 150ms var(--ease-out),
     scale 150ms var(--ease-out);
+  touch-action: manipulation;
 }
 
+.ghost-action:hover:not(:disabled),
 .github-action:hover {
-  border-color: rgba(var(--accent-rgb), 0.5);
-  background: rgba(6, 16, 34, 0.88);
-  box-shadow:
-    var(--shadow-border-hover),
-    0 0 0 4px rgba(var(--accent-rgb), 0.1);
+  border-color: var(--line-hover);
+  background: var(--button-surface-hover);
+  box-shadow: var(--shadow-border-hover), var(--shadow-raised);
 }
 
+.ghost-action:active,
 .github-action:active {
   scale: 0.96;
 }
 
-.ghost-action {
-  width: 100%;
-  min-height: 40px;
-  border-color: rgba(63, 209, 255, 0.18);
-  background: rgba(3, 8, 18, 0.56);
-  color: rgba(232, 243, 255, 0.9);
-}
-
-.ghost-action:hover:not(:disabled) {
-  border-color: rgba(var(--accent-rgb), 0.5);
-  background: rgba(6, 16, 34, 0.88);
+.github-action:focus-visible,
+.access-requirements a:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px #000000,
+    0 0 0 4px var(--accent);
 }
 
 .access-resources {
@@ -188,9 +184,9 @@
 }
 
 .access-requirements {
-  border: 1px solid rgba(63, 209, 255, 0.16);
+  border: 1px solid var(--line);
   border-radius: var(--surface-radius);
-  background: rgba(2, 6, 16, 0.72);
+  background: var(--panel-glass);
   padding: 12px;
 }
 
@@ -200,9 +196,9 @@
 }
 
 .access-requirements p {
-  color: #e8f3ff;
+  color: var(--text);
   font-size: var(--type-subtitle);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .access-requirements ul {
@@ -225,7 +221,7 @@
   margin-top: 12px;
   color: var(--accent);
   font-size: var(--type-subtitle);
-  font-weight: 700;
+  font-weight: 600;
   text-decoration: none;
 }
 

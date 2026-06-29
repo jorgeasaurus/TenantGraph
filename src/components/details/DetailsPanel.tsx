@@ -45,7 +45,7 @@ export function DetailsPanel({
       </div>
       <button className="secondary-action" type="button" onClick={onExpand} disabled={busy || !expansion.canExpand}>
         <PlusCircle size={16} />
-        {busy ? 'Expanding' : expansion.label}
+        {busy ? 'Expanding…' : expansion.label}
       </button>
       {expansion.helpText && <p className="details-action-hint">{expansion.helpText}</p>}
       {readableSummary && <ReadableSummary summary={readableSummary} />}

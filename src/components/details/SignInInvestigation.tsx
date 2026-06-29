@@ -65,7 +65,7 @@ export function SignInInvestigation({ client, node, onProjectEvent }: SignInInve
         </label>
         <button type="button" onClick={actions.resetAndLoad} disabled={state.loading}>
           {state.loading ? <Loader2 size={14} /> : <Filter size={14} />}
-          Load
+          Load Sign-Ins
         </button>
       </div>
 
@@ -112,7 +112,7 @@ export function SignInInvestigation({ client, node, onProjectEvent }: SignInInve
 
           {state.nextLink && (
             <button className="load-more-button" type="button" onClick={() => void actions.load('append')} disabled={state.loading}>
-              Load more sign-ins
+              Load More Sign-Ins
             </button>
           )}
 
@@ -185,7 +185,7 @@ function SignInDetail({
           </label>
           <button type="button" onClick={() => onProjectEvent(event, policyGraphFilter)}>
             <GitBranch size={13} />
-            Show on graph
+            Show on Graph
           </button>
         </div>
       </div>
@@ -216,7 +216,7 @@ function SignInDetail({
           <AlertTriangle size={14} />
           <span>
             {policyDetailsEnabled
-              ? 'CA policy names were omitted. Confirm Policy.Read.ConditionalAccess and a role such as Security Reader or Conditional Access Administrator.'
+              ? 'CA policy names were omitted. Check Policy.Read.ConditionalAccess and a role such as Security Reader or Conditional Access Administrator.'
               : 'CA policy names are not requested. Enable policy names to request Policy.Read.ConditionalAccess.'}
           </span>
         </div>
@@ -236,7 +236,7 @@ function SignInDetail({
         rel="noreferrer"
       >
         <ExternalLink size={13} />
-        Open sign-in logs in Entra
+        Open Sign-In Logs in Entra
       </a>
     </div>
   );

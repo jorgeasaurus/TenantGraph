@@ -17,6 +17,7 @@ import {
 } from './graphVisualPolicy';
 import { iconColor, makeNodeIcon } from './nodeIcons';
 import {
+  enableGraphBloom,
   makeDependencyPulse,
   makeEdgeArrow,
   makeEdgeLabel,
@@ -465,6 +466,7 @@ function addSelectedNodeCues(
   );
   halo.position.copy(position);
   halo.renderOrder = renderLayers.interactions + 2;
+  enableGraphBloom(halo);
   setPulse(halo, haloOpacity, stableHash(node.id) * 0.01, 0.08, 1.7);
   pulseObjects.push(halo);
   group.add(halo);
