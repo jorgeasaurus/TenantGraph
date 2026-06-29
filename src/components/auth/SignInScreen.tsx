@@ -37,7 +37,7 @@ export function MissingConfigScreen({
         <div className="landing-action-stack">
           <button className="secondary-action" type="button" onClick={onOpenSampleTenant}>
             <PlayCircle size={18} />
-            Sample tenant
+            Open Sample Tenant
           </button>
           <GitHubRepositoryLink />
         </div>
@@ -74,11 +74,11 @@ export function SignInScreen({ adminConsentUrl, onOpenSampleTenant }: AuthScreen
         <div className="landing-action-stack">
           <button className="primary-action" type="button" onClick={() => void signIn()}>
             <MicrosoftLogo />
-            Sign in with Microsoft
+            Sign In with Microsoft
           </button>
           <button className="secondary-action" type="button" onClick={onOpenSampleTenant}>
             <PlayCircle size={18} />
-            Sample tenant
+            Open Sample Tenant
           </button>
           <GitHubRepositoryLink />
         </div>
@@ -97,7 +97,7 @@ function GitHubRepositoryLink() {
   return (
     <a className="github-action" href={tenantGraphGitHubUrl} target="_blank" rel="noreferrer">
       <Github size={18} />
-      GitHub repository
+      View GitHub Repository
     </a>
   );
 }
@@ -120,7 +120,7 @@ function AccessResources({ adminConsentUrl }: { adminConsentUrl: string }) {
     <div className="access-resources">
       <button className="ghost-action" type="button" aria-expanded={open} onClick={() => setOpen((current) => !current)}>
         <Info size={17} />
-        Access requirements
+        View Access Requirements
       </button>
       {open && (
         <div className="access-requirements">
@@ -132,12 +132,12 @@ function AccessResources({ adminConsentUrl }: { adminConsentUrl: string }) {
           </ul>
           <a href={tenantGraphGitHubUrl} target="_blank" rel="noreferrer">
             <ExternalLink size={15} />
-            GitHub repository
+            View GitHub Repository
           </a>
           {adminConsentUrl && (
             <a href={adminConsentUrl} target="_blank" rel="noreferrer">
               <ShieldCheck size={15} />
-              Grant admin consent
+              Grant Admin Consent
             </a>
           )}
         </div>

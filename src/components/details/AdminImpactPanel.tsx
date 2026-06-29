@@ -61,7 +61,7 @@ export function AdminImpactPanel({
       <div className="admin-action-row">
         <button className="secondary-action compact-action" type="button" onClick={() => void copySummary()}>
           <Clipboard size={15} />
-          {copied ? 'Copied' : 'Copy evidence'}
+          {copied ? 'Evidence Copied' : 'Copy Evidence'}
         </button>
       </div>
     </section>

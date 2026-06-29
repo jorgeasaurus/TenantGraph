@@ -116,7 +116,7 @@ export function Sidebar({
             <small>Display limit: {graphObjectLimit}</small>
           </div>
           <button type="button" onClick={onLoadMoreGraphObjects}>
-            Load more
+            Load More Objects
           </button>
         </section>
       )}
@@ -156,7 +156,7 @@ export function Sidebar({
           <Search size={15} />
           Results
         </div>
-        {searching && <p className="muted">Searching Microsoft Graph.</p>}
+        {searching && <p className="muted">Searching Microsoft Graph…</p>}
         <div className="result-list">
           {visibleResults.map((node) => {
             const color = nodeColors[node.type] ?? '#64748b';
@@ -179,7 +179,7 @@ export function Sidebar({
           {results.length === 0 && <p className="muted">{searchTerm.trim() ? 'No matches.' : 'Type in the toolbar to search.'}</p>}
           {hiddenResultCount > 0 && (
             <button className="load-more-button" type="button" onClick={onLoadMoreResults}>
-              Load {Math.min(30, hiddenResultCount)} more results
+              Load {Math.min(30, hiddenResultCount)} More Results
             </button>
           )}
         </div>

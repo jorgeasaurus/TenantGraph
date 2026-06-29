@@ -32,7 +32,7 @@ export function AppShell({ accountName, client, isSampleTenant = false, onSignOu
         <div className="state-banner graph-limit-state">
           Showing {derived.visibleGraph.nodes.length} of {derived.graphLimitResult.totalNodeCount} loaded objects.
           <button type="button" onClick={actions.showMoreGraphObjects}>
-            Load more
+            Load More Objects
           </button>
         </div>
       ) : null,

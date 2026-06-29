@@ -15,6 +15,7 @@ import { applyCameraPose, cameraPoseForGraph, cameraPoseForZone, fitCameraToGrap
 import type { GraphHoverTarget } from './graphHoverCopy';
 import { updateGraphLabels } from './graphLabelVisibility';
 import type { GraphZone } from './graphLayout';
+import { makeGraphPostProcessing } from './graphPostProcessing';
 import { buildTenantGraphScene, pointsForZone } from './tenantGraphSceneBuilder';
 import {
   animateFlowObjects,
@@ -62,7 +63,7 @@ type UseTenantGraphRendererOptions = {
 };
 
 type TenantGraphRenderer = {
-  containerRef: RefObject<HTMLDivElement | null>;
+  containerRef: RefObject<HTMLElement | null>;
   fitView: () => void;
   resetView: () => void;
 };
@@ -80,7 +81,7 @@ export function useTenantGraphRenderer({
   onSelectNode,
   setHover,
 }: UseTenantGraphRendererOptions): TenantGraphRenderer {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLElement>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const controlsRef = useRef<OrbitControls | null>(null);
@@ -101,6 +102,7 @@ export function useTenantGraphRenderer({
   const particleObjectsRef = useRef<THREE.Object3D[]>([]);
   const positionsRef = useLazyRef(() => new Map<string, THREE.Vector3>());
   const pulseObjectsRef = useRef<THREE.Object3D[]>([]);
+  const reducedMotionRef = useRef(false);
   const zonePickablesRef = useRef<THREE.Object3D[]>([]);
 
   const moveCameraToPose = useCallback((pose: CameraPose, animated = true) => {
@@ -110,7 +112,7 @@ export function useTenantGraphRenderer({
       return;
     }
 
-    if (!animated) {
+    if (!animated || reducedMotionRef.current) {
       cameraFlightRef.current = undefined;
       applyCameraPose(camera, controls, pose);
       return;
@@ -128,6 +130,12 @@ export function useTenantGraphRenderer({
 
   const startGraphIllumination = useCallback((duration = 2600) => {
     if (illuminationObjectsRef.current.length === 0) {
+      return;
+    }
+
+    if (reducedMotionRef.current) {
+      illuminationRef.current = undefined;
+      animateIlluminationObjects(illuminationObjectsRef.current, 0);
       return;
     }
 
@@ -192,6 +200,7 @@ export function useTenantGraphRenderer({
     const camera = new THREE.PerspectiveCamera(48, 1, 0.1, 2000);
     const renderer = makeRenderer();
     container.appendChild(renderer.domElement);
+    const postProcessing = makeGraphPostProcessing(renderer, scene, camera);
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
@@ -199,6 +208,28 @@ export function useTenantGraphRenderer({
     controls.maxDistance = 900;
     controls.minDistance = 28;
     controls.screenSpacePanning = true;
+
+    const motionQuery = typeof window.matchMedia === 'function'
+      ? window.matchMedia('(prefers-reduced-motion: reduce)')
+      : undefined;
+    const syncReducedMotion = () => {
+      const reduceMotion = motionQuery?.matches ?? false;
+      reducedMotionRef.current = reduceMotion;
+      controls.enableDamping = !reduceMotion;
+      if (!reduceMotion) {
+        return;
+      }
+
+      const flight = cameraFlightRef.current;
+      if (flight) {
+        applyCameraPose(camera, controls, { position: flight.toPosition, target: flight.toTarget });
+        cameraFlightRef.current = undefined;
+      }
+      illuminationRef.current = undefined;
+      animateIlluminationObjects(illuminationObjectsRef.current, 0);
+    };
+    syncReducedMotion();
+    motionQuery?.addEventListener('change', syncReducedMotion);
 
     sceneRef.current = scene;
     cameraRef.current = camera;
@@ -211,6 +242,7 @@ export function useTenantGraphRenderer({
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
       renderer.setSize(width, height, false);
+      postProcessing.resize(width, height, renderer.getPixelRatio());
       if (positionsRef.current.size > 0) {
         fitCameraToGraph(camera, controls, positionsRef.current);
       }
@@ -303,11 +335,13 @@ export function useTenantGraphRenderer({
     const animate = (timestamp?: number) => {
       timer.update(timestamp);
       const elapsed = timer.getElapsed();
-      animateFlowObjects(flowObjectsRef.current, elapsed);
-      animateParticleFields(particleObjectsRef.current, elapsed);
-      animatePulseObjects(pulseObjectsRef.current, elapsed);
-      updateGraphIllumination(illuminationRef, illuminationObjectsRef.current, performance.now());
-      updateCameraFlight(cameraFlightRef, camera, controls, performance.now());
+      if (!reducedMotionRef.current) {
+        animateFlowObjects(flowObjectsRef.current, elapsed);
+        animateParticleFields(particleObjectsRef.current, elapsed);
+        animatePulseObjects(pulseObjectsRef.current, elapsed);
+        updateGraphIllumination(illuminationRef, illuminationObjectsRef.current, performance.now());
+        updateCameraFlight(cameraFlightRef, camera, controls, performance.now());
+      }
       controls.update();
       updateFocusGlow(container, camera, focusPointRef.current, focusProjectionRef.current);
       const labelVisibilityKey = graphLabelVisibilityKey(container, camera, controls, hoverNodeIdRef.current);
@@ -322,7 +356,7 @@ export function useTenantGraphRenderer({
           labelProjectionRef.current,
         );
       }
-      renderer.render(scene, camera);
+      postProcessing.render();
       frame = window.requestAnimationFrame(animate);
     };
     frame = window.requestAnimationFrame(animate);
@@ -334,11 +368,13 @@ export function useTenantGraphRenderer({
         window.cancelAnimationFrame(hoverFrame);
       }
       observer.disconnect();
+      motionQuery?.removeEventListener('change', syncReducedMotion);
       renderer.domElement.removeEventListener('pointermove', onPointerMove);
       renderer.domElement.removeEventListener('pointerleave', onPointerLeave);
       renderer.domElement.removeEventListener('click', onClick);
       controls.dispose();
       clearFocusGlow(container);
+      postProcessing.dispose();
       renderer.dispose();
       renderer.domElement.remove();
       sceneRef.current = null;
@@ -466,7 +502,7 @@ function makeRenderer(): THREE.WebGLRenderer {
 }
 
 function updateFocusGlow(
-  container: HTMLDivElement,
+  container: HTMLElement,
   camera: THREE.PerspectiveCamera,
   focusPosition?: THREE.Vector3,
   scratchVector = new THREE.Vector3(),
@@ -491,7 +527,7 @@ function updateFocusGlow(
 }
 
 function graphLabelVisibilityKey(
-  container: HTMLDivElement,
+  container: HTMLElement,
   camera: THREE.PerspectiveCamera,
   controls: OrbitControls,
   hoverNodeId: string | undefined,
@@ -525,11 +561,13 @@ function updateCameraFlight(
   }
 
   const progress = Math.min(1, (now - flight.startedAt) / flight.duration);
-  const eased = easeInOutCubic(progress);
+  const eased = easeOutSpring(progress);
   camera.position.copy(flight.fromPosition).lerp(flight.toPosition, eased);
   controls.target.copy(flight.fromTarget).lerp(flight.toTarget, eased);
 
   if (progress >= 1) {
+    camera.position.copy(flight.toPosition);
+    controls.target.copy(flight.toTarget);
     flightRef.current = undefined;
   }
 }
@@ -556,17 +594,23 @@ function updateGraphIllumination(
   animateIlluminationObjects(objects, Math.max(0, fade * pulse));
 }
 
-function easeInOutCubic(value: number): number {
-  return value < 0.5
-    ? 4 * value * value * value
-    : 1 - Math.pow(-2 * value + 2, 3) / 2;
-}
-
 function easeOutCubic(value: number): number {
   return 1 - Math.pow(1 - value, 3);
 }
 
-function clearFocusGlow(container: HTMLDivElement): void {
+function easeOutSpring(value: number): number {
+  if (value <= 0) {
+    return 0;
+  }
+  if (value >= 1) {
+    return 1;
+  }
+
+  const settled = 1 - Math.cos(value * Math.PI * 3.8) * Math.exp(-value * 5.8);
+  return THREE.MathUtils.clamp(settled, 0, 1.035);
+}
+
+function clearFocusGlow(container: HTMLElement): void {
   const host = container.parentElement ?? container;
   host.style.removeProperty('--graph-focus-opacity');
   host.style.removeProperty('--graph-focus-x');

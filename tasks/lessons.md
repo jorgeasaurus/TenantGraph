@@ -46,3 +46,5 @@
 - For graph particles specifically, verify against the deployed/default graph view because background render order and translucent node glows can make technically-present points disappear.
 - Graph particles should stay atmospheric: once visible, tune count, size, opacity, and texture core together so they do not compete with nodes, labels, or relationship lines.
 - In stacked landing-page actions, avoid one-off filled CTA styling when the user asks for visual consistency; scope overrides to that stack rather than changing shared button classes.
+- Selective bloom in a transparent sprite-heavy graph should render the base scene normally and add bloom as an overlay; do not route sprite textures through an opaque black isolation pass that can create hard rectangular artifacts.
+- When editing XLSX trackers, never write artifact-tool rendered export output back to the workbook path unless `file`/`unzip -t` verifies it is an XLSX; prefer a real spreadsheet writer or a temp-file validation step first.

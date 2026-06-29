@@ -57,9 +57,14 @@ const illuminationData = new WeakMap<THREE.Object3D, IlluminationData>();
 const particleFieldData = new WeakMap<THREE.Object3D, ParticleFieldData>();
 const pulseData = new WeakMap<THREE.Object3D, PulseData>();
 export const graphVisualBrillianceScale = 0.5;
+export const graphBloomLayer = 1;
 
 export function visualBrillianceOpacity(opacity: number): number {
   return opacity * graphVisualBrillianceScale;
+}
+
+export function enableGraphBloom(object: THREE.Object3D): void {
+  object.layers.enable(graphBloomLayer);
 }
 
 export function makeFocusRings(position: THREE.Vector3, size: number, color: string, seed: number): GraphObjectBundle<THREE.Group> {
@@ -82,6 +87,7 @@ export function makeFocusRings(position: THREE.Vector3, size: number, color: str
     ring.position.copy(position);
     ring.rotation.set(Math.PI * (0.42 + index * 0.2), seed * 0.01, Math.PI * (0.2 + index * 0.36));
     ring.renderOrder = renderLayers.interactions + index;
+    enableGraphBloom(ring);
     setPulse(ring, opacity, seed * 0.01 + index, 0.06, 1.2 + index * 0.34);
     pulseObjects.push(ring);
     group.add(ring);
@@ -96,7 +102,7 @@ export function makeGraphParticleField(
   nodeCount: number,
 ): GraphObjectBundle<THREE.Points> {
   const bounds = graphPositionBounds(positions);
-  const count = Math.min(300, Math.max(120, Math.round(Math.sqrt(Math.max(nodeCount, 1)) * 20)));
+  const count = Math.min(520, Math.max(160, Math.round(Math.sqrt(Math.max(nodeCount, 1)) * 28)));
   const width = Math.max(230, bounds.width + 190);
   const depth = Math.max(230, bounds.depth + 190);
   const height = Math.max(88, Math.min(170, 78 + Math.sqrt(Math.max(nodeCount, 1)) * 5.2));
@@ -111,7 +117,7 @@ export function makeGraphParticleField(
 
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-  const baseOpacity = visualBrillianceOpacity(0.86);
+  const baseOpacity = visualBrillianceOpacity(0.46);
   const material = new THREE.PointsMaterial({
     alphaTest: 0.01,
     blending: THREE.AdditiveBlending,
@@ -121,7 +127,7 @@ export function makeGraphParticleField(
     fog: false,
     map: makeParticleTexture(),
     opacity: baseOpacity,
-    size: 5.8,
+    size: 3.4,
     sizeAttenuation: false,
     toneMapped: false,
     transparent: true,
@@ -129,12 +135,13 @@ export function makeGraphParticleField(
   const particles = new THREE.Points(geometry, material);
   particles.frustumCulled = false;
   particles.renderOrder = renderLayers.labels - 1;
+  enableGraphBloom(particles);
   particleFieldData.set(particles, {
     baseOpacity,
     baseY: 0,
     phase: seededUnit(nodeCount, 73) * Math.PI * 2,
-    rotationSpeed: 0.006 + seededUnit(nodeCount, 91) * 0.005,
-    verticalDrift: 1.8 + seededUnit(nodeCount, 113) * 1.2,
+    rotationSpeed: 0.004 + seededUnit(nodeCount, 91) * 0.003,
+    verticalDrift: 1.2 + seededUnit(nodeCount, 113) * 0.9,
   });
   return { object: particles };
 }
@@ -146,12 +153,12 @@ export function makeSemanticZone(zone: GraphZone): SemanticZoneObject {
   const floor = new THREE.Mesh(
     makeBoundaryFillGeometry(zone),
     new THREE.MeshBasicMaterial({
-      color,
-      transparent: true,
-      opacity: visualBrillianceOpacity(0.09),
       blending: THREE.AdditiveBlending,
+      color,
       depthWrite: false,
+      opacity: visualBrillianceOpacity(0.095),
       side: THREE.DoubleSide,
+      transparent: true,
     }),
   );
   floor.userData.zone = zone;
@@ -171,6 +178,7 @@ export function makeSemanticZone(zone: GraphZone): SemanticZoneObject {
   );
   ring.userData.zone = zone;
   ring.renderOrder = renderLayers.clusters + 1;
+  enableGraphBloom(ring);
   zonePickables.push(ring);
   group.add(ring);
 
@@ -203,20 +211,46 @@ export function makeNodeLayers(
   ring.position.copy(position);
   ring.rotation.set(Math.PI * 0.42, 0, Math.PI * 0.18);
   ring.renderOrder = renderLayers.nodes;
+  if (options.active) {
+    enableGraphBloom(ring);
+  }
   group.add(ring);
 
+  const rimOpacity = visualBrillianceOpacity(options.dimmed ? 0.04 : options.active ? 0.32 : 0.13);
+  const rim = new THREE.Mesh(
+    new THREE.TorusGeometry(size * 1.04, 0.07, 8, 72),
+    new THREE.MeshBasicMaterial({
+      color: options.active ? '#f8fbff' : color,
+      transparent: true,
+      opacity: rimOpacity,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    }),
+  );
+  rim.position.copy(position);
+  rim.rotation.set(Math.PI * 0.48, 0, Math.PI * 0.25);
+  rim.renderOrder = renderLayers.nodes + 1;
+  if (options.active) {
+    enableGraphBloom(rim);
+  }
+  group.add(rim);
+
+  const underlayOpacity = visualBrillianceOpacity(options.dimmed ? 0.05 : options.active ? 0.3 : 0.18);
   const underlay = new THREE.Mesh(
     new THREE.SphereGeometry(size * 0.42, 16, 8),
     new THREE.MeshBasicMaterial({
       color,
       transparent: true,
-      opacity: visualBrillianceOpacity(options.dimmed ? 0.05 : options.active ? 0.3 : 0.18),
+      opacity: underlayOpacity,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
     }),
   );
   underlay.position.copy(position);
   underlay.renderOrder = renderLayers.nodes;
+  if (options.active) {
+    enableGraphBloom(underlay);
+  }
   group.add(underlay);
 
   if (options.signalColor && !options.dimmed) {
@@ -232,6 +266,7 @@ export function makeNodeLayers(
     );
     badge.position.copy(position).add(new THREE.Vector3(size * 0.34, size * 0.32, size * 0.1));
     badge.renderOrder = renderLayers.interactions;
+    enableGraphBloom(badge);
     setPulse(badge, visualBrillianceOpacity(0.78), size * 0.1, 0.12, 1.9);
     pulseObjects.push(badge);
     group.add(badge);
@@ -266,6 +301,7 @@ export function makeNodeIllumination(
   floor.rotation.x = -Math.PI / 2;
   floor.renderOrder = renderLayers.nodes + 1;
   floor.visible = false;
+  enableGraphBloom(floor);
   setIllumination(floor, visualBrillianceOpacity(options.dimmed ? 0.1 : options.prominent ? 0.42 : 0.32), 0.52);
   illuminationObjects.push(floor);
   group.add(floor);
@@ -285,6 +321,7 @@ export function makeNodeIllumination(
   ring.rotation.set(Math.PI * 0.45, 0, Math.PI * 0.18);
   ring.renderOrder = renderLayers.nodes + 1;
   ring.visible = false;
+  enableGraphBloom(ring);
   setIllumination(ring, visualBrillianceOpacity(options.dimmed ? 0.12 : options.prominent ? 0.58 : 0.46), 0.3);
   illuminationObjects.push(ring);
   group.add(ring);
@@ -311,6 +348,7 @@ export function makeSelectionAnchor(position: THREE.Vector3, size: number, color
   plate.position.copy(position).add(new THREE.Vector3(0, -size * 0.28, 0));
   plate.rotation.x = Math.PI / 2;
   plate.renderOrder = renderLayers.interactions + 2;
+  enableGraphBloom(plate);
   setPulse(plate, visualBrillianceOpacity(0.34), seed * 0.02, 0.045, 1.45);
   pulseObjects.push(plate);
   group.add(plate);
@@ -455,6 +493,7 @@ export function makeRelationshipFlowPulse(
     }),
   );
   marker.renderOrder = renderLayers.edges + 5;
+  enableGraphBloom(marker);
   setFlow(marker, source, target, visualBrillianceOpacity(prominent ? 0.88 : 0.58), seed * 0.017, prominent ? 0.44 : 0.32);
   return marker;
 }
@@ -477,6 +516,7 @@ export function makeDependencyPulse(
   );
   marker.position.copy(source).lerp(target, 0.5).add(new THREE.Vector3(0, 5.5, 0));
   marker.renderOrder = renderLayers.edges + 4;
+  enableGraphBloom(marker);
   setPulse(marker, visualBrillianceOpacity(0.68), seed * 0.01, 0.26, 2.4);
   return marker;
 }
@@ -605,32 +645,29 @@ function disposeMaterial(material: THREE.Material): void {
   material.dispose();
 }
 
-function makeParticleTexture(): THREE.DataTexture {
-  const size = 64;
-  const data = new Uint8Array(size * size * 4);
-
-  for (let y = 0; y < size; y += 1) {
-    for (let x = 0; x < size; x += 1) {
-      const dx = (x + 0.5 - size / 2) / (size / 2);
-      const dy = (y + 0.5 - size / 2) / (size / 2);
-      const distance = Math.sqrt(dx * dx + dy * dy);
-      const falloff = Math.max(0, 1 - distance);
-      const core = distance < 0.2 ? 1 : 0;
-      const alpha = Math.round(Math.min(1, Math.pow(falloff, 1.9) * 0.68 + core * 0.24) * 255);
-      const offset = (y * size + x) * 4;
-      data[offset] = 116;
-      data[offset + 1] = 232;
-      data[offset + 2] = 245;
-      data[offset + 3] = alpha;
-    }
+function makeParticleTexture(): THREE.Texture {
+  if (typeof document === 'undefined') {
+    return new THREE.Texture();
   }
 
-  const texture = new THREE.DataTexture(data, size, size, THREE.RGBAFormat);
+  const canvas = document.createElement('canvas');
+  canvas.width = 64;
+  canvas.height = 64;
+  const context = canvas.getContext('2d');
+  if (context) {
+    const gradient = context.createRadialGradient(32, 32, 2, 32, 32, 31);
+    gradient.addColorStop(0, 'rgba(116, 232, 245, 0.92)');
+    gradient.addColorStop(0.2, 'rgba(116, 232, 245, 0.72)');
+    gradient.addColorStop(1, 'rgba(116, 232, 245, 0)');
+    context.fillStyle = gradient;
+    context.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
+  const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.generateMipmaps = false;
   texture.minFilter = THREE.LinearFilter;
   texture.magFilter = THREE.LinearFilter;
-  texture.needsUpdate = true;
   return texture;
 }
 
@@ -666,7 +703,7 @@ function seededUnit(index: number, salt: number): number {
 }
 
 function shorten(value: string, length = 28): string {
-  return value.length > length ? `${value.slice(0, length - 3)}...` : value;
+  return value.length > length ? `${value.slice(0, length - 1)}…` : value;
 }
 
 function makeZoneLabel(text: string, count: number, position: THREE.Vector3, color: string): THREE.Sprite {

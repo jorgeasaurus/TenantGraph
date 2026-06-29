@@ -10,19 +10,18 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 74% 78%, rgba(63, 209, 255, 0.1), transparent 28%),
-    linear-gradient(rgba(1, 4, 12, 0.34), rgba(1, 4, 12, 0.34));
+    radial-gradient(circle at 74% 78%, rgba(var(--accent-rgb), 0.08), transparent 28%),
+    linear-gradient(rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0.38));
 }
 
 .sample-guide-target {
   position: fixed;
   z-index: 31;
-  border: 1px solid rgba(var(--accent-rgb), 0.86);
-  border-radius: 14px;
+  border: 1px solid var(--accent);
+  border-radius: var(--surface-radius);
   box-shadow:
-    0 0 0 9999px rgba(1, 4, 12, 0.38),
-    0 0 0 4px rgba(var(--accent-rgb), 0.15),
-    0 0 34px rgba(var(--accent-rgb), 0.28);
+    0 0 0 9999px rgba(0, 0, 0, 0.38),
+    0 0 0 4px rgba(var(--accent-rgb), 0.16);
   pointer-events: none;
   transition-property: height, left, opacity, top, width;
   transition-duration: 150ms;
@@ -35,15 +34,11 @@
   bottom: 18px;
   z-index: 32;
   width: min(420px, calc(100vw - 36px));
-  border: 1px solid rgba(var(--accent-rgb), 0.34);
-  border-radius: 20px;
-  background: rgba(4, 9, 20, 0.97);
-  padding: 14px;
-  box-shadow:
-    var(--shadow-border),
-    0 22px 48px rgba(0, 0, 0, 0.46),
-    0 0 0 1px rgba(255, 255, 255, 0.035) inset,
-    0 0 38px rgba(var(--accent-rgb), 0.12);
+  border: 1px solid var(--line);
+  border-radius: var(--surface-radius);
+  background: var(--panel-glass-popover);
+  padding: 16px;
+  box-shadow: var(--shadow-popover);
   animation: sample-guide-panel-enter 240ms var(--ease-out) both;
   pointer-events: auto;
   transform-origin: bottom right;
@@ -60,28 +55,28 @@
 .sample-guide-heading span {
   color: var(--accent);
   font-size: var(--type-caption);
-  font-weight: 700;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
 
 .sample-guide-heading button {
-  width: 40px;
-  min-height: 40px;
+  width: 44px;
+  min-height: 44px;
   padding: 0;
 }
 
 .sample-guide-panel h2 {
   margin: 12px 0 8px;
-  color: #f8fbff;
+  color: var(--text);
   font-size: 20px;
-  line-height: 1.18;
+  line-height: 1.3;
 }
 
 .sample-guide-panel p {
   margin: 0;
-  color: #c6d6ea;
+  color: var(--muted);
   font-size: var(--type-subtitle);
-  line-height: 1.48;
+  line-height: 1.45;
 }
 
 .sample-guide-progress {
@@ -94,7 +89,7 @@
 .sample-guide-progress span {
   height: 3px;
   border-radius: 999px;
-  background: rgba(63, 209, 255, 0.18);
+  background: rgba(255, 255, 255, 0.14);
   transition-property: background-color, box-shadow, opacity;
   transition-duration: 150ms;
   transition-timing-function: var(--ease-out);
@@ -102,7 +97,7 @@
 
 .sample-guide-progress span.active {
   background: var(--accent);
-  box-shadow: 0 0 16px rgba(var(--accent-rgb), 0.48);
+  box-shadow: none;
 }
 
 .sample-guide-actions button {

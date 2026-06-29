@@ -91,20 +91,20 @@ export function Toolbar({
 
         <button type="button" title="Reset to signed-in user" onClick={onResetGraph} disabled={loading}>
           <RefreshCw size={16} />
-          Reset
+          Reset Graph
         </button>
         <button type="button" title="Reset view" onClick={onResetView}>
           <RotateCcw size={16} />
-          View
+          Reset View
         </button>
         <button type="button" title="Fit graph" onClick={onFitGraph}>
           <Maximize2 size={16} />
-          Fit
+          Fit Graph
         </button>
         {onOpenGuide && (
           <button data-guide="guide-button" type="button" title="Open sample tenant guide" onClick={onOpenGuide}>
             <HelpCircle size={16} />
-            Guide
+            Open Guide
           </button>
         )}
       </section>
@@ -118,19 +118,27 @@ export function Toolbar({
           <strong>{accountName}</strong>
           {!isSampleTenant && (
             <>
-              <button type="button" onClick={() => openAccountUrl('https://myaccount.microsoft.com/')}>
+              <button
+                type="button"
+                onClick={() => window.open('https://myaccount.microsoft.com/', '_blank', 'noopener,noreferrer')}
+              >
                 <UserCircle size={15} />
-                Profile
+                Open Profile
               </button>
-              <button type="button" onClick={() => openAccountUrl('https://myaccount.microsoft.com/organizations')}>
+              <button
+                type="button"
+                onClick={() =>
+                  window.open('https://myaccount.microsoft.com/organizations', '_blank', 'noopener,noreferrer')
+                }
+              >
                 <Building2 size={15} />
-                Tenant switch
+                Switch Tenant
               </button>
             </>
           )}
           <button type="button" onClick={onSignOut}>
             <LogOut size={15} />
-            {isSampleTenant ? 'Exit sample' : 'Sign out'}
+            {isSampleTenant ? 'Exit Sample' : 'Sign Out'}
           </button>
         </div>
       </details>
@@ -141,8 +149,4 @@ export function Toolbar({
 function initials(name: string): string {
   const parts = name.split(/[.@\s_-]+/).filter(Boolean);
   return `${parts[0]?.[0] ?? 'T'}${parts[1]?.[0] ?? 'G'}`.toUpperCase();
-}
-
-function openAccountUrl(url: string): void {
-  window.open(url, '_blank', 'noopener,noreferrer');
 }

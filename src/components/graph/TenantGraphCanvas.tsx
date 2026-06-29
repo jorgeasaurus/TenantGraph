@@ -55,7 +55,12 @@ export function TenantGraphCanvas({
   const hoverCopy = hover ? describeHover(hover, graph) : undefined;
 
   return (
-    <div className="graph-canvas" data-guide={dataGuide} ref={containerRef}>
+    <section
+      aria-label="Interactive tenant relationship graph. Use the toolbar and sidebar controls to search, filter, reset, and inspect objects."
+      className="graph-canvas"
+      data-guide={dataGuide}
+      ref={containerRef}
+    >
       {hover && hoverCopy && (
         <div className="graph-tooltip" style={{ left: hover.x + 14, top: hover.y + 14 }}>
           <strong>{hoverCopy.title}</strong>
@@ -63,6 +68,6 @@ export function TenantGraphCanvas({
           {hoverCopy.detail && <small>{hoverCopy.detail}</small>}
         </div>
       )}
-    </div>
+    </section>
   );
 }

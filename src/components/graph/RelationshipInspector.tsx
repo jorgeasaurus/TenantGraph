@@ -79,7 +79,7 @@ export function RelationshipInspector({
         <div className="inspector-actions" aria-label="Object actions">
           <button type="button" onClick={() => void copyText(objectNode.label)}>
             <Copy size={13} />
-            Copy name
+            Copy Name
           </button>
           <button type="button" onClick={() => void copyText(nodeApiId(objectNode))}>
             <Copy size={13} />
@@ -95,7 +95,7 @@ export function RelationshipInspector({
           </button>
           <button type="button" onClick={() => void copyText(graphQuery)}>
             <Copy size={13} />
-            Graph query
+            Copy Graph Query
           </button>
         </div>
       )}
