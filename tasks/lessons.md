@@ -48,4 +48,5 @@
 - In stacked landing-page actions, avoid one-off filled CTA styling when the user asks for visual consistency; scope overrides to that stack rather than changing shared button classes.
 - Selective bloom in a transparent sprite-heavy graph should render the base scene normally and add bloom as an overlay; do not route sprite textures through an opaque black isolation pass that can create hard rectangular artifacts.
 - Keep post-processing outputs and mobile visual tuning inside the WebGL pipeline; do not sample stale composer buffers or use full-canvas CSS filters for scene brightness.
+- Let EffectComposer own pass sizing; avoid manually mutating pass resolution unless the value includes the same pixel-ratio semantics.
 - When editing XLSX trackers, never write artifact-tool rendered export output back to the workbook path unless `file`/`unzip -t` verifies it is an XLSX; prefer a real spreadsheet writer or a temp-file validation step first.

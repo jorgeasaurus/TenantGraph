@@ -91,7 +91,6 @@ export function makeGraphPostProcessing(
     resize: (width, height, pixelRatio) => {
       bloomComposer.setPixelRatio(pixelRatio);
       bloomComposer.setSize(width, height);
-      bloomPass.resolution.set(width, height);
     },
   };
 }
