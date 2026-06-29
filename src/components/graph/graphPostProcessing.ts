@@ -83,6 +83,7 @@ export function makeGraphPostProcessing(
 
   return {
     dispose: () => {
+      bloomPass.dispose();
       bloomComposer.dispose();
       overlayMesh.geometry.dispose();
       overlayMaterial.dispose();
