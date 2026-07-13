@@ -1,18 +1,10 @@
-# Tenant Graph Plan
+# Anime.js Reimagination
 
-Canonical feature and retest tracking lives in `tasks/tenant-graph-feature-stories.xlsx`.
+- [x] Add Anime.js and a scoped, reduced-motion-aware motion utility
+- [x] Choreograph landing and authenticated workspace entrances
+- [x] Animate sidebar content, graph overlays, selection details, and mobile navigation
+- [x] Add graph-canvas emphasis cues without competing with Three.js camera motion
+- [x] Verify lint, build, tests, React Doctor, and Playwright desktop/mobile smoke
+- [x] Review cleanup, layout stability, bundle impact, and document results
 
-- [x] Ponytail simplification implementation
-  - [x] Remove graph trace, path-reveal, shader-zone, and depth-focus animation systems
-  - [x] Simplify zone floors to static materials
-  - [x] Replace hand-built particle texture with a canvas texture
-  - [x] Inline account-menu links and remove the helper module
-  - [x] Share landing link/action styling
-  - [x] Run lint, typecheck, focused tests, and full tests
-- [x] Final verification
-  - [x] Run production build
-  - [x] Run React Doctor
-  - [x] Verify dev sample route returns HTTP 200
-  - [x] Record final result
-
-Review: `npm run lint`, `npx tsc -b --pretty false`, focused Vitest, full Vitest, `npm run build`, React Doctor 100/100, and `git diff --check` passed. Playwright MCP calls were unavailable in this session, and local Playwright is not installed.
+Review: Anime.js 4.5.0 now drives scoped landing/workspace choreography, selection feedback, result reveals, inspector/loading entrances, and Three.js camera flights. Lint, 87 tests, production build, React Doctor 100/100, desktop/mobile Playwright smoke, reduced-motion checks, and `git diff --check` passed with no browser errors.

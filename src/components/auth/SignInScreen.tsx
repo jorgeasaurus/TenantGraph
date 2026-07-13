@@ -1,12 +1,11 @@
 import { useMsal } from '@azure/msal-react';
 import { ExternalLink, Github, Info, Network, PlayCircle, ShieldCheck } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { loginRequest } from '../../auth/msal';
 import { signInErrorMessage } from '../../auth/signInErrors';
 import { accessRequirementItems, tenantGraphGitHubUrl } from './accessResources';
 import { VantaNetBackground } from './VantaNetBackground';
-
-export const externalLinkRel = 'noopener noreferrer';
+import { animateAccessRequirements, useSignInMotion } from './useSignInMotion';
 
 type AuthScreenProps = {
   adminConsentUrl: string;
@@ -22,8 +21,11 @@ export function MissingConfigScreen({
   missing: readonly string[];
   onOpenSampleTenant: () => void;
 }) {
+  const screenRef = useRef<HTMLElement>(null);
+  useSignInMotion(screenRef);
+
   return (
-    <main className="signin-screen">
+    <main className="signin-screen" ref={screenRef}>
       <VantaNetBackground />
       <section className="signin-panel">
         <div className="brand-mark">
@@ -52,6 +54,8 @@ export function MissingConfigScreen({
 export function SignInScreen({ adminConsentUrl, onOpenSampleTenant }: AuthScreenProps) {
   const { instance } = useMsal();
   const [authError, setAuthError] = useState('');
+  const screenRef = useRef<HTMLElement>(null);
+  useSignInMotion(screenRef);
 
   const signIn = async () => {
     setAuthError('');
@@ -64,7 +68,7 @@ export function SignInScreen({ adminConsentUrl, onOpenSampleTenant }: AuthScreen
   };
 
   return (
-    <main className="signin-screen">
+    <main className="signin-screen" ref={screenRef}>
       <VantaNetBackground />
       <section className="signin-panel">
         <div className="brand-mark">
@@ -97,7 +101,7 @@ export function SignInScreen({ adminConsentUrl, onOpenSampleTenant }: AuthScreen
 
 function GitHubRepositoryLink() {
   return (
-    <a className="github-action" href={tenantGraphGitHubUrl} target="_blank" rel={externalLinkRel}>
+    <a className="github-action" href={tenantGraphGitHubUrl} target="_blank" rel="noopener noreferrer">
       <Github size={18} />
       View GitHub Repository
     </a>
@@ -117,6 +121,14 @@ function MicrosoftLogo() {
 
 function AccessResources({ adminConsentUrl }: { adminConsentUrl: string }) {
   const [open, setOpen] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open || !panelRef.current) {
+      return undefined;
+    }
+    return animateAccessRequirements(panelRef.current);
+  }, [open]);
 
   return (
     <div className="access-resources">
@@ -125,19 +137,19 @@ function AccessResources({ adminConsentUrl }: { adminConsentUrl: string }) {
         View Access Requirements
       </button>
       {open && (
-        <div className="access-requirements">
+        <div className="access-requirements" ref={panelRef}>
           <p>To connect a live tenant, Tenant Graph needs:</p>
           <ul>
             {accessRequirementItems.map((item) => (
               <li key={item}>{item}</li>
             ))}
           </ul>
-          <a href={tenantGraphGitHubUrl} target="_blank" rel={externalLinkRel}>
+          <a href={tenantGraphGitHubUrl} target="_blank" rel="noopener noreferrer">
             <ExternalLink size={15} />
             View GitHub Repository
           </a>
           {adminConsentUrl && (
-            <a href={adminConsentUrl} target="_blank" rel={externalLinkRel}>
+            <a href={adminConsentUrl} target="_blank" rel="noopener noreferrer">
               <ShieldCheck size={15} />
               Grant Admin Consent
             </a>

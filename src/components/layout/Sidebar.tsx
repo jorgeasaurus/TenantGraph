@@ -1,4 +1,5 @@
 import { AlertTriangle, ChevronRight, Filter, Search, ShieldAlert } from 'lucide-react';
+import { useRef } from 'react';
 import {
   relationshipTypeLabels,
   tenantRelationshipTypes,
@@ -21,6 +22,7 @@ import { AdminImpactPanel } from '../details/AdminImpactPanel';
 import { ClusterSummary } from '../details/ClusterSummary';
 import { DetailsPanel } from '../details/DetailsPanel';
 import { PathFinder } from '../details/PathFinder';
+import { useSidebarResultMotion } from './useWorkspaceMotion';
 
 type SidebarProps = {
   adminImpact: AdminImpactAnalysis;
@@ -94,9 +96,12 @@ export function Sidebar({
   const visibleResults = results.slice(0, resultLimit);
   const hiddenResultCount = Math.max(0, resultTotalCount - visibleResults.length);
   const showDataConfidence = Boolean(permissionError) || warnings.length > 0;
+  const sidebarRef = useRef<HTMLElement>(null);
+  const resultMotionKey = visibleResults.map((node) => node.id).join('|');
+  useSidebarResultMotion(sidebarRef, resultMotionKey);
 
   return (
-    <aside className="sidebar" data-guide="sidebar">
+    <aside className="sidebar" data-guide="sidebar" ref={sidebarRef}>
       <section className="sidebar-section summary-row">
         <div>
           <span className="metric-value">{graphNodeCount}</span>
@@ -165,6 +170,7 @@ export function Sidebar({
                 key={node.id}
                 className="result-item"
                 type="button"
+                aria-pressed={node.id === selectedNode?.id}
                 onClick={() => onSelectNode(node.id)}
               >
                 <span className="node-dot" style={{ background: color, color }} />

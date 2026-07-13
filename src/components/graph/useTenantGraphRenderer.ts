@@ -7,6 +7,8 @@ import {
   type RefObject,
   type SetStateAction,
 } from 'react';
+import { createTimeline } from 'animejs';
+import 'animejs/adapters/three';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import type { TenantEdge, TenantGraph, TenantNode } from '../../models/tenantGraph';
@@ -32,15 +34,6 @@ type CurrentRef<T> = {
 export type TenantGraphHoverState = GraphHoverTarget & {
   x: number;
   y: number;
-};
-
-type CameraFlight = {
-  duration: number;
-  fromPosition: THREE.Vector3;
-  fromTarget: THREE.Vector3;
-  startedAt: number;
-  toPosition: THREE.Vector3;
-  toTarget: THREE.Vector3;
 };
 
 type IlluminationFlight = {
@@ -85,7 +78,7 @@ export function useTenantGraphRenderer({
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const controlsRef = useRef<OrbitControls | null>(null);
-  const cameraFlightRef = useRef<CameraFlight | undefined>(undefined);
+  const cameraFlightRef = useRef<ReturnType<typeof createTimeline> | undefined>(undefined);
   const cameraFocusKeyRef = useRef<string | undefined>(undefined);
   const edgePickablesRef = useRef<THREE.Object3D[]>([]);
   const flowObjectsRef = useRef<THREE.Object3D[]>([]);
@@ -112,20 +105,41 @@ export function useTenantGraphRenderer({
       return;
     }
 
+    cameraFlightRef.current?.cancel();
+    cameraFlightRef.current = undefined;
+
     if (!animated || reducedMotionRef.current) {
-      cameraFlightRef.current = undefined;
       applyCameraPose(camera, controls, pose);
       return;
     }
 
-    cameraFlightRef.current = {
-      duration: 620,
-      fromPosition: camera.position.clone(),
-      fromTarget: controls.target.clone(),
-      startedAt: performance.now(),
-      toPosition: pose.position.clone(),
-      toTarget: pose.target.clone(),
-    };
+    const flight = createTimeline({
+      defaults: {
+        duration: 720,
+        ease: 'inOut(3)',
+      },
+      onComplete: () => {
+        camera.position.copy(pose.position);
+        controls.target.copy(pose.target);
+        controls.update();
+        if (cameraFlightRef.current === flight) {
+          cameraFlightRef.current = undefined;
+        }
+      },
+      onUpdate: () => controls.update(),
+    });
+    flight
+      .add(camera, {
+        x: pose.position.x,
+        y: pose.position.y,
+        z: pose.position.z,
+      }, 0)
+      .add(controls.target, {
+        x: pose.target.x,
+        y: pose.target.y,
+        z: pose.target.z,
+      }, 0);
+    cameraFlightRef.current = flight;
   }, []);
 
   const startGraphIllumination = useCallback((duration = 2600) => {
@@ -153,6 +167,7 @@ export function useTenantGraphRenderer({
       return;
     }
 
+    cameraFlightRef.current?.cancel();
     cameraFlightRef.current = undefined;
     if (positionsRef.current.size > 0) {
       applyCameraPose(camera, controls, cameraPoseForGraph(camera, controls, positionsRef.current));
@@ -220,11 +235,8 @@ export function useTenantGraphRenderer({
         return;
       }
 
-      const flight = cameraFlightRef.current;
-      if (flight) {
-        applyCameraPose(camera, controls, { position: flight.toPosition, target: flight.toTarget });
-        cameraFlightRef.current = undefined;
-      }
+      cameraFlightRef.current?.complete();
+      cameraFlightRef.current = undefined;
       illuminationRef.current = undefined;
       animateIlluminationObjects(illuminationObjectsRef.current, 0);
     };
@@ -321,6 +333,11 @@ export function useTenantGraphRenderer({
       }
     };
 
+    const cancelCameraFlight = () => {
+      cameraFlightRef.current?.cancel();
+      cameraFlightRef.current = undefined;
+    };
+
     const observer = new ResizeObserver(resize);
     observer.observe(container);
     resize();
@@ -328,6 +345,7 @@ export function useTenantGraphRenderer({
     renderer.domElement.addEventListener('pointermove', onPointerMove);
     renderer.domElement.addEventListener('pointerleave', onPointerLeave);
     renderer.domElement.addEventListener('click', onClick);
+    controls.addEventListener('start', cancelCameraFlight);
 
     const timer = new THREE.Timer();
     timer.connect(document);
@@ -340,7 +358,6 @@ export function useTenantGraphRenderer({
         animateParticleFields(particleObjectsRef.current, elapsed);
         animatePulseObjects(pulseObjectsRef.current, elapsed);
         updateGraphIllumination(illuminationRef, illuminationObjectsRef.current, performance.now());
-        updateCameraFlight(cameraFlightRef, camera, controls, performance.now());
       }
       controls.update();
       updateFocusGlow(container, camera, focusPointRef.current, focusProjectionRef.current);
@@ -372,6 +389,9 @@ export function useTenantGraphRenderer({
       renderer.domElement.removeEventListener('pointermove', onPointerMove);
       renderer.domElement.removeEventListener('pointerleave', onPointerLeave);
       renderer.domElement.removeEventListener('click', onClick);
+      controls.removeEventListener('start', cancelCameraFlight);
+      cameraFlightRef.current?.cancel();
+      cameraFlightRef.current = undefined;
       controls.dispose();
       clearFocusGlow(container);
       postProcessing.dispose();
@@ -581,29 +601,6 @@ function roundedCameraValue(value: number): number {
   return Math.round(value * 10) / 10;
 }
 
-function updateCameraFlight(
-  flightRef: CurrentRef<CameraFlight | undefined>,
-  camera: THREE.PerspectiveCamera,
-  controls: OrbitControls,
-  now: number,
-): void {
-  const flight = flightRef.current;
-  if (!flight) {
-    return;
-  }
-
-  const progress = Math.min(1, (now - flight.startedAt) / flight.duration);
-  const eased = easeOutSpring(progress);
-  camera.position.copy(flight.fromPosition).lerp(flight.toPosition, eased);
-  controls.target.copy(flight.fromTarget).lerp(flight.toTarget, eased);
-
-  if (progress >= 1) {
-    camera.position.copy(flight.toPosition);
-    controls.target.copy(flight.toTarget);
-    flightRef.current = undefined;
-  }
-}
-
 function updateGraphIllumination(
   flightRef: CurrentRef<IlluminationFlight | undefined>,
   objects: readonly THREE.Object3D[],
@@ -628,18 +625,6 @@ function updateGraphIllumination(
 
 function easeOutCubic(value: number): number {
   return 1 - Math.pow(1 - value, 3);
-}
-
-function easeOutSpring(value: number): number {
-  if (value <= 0) {
-    return 0;
-  }
-  if (value >= 1) {
-    return 1;
-  }
-
-  const settled = 1 - Math.cos(value * Math.PI * 3.8) * Math.exp(-value * 5.8);
-  return THREE.MathUtils.clamp(settled, 0, 1.035);
 }
 
 function clearFocusGlow(container: HTMLElement): void {

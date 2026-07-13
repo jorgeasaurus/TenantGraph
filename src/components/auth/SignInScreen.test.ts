@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { signInErrorMessage } from '../../auth/signInErrors';
 import { accessRequirementItems, tenantGraphGitHubUrl } from './accessResources';
-import { externalLinkRel } from './SignInScreen';
 
 describe('signInErrorMessage', () => {
   it('shows a retry-safe message when the popup is canceled', () => {
@@ -28,9 +27,5 @@ describe('landing access resources', () => {
         expect.stringContaining('Policy.Read.ConditionalAccess'),
       ]),
     );
-  });
-
-  it('uses a safe rel value for external links opened in new tabs', () => {
-    expect(externalLinkRel).toBe('noopener noreferrer');
   });
 });

@@ -60,7 +60,7 @@ export function RelationshipInspector({
           <strong>{edge ? relationshipLabel(edge) : objectNode?.label}</strong>
           {readableEdge && <p className="relationship-sentence">{readableEdge.sentence}</p>}
         </div>
-        <button type="button" title="Close inspector" onClick={onClose}>
+        <button type="button" aria-label="Close inspector" title="Close inspector" onClick={onClose}>
           <X size={14} />
         </button>
       </div>

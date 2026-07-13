@@ -51,4 +51,5 @@
 - Let EffectComposer own pass sizing; avoid manually mutating pass resolution unless the value includes the same pixel-ratio semantics.
 - Catch redirect-auth promise failures and dispose post-processing passes explicitly; helper calls and composers do not automatically absorb those lifecycle failures.
 - Restore renderer state in `finally` blocks and use `noopener noreferrer` on every `_blank` link; rare render failures and tab opener leaks are still real defects.
+- Verify short UI animations in heavy WebGL views through observed style changes; headless screenshots can miss a valid cue when rendering is frame-throttled.
 - When editing XLSX trackers, never write artifact-tool rendered export output back to the workbook path unless `file`/`unzip -t` verifies it is an XLSX; prefer a real spreadsheet writer or a temp-file validation step first.
