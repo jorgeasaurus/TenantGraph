@@ -196,6 +196,14 @@
   box-shadow: var(--shadow-border-hover), var(--shadow-raised);
 }
 
+.result-item[aria-pressed="true"] {
+  border-color: rgba(var(--accent-rgb), 0.58);
+  background: rgba(var(--accent-rgb), 0.12);
+  box-shadow:
+    0 0 0 1px rgba(var(--accent-rgb), 0.2),
+    0 8px 24px rgba(var(--accent-rgb), 0.08);
+}
+
 .result-item span:nth-child(2) {
   min-width: 0;
   flex: 1;

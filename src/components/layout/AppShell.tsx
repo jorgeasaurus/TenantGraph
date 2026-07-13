@@ -8,6 +8,7 @@ import { TenantGraphCanvas, type TenantGraphCanvasHandle } from '../graph/Tenant
 import { Sidebar } from './Sidebar';
 import { Toolbar } from './Toolbar';
 import { useTenantGraphWorkspace } from './useTenantGraphWorkspace';
+import { useWorkspaceMotion } from './useWorkspaceMotion';
 
 type AppShellProps = {
   accountName: string;
@@ -20,6 +21,11 @@ export function AppShell({ accountName, client, isSampleTenant = false, onSignOu
   const canvasRef = useRef<TenantGraphCanvasHandle>(null);
   const [sampleGuideDismissed, setSampleGuideDismissed] = useState(false);
   const { actions, derived, state } = useTenantGraphWorkspace(client);
+  const shellRef = useWorkspaceMotion({
+    inspectorOpen: state.inspectorOpen,
+    loading: Boolean(state.loading || state.busyNodeId),
+    selectedNodeId: state.selectedNodeId,
+  });
   const guideOpen = isSampleTenant && !sampleGuideDismissed;
   const resetGraph = () => {
     void actions.loadGraph().finally(() => {
@@ -45,7 +51,7 @@ export function AppShell({ accountName, client, isSampleTenant = false, onSignOu
   );
 
   return (
-    <div className="app-shell">
+    <div className="app-shell" ref={shellRef}>
       <Toolbar
         accountName={accountName}
         depth={state.depth}
@@ -121,6 +127,9 @@ export function AppShell({ accountName, client, isSampleTenant = false, onSignOu
         />
         <main className={`graph-stage ${state.inspectorOpen ? 'has-inspector' : ''}`}>
           <div className="graph-viewport">
+            <div className="graph-selection-wave" aria-hidden="true">
+              <span />
+            </div>
             {state.permissionError && (
               <div className="state-banner permission-state">
                 Missing permission or Intune access: {state.permissionError}
