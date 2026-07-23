@@ -24,3 +24,11 @@ Review: Confirmed the pre-fix 400 with a focused mock, then verified the compati
 - [x] Push the branch and open a draft pull request
 
 Review: Draft PR #4 opened against `main` after the verified directory-role query fix was pushed.
+
+# Copilot review loop
+
+- [x] Mark PR #4 ready for review and record the baseline review state
+- [ ] Request a Copilot review and inspect all resulting threads
+- [ ] Address, verify, and re-review any actionable feedback until clean
+
+Review: Pending.
