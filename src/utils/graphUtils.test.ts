@@ -689,6 +689,52 @@ describe('graph utils', () => {
     );
   });
 
+  it('expands directory-role members without an unsupported top query parameter', async () => {
+    const requestedPaths: string[] = [];
+    const client = mockGraphClient({
+      async getPaged<T>(path: string): Promise<T[]> {
+        requestedPaths.push(path);
+
+        if (path.includes('$top')) {
+          throw new GraphError(400, 'Unsupported query parameter: $top', 'Request_UnsupportedQuery');
+        }
+
+        return [
+          {
+            '@odata.type': '#microsoft.graph.user',
+            id: 'admin-id',
+            displayName: 'Alex Administrator',
+            userPrincipalName: 'alex@example.com',
+          },
+        ] as T[];
+      },
+      async getDataUrl(): Promise<string> {
+        throw new Error('Photo unavailable');
+      },
+    });
+
+    const result = await expandTenantNode(
+      client,
+      { id: 'directoryRole:role-id', type: 'directoryRole', label: 'Global Administrator' },
+      1,
+    );
+
+    expect(result.warnings).toEqual([]);
+    expect(requestedPaths).toEqual([
+      '/directoryRoles/role-id/members?$select=id,displayName,userPrincipalName,mail,mailNickname,securityEnabled,groupTypes',
+    ]);
+    expect(result.graph.nodes).toContainEqual(
+      expect.objectContaining({ id: 'user:admin-id', label: 'Alex Administrator' }),
+    );
+    expect(result.graph.edges).toContainEqual(
+      expect.objectContaining({
+        source: 'directoryRole:role-id',
+        target: 'user:admin-id',
+        type: 'member',
+      }),
+    );
+  });
+
   it('keeps device expansion usable when an optional managed-device child query returns 400', async () => {
     const requestedPaths: string[] = [];
     const client = mockGraphClient({

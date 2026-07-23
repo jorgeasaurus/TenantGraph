@@ -170,7 +170,7 @@ async function expandGroup(client: GraphClient, node: TenantNode, id: string): P
 async function expandDirectoryRole(client: GraphClient, node: TenantNode, id: string): Promise<TenantGraph> {
   return client
     .getPaged<GraphObject>(
-      `/directoryRoles/${id}/members?$top=25&$select=id,displayName,userPrincipalName,mail,mailNickname,securityEnabled,groupTypes`,
+      `/directoryRoles/${id}/members?$select=id,displayName,userPrincipalName,mail,mailNickname,securityEnabled,groupTypes`,
     )
     .then((items) => connectRelated(node, directoryObjectsToGraph(items), 'member', 'Member'));
 }
